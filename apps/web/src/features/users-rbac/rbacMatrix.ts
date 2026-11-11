@@ -16,35 +16,27 @@ export const ROLE_ORDER: readonly RoleCode[] = [
 export const ROLE_META: Record<RoleCode, RoleMeta> = {
   ADMIN: {
     code: 'ADMIN',
-    labelEn: 'Administrator',
-    labelVi: 'Quản trị hệ thống (Admin)',
+    labelKey: 'usersRbac.roles.ADMIN.label',
     badgeVariant: 'info',
-    scopeNoteEn: 'Full system access, users & settings, all warehouses',
-    scopeNoteVi: 'Toàn quyền hệ thống, người dùng, cấu hình & tất cả kho',
+    scopeNoteKey: 'usersRbac.roles.ADMIN.scopeNote',
   },
   WAREHOUSE_MANAGER: {
     code: 'WAREHOUSE_MANAGER',
-    labelEn: 'Warehouse Manager',
-    labelVi: 'Quản lý kho (Manager)',
+    labelKey: 'usersRbac.roles.WAREHOUSE_MANAGER.label',
     badgeVariant: 'primary',
-    scopeNoteEn: 'Catalog, approvals & threshold config for assigned warehouses',
-    scopeNoteVi: 'Quản lý danh mục, phê duyệt phiếu & ngưỡng trong kho được gán',
+    scopeNoteKey: 'usersRbac.roles.WAREHOUSE_MANAGER.scopeNote',
   },
   WAREHOUSE_STAFF: {
     code: 'WAREHOUSE_STAFF',
-    labelEn: 'Warehouse Staff',
-    labelVi: 'Nhân viên kho (Staff)',
+    labelKey: 'usersRbac.roles.WAREHOUSE_STAFF.label',
     badgeVariant: 'warning',
-    scopeNoteEn: 'Create stock vouchers & physical counts; view-only catalog',
-    scopeNoteVi: 'Lập phiếu nhập/xuất & kiểm kê; chỉ xem sản phẩm và danh mục',
+    scopeNoteKey: 'usersRbac.roles.WAREHOUSE_STAFF.scopeNote',
   },
   VIEWER: {
     code: 'VIEWER',
-    labelEn: 'Viewer',
-    labelVi: 'Người xem (Viewer)',
+    labelKey: 'usersRbac.roles.VIEWER.label',
     badgeVariant: 'neutral',
-    scopeNoteEn: 'Strictly read-only inventory, alerts and reports across scope',
-    scopeNoteVi: 'Chỉ xem tồn kho, dữ liệu nền, cảnh báo và báo cáo (không sửa)',
+    scopeNoteKey: 'usersRbac.roles.VIEWER.scopeNote',
   },
 };
 
@@ -171,8 +163,7 @@ export function canAccessNavKey(role: RoleCode, navKey: NavMenuKey): boolean {
 export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   {
     moduleKey: 'users',
-    moduleVi: 'Quản lý người dùng & vai trò',
-    moduleEn: 'User & Role Management',
+    moduleLabelKey: 'usersRbac.matrix.modules.users',
     admin: 'FULL',
     manager: 'NONE',
     staff: 'NONE',
@@ -180,8 +171,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'settings',
-    moduleVi: 'Cấu hình quy tắc hệ thống',
-    moduleEn: 'System Settings & Rules',
+    moduleLabelKey: 'usersRbac.matrix.modules.settings',
     admin: 'FULL',
     manager: 'NONE',
     staff: 'NONE',
@@ -189,8 +179,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'warehouses',
-    moduleVi: 'Quản lý kho hàng',
-    moduleEn: 'Warehouse Management',
+    moduleLabelKey: 'usersRbac.matrix.modules.warehouses',
     admin: 'FULL',
     manager: 'SCOPED',
     staff: 'READ',
@@ -198,8 +187,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'catalog',
-    moduleVi: 'Sản phẩm, Danh mục, ĐVT, NCC',
-    moduleEn: 'Products, Categories, Units, Suppliers',
+    moduleLabelKey: 'usersRbac.matrix.modules.catalog',
     admin: 'FULL',
     manager: 'FULL',
     staff: 'READ',
@@ -207,8 +195,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'stock-create',
-    moduleVi: 'Lập & gửi phiếu Nhập / Xuất kho',
-    moduleEn: 'Create & Submit Stock-In / Stock-Out',
+    moduleLabelKey: 'usersRbac.matrix.modules.stock-create',
     admin: 'FULL',
     manager: 'SCOPED',
     staff: 'CREATE',
@@ -216,8 +203,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'stock-approve',
-    moduleVi: 'Phê duyệt / từ chối phiếu & điều chỉnh tồn',
-    moduleEn: 'Approve / Reject Vouchers & Adjustments',
+    moduleLabelKey: 'usersRbac.matrix.modules.stock-approve',
     admin: 'FULL',
     manager: 'SCOPED',
     staff: 'NONE',
@@ -225,8 +211,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'stocktaking',
-    moduleVi: 'Kiểm kê thực tế (Stocktaking)',
-    moduleEn: 'Physical Stocktaking Entry',
+    moduleLabelKey: 'usersRbac.matrix.modules.stocktaking',
     admin: 'FULL',
     manager: 'SCOPED',
     staff: 'CREATE',
@@ -234,8 +219,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'alerts',
-    moduleVi: 'Cảnh báo tồn thấp & thiết lập ngưỡng',
-    moduleEn: 'Low-Stock Alerts & Thresholds',
+    moduleLabelKey: 'usersRbac.matrix.modules.alerts',
     admin: 'FULL',
     manager: 'SCOPED',
     staff: 'READ',
@@ -243,8 +227,7 @@ export const SPEC_PERMISSION_ROWS: readonly PermissionMatrixRow[] = [
   },
   {
     moduleKey: 'reports',
-    moduleVi: 'Báo cáo tồn kho & phân tích',
-    moduleEn: 'Inventory Reports & Analytics',
+    moduleLabelKey: 'usersRbac.matrix.modules.reports',
     admin: 'FULL',
     manager: 'SCOPED',
     staff: 'LIMITED',

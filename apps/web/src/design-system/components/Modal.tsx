@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from '../../i18n';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -36,6 +37,7 @@ export const Modal: React.FC<ModalProps> = ({
   className = '',
 }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const { t } = useTranslation();
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -122,7 +124,7 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close dialog"
+                aria-label={t('common.closeDialog')}
                 className="
                   p-1.5 -mr-1.5 text-[#94A3B8] hover:text-[#0F172A] hover:bg-[#F1F5F9]
                   rounded-md transition-colors duration-150 outline-none

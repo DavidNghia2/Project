@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
 import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
 import {
@@ -72,14 +73,21 @@ export const CategoriesPage: React.FC = () => {
     if (formMode === 'create') {
       const res = addItem(data);
       if (res.success) {
-        showToast(`Đã tạo mới danh mục ${data.name} (${data.code.toUpperCase()}).`);
+        showToast(
+          t('masterData.categories.toastCreated', {
+            name: translateDomainLabel(language, 'categories', data.name),
+            code: data.code.toUpperCase(),
+          })
+        );
       }
       return res;
     }
     if (selectedItem) {
       const res = updateItem(selectedItem.id, data);
       if (res.success) {
-        showToast(`Đã cập nhật danh mục ${data.code.toUpperCase()}.`);
+        showToast(
+          t('masterData.categories.toastUpdated', { code: data.code.toUpperCase() })
+        );
       }
       return res;
     }
@@ -90,7 +98,12 @@ export const CategoriesPage: React.FC = () => {
     if (!selectedItem) return;
     const res = deleteItem(selectedItem.id, forceConfirm);
     if (res.success) {
-      showToast(`Đã xóa danh mục ${selectedItem.name} (${selectedItem.code}).`);
+      showToast(
+        t('masterData.categories.toastDeleted', {
+          name: translateDomainLabel(language, 'categories', selectedItem.name),
+          code: selectedItem.code,
+        })
+      );
       setDeleteOpen(false);
       setSelectedItem(null);
     }
@@ -99,34 +112,36 @@ export const CategoriesPage: React.FC = () => {
   const columns: Column<Category>[] = [
     {
       key: 'code',
-      label: 'Mã danh mục',
+      label: t('masterData.categories.colCode'),
       render: (_val, row) => (
         <span className="font-mono text-xs font-bold text-[#2563EB]">{row.code}</span>
       ),
     },
     {
       key: 'name',
-      label: 'Tên danh mục',
+      label: t('masterData.categories.colName'),
       render: (_val, row) => (
         <button
           type="button"
           onClick={() => handleOpenDetail(row)}
           className="font-semibold text-[#0F172A] hover:text-[#2563EB] text-left cursor-pointer focus-visible:outline-none focus-visible:underline"
         >
-          {row.name}
+          {translateDomainLabel(language, 'categories', row.name)}
         </button>
       ),
     },
     {
       key: 'parentGroup',
-      label: 'Nhóm ngành chính',
+      label: t('masterData.categories.colParentGroup'),
       render: (_val, row) => (
-        <span className="text-xs text-[#334155] font-medium">{row.parentGroup}</span>
+        <span className="text-xs text-[#334155] font-medium">
+          {translateDomainLabel(language, 'parentGroups', row.parentGroup)}
+        </span>
       ),
     },
     {
       key: 'description',
-      label: 'Mô tả',
+      label: t('masterData.categories.colDescription'),
       render: (_val, row) => (
         <span className="text-xs text-[#475569] line-clamp-1 max-w-md block">
           {row.description || '—'}
@@ -135,7 +150,7 @@ export const CategoriesPage: React.FC = () => {
     },
     {
       key: 'productsCount',
-      label: 'Sản phẩm',
+      label: t('masterData.categories.colProducts'),
       align: 'center',
       render: (_val, row) => (
         <span className="font-mono text-xs font-medium text-[#0F172A] tabular-nums">
@@ -145,7 +160,7 @@ export const CategoriesPage: React.FC = () => {
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      label: t('masterData.categories.colStatus'),
       align: 'center',
       render: (_val, row) => (
         <Badge variant={row.status === 'active' ? 'success' : 'neutral'} size="sm" dot>
@@ -155,7 +170,7 @@ export const CategoriesPage: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Thao tác',
+      label: t('masterData.categories.colActions'),
       align: 'right',
       render: (_val, row) => (
         <MasterDataRowActions
@@ -170,6 +185,9 @@ export const CategoriesPage: React.FC = () => {
   ];
 
   const selectedRefs = selectedItem ? getItemReferences(selectedItem) : [];
+  const selectedDisplayName = selectedItem
+    ? translateDomainLabel(language, 'categories', selectedItem.name)
+    : undefined;
 
   return (
     <div className="space-y-6">
@@ -185,7 +203,7 @@ export const CategoriesPage: React.FC = () => {
               iconLeft={<Plus className="w-4 h-4" />}
               onClick={handleOpenCreate}
             >
-              {language === 'vi' ? 'Thêm danh mục' : 'Add Category'}
+              {t('masterData.categories.createBtn')}
             </Button>
           ) : undefined
         }
@@ -196,7 +214,7 @@ export const CategoriesPage: React.FC = () => {
       {toastMessage && (
         <Alert
           variant="success"
-          title="Thao tác thành công"
+          title={t('common.operationSuccess')}
           message={toastMessage}
           dismissible
           onDismiss={() => setToastMessage(null)}
@@ -207,33 +225,40 @@ export const CategoriesPage: React.FC = () => {
         <MasterDataToolbar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Tìm theo mã danh mục, tên ngành hàng hoặc mô tả..."
+          searchPlaceholder={t('masterData.categories.searchPlaceholder')}
           searchInputId="cat-search-input"
           statusFilter={statusFilter}
           onStatusChange={setStatusFilter}
           secondaryFilter={secondaryFilter}
           onSecondaryFilterChange={setSecondaryFilter}
-          secondaryLabel="Nhóm ngành chính"
+          secondaryLabel={t('masterData.categories.filterGroupLabel')}
           secondaryOptions={[
-            { value: 'ALL', label: 'Tất cả nhóm ngành' },
-            ...CATEGORY_PARENT_GROUPS.map((g) => ({ value: g, label: g })),
+            { value: 'ALL', label: t('masterData.categories.allGroups') },
+            ...CATEGORY_PARENT_GROUPS.map((g) => ({
+              value: g,
+              label: translateDomainLabel(language, 'parentGroups', g),
+            })),
           ]}
           isFiltered={isFiltered}
           onReset={resetFilters}
           totalFiltered={filteredItems.length}
           totalItems={items.length}
-          itemUnitLabel="danh mục"
+          itemUnitLabel={t('masterData.categories.unitLabel')}
         />
 
         <Table
           columns={columns}
           data={filteredItems}
-          caption="Danh sách phân loại sản phẩm"
-          emptyTitle={isFiltered ? 'Không tìm thấy danh mục phù hợp' : 'Chưa có danh mục nào'}
+          caption={t('masterData.categories.tableCaption')}
+          emptyTitle={
+            isFiltered
+              ? t('masterData.categories.emptyFilteredTitle')
+              : t('masterData.categories.emptyTitle')
+          }
           emptyDescription={
             isFiltered
-              ? 'Không có danh mục nào khớp với điều kiện tìm kiếm hiện tại.'
-              : 'Tạo danh mục đầu tiên để phân nhóm hàng hóa trong kho.'
+              ? t('masterData.categories.emptyFilteredDesc')
+              : t('masterData.categories.emptyDesc')
           }
           emptyAction={
             isFiltered ? (
@@ -243,7 +268,7 @@ export const CategoriesPage: React.FC = () => {
                 onClick={resetFilters}
                 iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
               >
-                Xóa bộ lọc
+                {t('masterData.common.clearFilters')}
               </Button>
             ) : canManageCatalog ? (
               <Button
@@ -252,7 +277,7 @@ export const CategoriesPage: React.FC = () => {
                 onClick={handleOpenCreate}
                 iconLeft={<Plus className="w-3.5 h-3.5" />}
               >
-                Thêm danh mục
+                {t('masterData.categories.createBtn')}
               </Button>
             ) : undefined
           }
@@ -271,16 +296,19 @@ export const CategoriesPage: React.FC = () => {
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
         onEdit={canManageCatalog ? () => selectedItem && handleOpenEdit(selectedItem) : undefined}
-        titlePrefix="Chi tiết danh mục"
+        titlePrefix={t('masterData.categories.detailPrefix')}
         code={selectedItem?.code}
-        name={selectedItem?.name}
+        name={selectedDisplayName}
         status={selectedItem?.status}
         description={selectedItem?.description}
         fields={
           selectedItem
             ? [
-                { label: 'Mã danh mục', value: selectedItem.code },
-                { label: 'Nhóm ngành chính', value: selectedItem.parentGroup },
+                { label: t('masterData.categories.detailCode'), value: selectedItem.code },
+                {
+                  label: t('masterData.categories.detailParentGroup'),
+                  value: translateDomainLabel(language, 'parentGroups', selectedItem.parentGroup),
+                },
               ]
             : []
         }
@@ -293,9 +321,9 @@ export const CategoriesPage: React.FC = () => {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleConfirmDelete}
-        entityLabel="danh mục"
+        entityLabel={t('masterData.categories.entity')}
         itemCode={selectedItem?.code}
-        itemName={selectedItem?.name}
+        itemName={selectedDisplayName}
         references={selectedRefs}
       />
     </div>

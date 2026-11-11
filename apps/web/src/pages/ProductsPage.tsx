@@ -16,7 +16,7 @@ import {
 import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const ProductsPage: React.FC = () => {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const { activeRole, capabilities } = useRolePreview();
   const canEditCatalog = capabilities.canManageCatalog;
 
@@ -90,13 +90,13 @@ export const ProductsPage: React.FC = () => {
     if (formMode === 'create') {
       const res = addProduct(formData);
       if (res.success) {
-        showToast(`Đã thêm mới thành công sản phẩm ${formData.name} (SKU: ${formData.sku})!`);
+        showToast(t('products.toastCreated', { name: formData.name, sku: formData.sku }));
       }
       return res;
     } else if (selectedProduct) {
       const res = updateProduct(selectedProduct.id, formData);
       if (res.success) {
-        showToast(`Đã cập nhật thông tin sản phẩm SKU ${formData.sku}!`);
+        showToast(t('products.toastUpdated', { sku: formData.sku }));
       }
       return res;
     }
@@ -106,7 +106,7 @@ export const ProductsPage: React.FC = () => {
   const handleConfirmDelete = () => {
     if (selectedProduct) {
       deleteProduct(selectedProduct.id);
-      showToast(`Đã xóa sản phẩm ${selectedProduct.name} khỏi danh mục kho.`);
+      showToast(t('products.toastDeleted', { name: selectedProduct.name }));
       setDeleteOpen(false);
       setSelectedProduct(null);
     }
@@ -127,7 +127,7 @@ export const ProductsPage: React.FC = () => {
               onClick={handleOpenCreate}
               id="btn-add-product"
             >
-              {language === 'vi' ? 'Thêm sản phẩm mới' : 'Add New Product'}
+              {t('products.addBtn')}
             </Button>
           ) : undefined
         }
@@ -139,7 +139,7 @@ export const ProductsPage: React.FC = () => {
       {toastMessage && (
         <Alert
           variant="success"
-          title="Thao tác thành công"
+          title={t('common.operationSuccess')}
           message={toastMessage}
           dismissible
           onDismiss={() => setToastMessage(null)}
@@ -153,8 +153,8 @@ export const ProductsPage: React.FC = () => {
             <Package className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">Tổng số mặt hàng</span>
-            <span className="font-mono text-lg font-bold text-[#0F172A]">{totalCatalogCount} SKUs</span>
+            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.totalItems')}</span>
+            <span className="font-mono text-lg font-bold text-[#0F172A]">{t('products.kpi.totalItemsUnit', { count: totalCatalogCount })}</span>
           </div>
         </div>
 
@@ -163,8 +163,8 @@ export const ProductsPage: React.FC = () => {
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">Đang kinh doanh</span>
-            <span className="font-mono text-lg font-bold text-emerald-700">{activeCount} mặt hàng</span>
+            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.activeItems')}</span>
+            <span className="font-mono text-lg font-bold text-emerald-700">{t('products.kpi.activeItemsUnit', { count: activeCount })}</span>
           </div>
         </div>
 
@@ -173,8 +173,8 @@ export const ProductsPage: React.FC = () => {
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">Cảnh báo tồn thấp</span>
-            <span className="font-mono text-lg font-bold text-amber-600">{lowStockCount} mặt hàng</span>
+            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.lowStockItems')}</span>
+            <span className="font-mono text-lg font-bold text-amber-600">{t('products.kpi.lowStockItemsUnit', { count: lowStockCount })}</span>
           </div>
         </div>
 
@@ -183,7 +183,7 @@ export const ProductsPage: React.FC = () => {
             <Boxes className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">Tổng tồn khả dụng</span>
+            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.totalOnHand')}</span>
             <span className="font-mono text-lg font-bold text-purple-700">{totalStockUnits.toLocaleString()}</span>
           </div>
         </div>

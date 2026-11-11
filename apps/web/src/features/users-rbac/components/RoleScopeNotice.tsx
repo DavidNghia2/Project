@@ -14,7 +14,7 @@ export const RoleScopeNotice: React.FC<ReadOnlyBannerProps> = ({
   role,
   context = 'catalog',
 }) => {
-  const { language } = useTranslation();
+  const { t } = useTranslation();
   const meta = ROLE_META[role];
 
   if (context === 'restricted') {
@@ -25,14 +25,10 @@ export const RoleScopeNotice: React.FC<ReadOnlyBannerProps> = ({
             <Lock className="w-5 h-5 text-[#DC2626] shrink-0 mt-0.5" />
             <div className="space-y-1 text-xs sm:text-sm">
               <h3 className="font-semibold text-[#991B1B]">
-                {language === 'vi'
-                  ? 'Không có quyền truy cập trang quản trị này'
-                  : 'Access restricted for current role'}
+                {t('usersRbac.scopeNotice.restrictedTitle')}
               </h3>
               <p className="text-[#7F1D1D]">
-                {language === 'vi'
-                  ? `Vai trò hiện tại (${meta.labelVi}) không được cấp quyền sử dụng phân hệ này theo ma trận phân quyền.`
-                  : `The active role (${meta.labelEn}) does not have permission to access this administration module.`}
+                {t('usersRbac.scopeNotice.restrictedDesc', { role: t(meta.labelKey) })}
               </p>
             </div>
           </div>
@@ -49,12 +45,8 @@ export const RoleScopeNotice: React.FC<ReadOnlyBannerProps> = ({
       <Lock className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
       <span>
         {role === 'VIEWER'
-          ? language === 'vi'
-            ? 'Chế độ chỉ xem (Viewer): Các thao tác thêm mới, chỉnh sửa, xóa và phê duyệt đã được ẩn trên giao diện.'
-            : 'Read-only Viewer mode: Create, edit, delete, and approval controls are hidden.'
-          : language === 'vi'
-            ? 'Quyền chỉ xem danh mục (Staff): Chỉ Admin hoặc Warehouse Manager mới có quyền thêm, sửa hoặc xóa dữ liệu này.'
-            : 'Read-only catalog scope (Staff): Only Admin or Warehouse Manager can create, edit, or delete records.'}
+          ? t('usersRbac.scopeNotice.readOnlyViewerDesc')
+          : t('usersRbac.scopeNotice.readOnlyStaffDesc')}
       </span>
     </div>
   );

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Search, RotateCcw } from 'lucide-react';
+import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { Input, Select, Button } from '../../../design-system';
 import { CATEGORIES_LIST, WAREHOUSES_LIST } from '../mockData';
 import type { ProductFilterState } from '../types';
@@ -25,6 +27,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   totalFiltered,
   totalProducts,
 }) => {
+  const { t, language } = useTranslation();
+
   const isFiltered =
     filters.search.trim() !== '' ||
     filters.category !== 'ALL' ||
@@ -38,8 +42,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="lg:col-span-2">
           <Input
             id="product-search-input"
-            label="Tìm kiếm sản phẩm"
-            placeholder="Tìm theo SKU, tên sản phẩm hoặc mã vạch..."
+            label={t('products.filters.searchLabel')}
+            placeholder={t('products.filters.searchPlaceholder')}
             value={filters.search}
             onChange={(e) => onSearchChange(e.target.value)}
             prefix={<Search className="w-4 h-4 text-slate-400" />}
@@ -50,13 +54,16 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         {/* Category Filter */}
         <div>
           <Select
-            label="Danh mục ngành hàng"
+            label={t('products.filters.categoryLabel')}
             value={filters.category}
             onChange={(e) => onCategoryChange(e.target.value)}
             size="sm"
             options={[
-              { value: 'ALL', label: 'Tất cả danh mục' },
-              ...CATEGORIES_LIST.map((c) => ({ value: c, label: c })),
+              { value: 'ALL', label: t('products.filters.allCategories') },
+              ...CATEGORIES_LIST.map((c) => ({
+                value: c,
+                label: translateDomainLabel(language, 'categories', c),
+              })),
             ]}
           />
         </div>
@@ -64,14 +71,14 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         {/* Status Filter */}
         <div>
           <Select
-            label="Trạng thái hàng hóa"
+            label={t('products.filters.statusLabel')}
             value={filters.status}
             onChange={(e) => onStatusChange(e.target.value)}
             size="sm"
             options={[
-              { value: 'ALL', label: 'Tất cả trạng thái' },
-              { value: 'active', label: 'Đang hoạt động (Active)' },
-              { value: 'inactive', label: 'Ngừng kinh doanh (Inactive)' },
+              { value: 'ALL', label: t('products.filters.allStatuses') },
+              { value: 'active', label: t('products.filters.statusActiveOpt') },
+              { value: 'inactive', label: t('products.filters.statusInactiveOpt') },
             ]}
           />
         </div>
@@ -79,13 +86,16 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         {/* Warehouse Filter */}
         <div>
           <Select
-            label="Lọc theo kho còn hàng"
+            label={t('products.filters.warehouseLabel')}
             value={filters.warehouse}
             onChange={(e) => onWarehouseChange(e.target.value)}
             size="sm"
             options={[
-              { value: 'ALL', label: 'Tất cả các kho' },
-              ...WAREHOUSES_LIST.map((w) => ({ value: w.code, label: w.name })),
+              { value: 'ALL', label: t('products.filters.allWarehouses') },
+              ...WAREHOUSES_LIST.map((w) => ({
+                value: w.code,
+                label: translateDomainLabel(language, 'warehouseNames', w.code, w.name),
+              })),
             ]}
           />
         </div>
@@ -95,11 +105,13 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       <div className="flex items-center justify-between text-xs text-[#64748B] pt-1 border-t border-[#F1F5F9]">
         <div className="flex items-center gap-2">
           <span>
-            Kết quả: <strong className="text-[#0F172A] font-semibold">{totalFiltered}</strong> / {totalProducts} sản phẩm
+            {t('products.filters.resultsLabel')}{' '}
+            <strong className="text-[#0F172A] font-semibold">{totalFiltered}</strong> / {totalProducts}{' '}
+            {t('products.filters.itemsUnit')}
           </span>
           {isFiltered && (
             <span className="text-blue-600 font-medium bg-blue-50 px-2 py-0.5 rounded text-[11px]">
-              Đang áp dụng bộ lọc
+              {t('products.filters.filtersActiveBadge')}
             </span>
           )}
         </div>
@@ -112,7 +124,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
             className="text-xs text-[#475569] hover:text-[#0F172A]"
           >
-            Đặt lại bộ lọc
+            {t('products.filters.resetBtn')}
           </Button>
         )}
       </div>

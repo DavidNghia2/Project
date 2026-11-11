@@ -3,6 +3,8 @@ import { Modal, Button, Input, Select } from '../../../design-system';
 import { SUPPLIER_PAYMENT_TERMS } from '../mockData';
 import { CATEGORIES_LIST } from '../../products/mockData';
 import type { Supplier, SupplierFormData, MasterStatus, ValidationErrors } from '../types';
+import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
 export interface SupplierFormModalProps {
   open: boolean;
@@ -38,6 +40,7 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t, language } = useTranslation();
   const [formData, setFormData] = useState<SupplierFormData>(() => {
     if (mode === 'edit' && initialItem) {
       return {
@@ -80,9 +83,9 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           id="sup-input-code"
-          label="Mã nhà cung cấp (Duy nhất)"
+          label={t('masterData.suppliers.formCodeLabel')}
           required
-          placeholder="VD: SUP-SAMSUNG-VN"
+          placeholder={t('masterData.suppliers.formCodePlaceholder')}
           value={formData.code}
           onChange={(e) => handleChange('code', e.target.value.toUpperCase())}
           error={errors.code}
@@ -90,9 +93,9 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
         />
         <Input
           id="sup-input-name"
-          label="Tên doanh nghiệp / Đối tác"
+          label={t('masterData.suppliers.formNameLabel')}
           required
-          placeholder="VD: Công ty TNHH Phân Phối Samsung Vina"
+          placeholder={t('masterData.suppliers.formNamePlaceholder')}
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
           error={errors.name}
@@ -103,9 +106,9 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Input
           id="sup-input-contact"
-          label="Người liên hệ chính"
+          label={t('masterData.suppliers.formContactLabel')}
           required
-          placeholder="VD: Phạm Minh Quân"
+          placeholder={t('masterData.suppliers.formContactPlaceholder')}
           value={formData.contactPerson}
           onChange={(e) => handleChange('contactPerson', e.target.value)}
           error={errors.contactPerson}
@@ -113,9 +116,9 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
         />
         <Input
           id="sup-input-phone"
-          label="Số máy / Đường dây liên hệ"
+          label={t('masterData.suppliers.formPhoneLabel')}
           required
-          placeholder="VD: ext. 808-9900"
+          placeholder={t('masterData.suppliers.formPhonePlaceholder')}
           value={formData.phone}
           onChange={(e) => handleChange('phone', e.target.value)}
           error={errors.phone}
@@ -123,10 +126,10 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
         />
         <Input
           id="sup-input-email"
-          label="Email giao dịch (Duy nhất)"
+          label={t('masterData.suppliers.formEmailLabel')}
           type="email"
           required
-          placeholder="VD: quan.pham@partner.example"
+          placeholder={t('masterData.suppliers.formEmailPlaceholder')}
           value={formData.email}
           onChange={(e) => handleChange('email', e.target.value)}
           error={errors.email}
@@ -136,9 +139,9 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
 
       <Input
         id="sup-input-address"
-        label="Địa chỉ khu vực"
+        label={t('masterData.suppliers.formAddressLabel')}
         required
-        placeholder="VD: Phường Thảo Điền, TP. Thủ Đức, TP. HCM"
+        placeholder={t('masterData.suppliers.formAddressPlaceholder')}
         value={formData.address}
         onChange={(e) => handleChange('address', e.target.value)}
         error={errors.address}
@@ -148,28 +151,31 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Input
           id="sup-input-focus"
-          label="Ngành hàng cung ứng chính"
-          placeholder="VD: Lưu trữ & Thẻ nhớ"
+          label={t('masterData.suppliers.formFocusLabel')}
+          placeholder={t('masterData.suppliers.formFocusPlaceholder')}
           value={formData.categoryFocus}
           onChange={(e) => handleChange('categoryFocus', e.target.value)}
           size="sm"
         />
         <Select
           id="sup-select-terms"
-          label="Điều khoản thanh toán"
+          label={t('masterData.suppliers.formTermsLabel')}
           value={formData.paymentTerms}
           onChange={(e) => handleChange('paymentTerms', e.target.value)}
-          options={SUPPLIER_PAYMENT_TERMS.map((p) => ({ value: p, label: p }))}
+          options={SUPPLIER_PAYMENT_TERMS.map((p) => ({
+            value: p,
+            label: translateDomainLabel(language, 'paymentTerms', p),
+          }))}
           size="sm"
         />
         <Select
           id="sup-select-status"
-          label="Trạng thái hợp tác"
+          label={t('masterData.suppliers.formStatusLabel')}
           value={formData.status}
           onChange={(e) => handleChange('status', e.target.value as MasterStatus)}
           options={[
-            { value: 'active', label: 'Đang hợp tác' },
-            { value: 'inactive', label: 'Tạm ngừng' },
+            { value: 'active', label: t('masterData.suppliers.formStatusActive') },
+            { value: 'inactive', label: t('masterData.suppliers.formStatusInactive') },
           ]}
           size="sm"
         />
@@ -177,12 +183,12 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
 
       <div>
         <label htmlFor="sup-input-notes" className="block text-xs font-medium text-[#0F172A] mb-1">
-          Ghi chú thương mại
+          {t('masterData.suppliers.formNotesLabel')}
         </label>
         <textarea
           id="sup-input-notes"
           rows={2}
-          placeholder="Ghi chú hợp đồng nguyên tắc, lịch giao nhận hoặc chính sách bảo hành..."
+          placeholder={t('masterData.suppliers.formNotesPlaceholder')}
           value={formData.notes}
           onChange={(e) => handleChange('notes', e.target.value)}
           className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]"
@@ -191,10 +197,12 @@ const SupplierFormContent: React.FC<SupplierFormContentProps> = ({
 
       <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
         <Button variant="secondary" size="sm" onClick={onClose} type="button">
-          Hủy bỏ
+          {t('masterData.common.cancelBtn')}
         </Button>
         <Button id="btn-submit-supplier" variant="primary" size="sm" type="submit">
-          {mode === 'create' ? 'Tạo nhà cung cấp' : 'Lưu thay đổi'}
+          {mode === 'create'
+            ? t('masterData.suppliers.formCreateSubmit')
+            : t('masterData.common.saveBtn')}
         </Button>
       </div>
     </form>
@@ -207,26 +215,34 @@ export const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
   onSubmit,
   initialItem,
   mode,
-}) => (
-  <Modal
-    open={open}
-    onClose={onClose}
-    size="lg"
-    title={mode === 'create' ? 'Thêm nhà cung cấp mới' : `Chỉnh sửa nhà cung cấp: ${initialItem?.code}`}
-    description={
-      mode === 'create'
-        ? 'Khai báo hồ sơ đối tác cung ứng, đầu mối liên hệ và điều khoản thanh toán.'
-        : 'Cập nhật thông tin liên hệ và trạng thái hợp tác của nhà cung cấp.'
-    }
-  >
-    {open ? (
-      <SupplierFormContent
-        key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
-        mode={mode}
-        initialItem={initialItem}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
-    ) : null}
-  </Modal>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="lg"
+      title={
+        mode === 'create'
+          ? t('masterData.suppliers.formCreateTitle')
+          : t('masterData.suppliers.formEditTitle', { code: initialItem?.code ?? '' })
+      }
+      description={
+        mode === 'create'
+          ? t('masterData.suppliers.formCreateDesc')
+          : t('masterData.suppliers.formEditDesc')
+      }
+    >
+      {open ? (
+        <SupplierFormContent
+          key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
+          mode={mode}
+          initialItem={initialItem}
+          onClose={onClose}
+          onSubmit={onSubmit}
+        />
+      ) : null}
+    </Modal>
+  );
+};

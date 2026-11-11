@@ -72,17 +72,14 @@ export interface RoleCapabilities {
 
 export interface RoleMeta {
   code: RoleCode;
-  labelEn: string;
-  labelVi: string;
+  labelKey: string;
   badgeVariant: BadgeVariant;
-  scopeNoteEn: string;
-  scopeNoteVi: string;
+  scopeNoteKey: string;
 }
 
 export interface PermissionMatrixRow {
   moduleKey: string;
-  moduleVi: string;
-  moduleEn: string;
+  moduleLabelKey: string;
   admin: 'FULL' | 'READ' | 'NONE' | 'LIMITED';
   manager: 'FULL' | 'SCOPED' | 'READ' | 'NONE';
   staff: 'CREATE' | 'READ' | 'LIMITED' | 'NONE';

@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertCircle, Plus, Trash2 } from 'lucide-react';
 import { Button } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_PRODUCTS } from '../../products/mockData';
 import type { Product } from '../../products/types';
 import type { LineValidationError } from '../types';
@@ -42,7 +43,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
   onAddLine,
   onRemoveLine,
 }) => {
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
 
   const resolvedLinesForTotal = items.map((line) => {
     const product = products.find((p) => p.id === line.productId);
@@ -60,17 +61,15 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
-            {language === 'vi' ? 'Danh sách sản phẩm' : 'Product Line Items'}
+            {t('stockOps.lineEditor.title')}
             <span className="text-[#DC2626] ml-0.5">*</span>
           </h4>
           <p className="text-[11px] text-[#64748B]">
             {mode === 'in'
-              ? language === 'vi'
-                ? 'Chọn từng mặt hàng, nhập số lượng và đơn giá nhập để tự động tính tổng.'
-                : 'Select products, enter quantities and unit cost to calculate voucher totals.'
-              : language === 'vi'
-                ? `Số lượng xuất không được vượt quá tồn kho khả dụng tại ${warehouseCode || 'kho đã chọn'}.`
-                : `Dispatch quantity cannot exceed available stock in ${warehouseCode || 'selected warehouse'}.`}
+              ? t('stockOps.lineEditor.hintIn')
+              : t('stockOps.lineEditor.hintOut', {
+                  warehouse: warehouseCode || t('stockOps.lineEditor.selectedWarehouseFallback'),
+                })}
           </p>
         </div>
 
@@ -82,7 +81,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
           onClick={onAddLine}
           iconLeft={<Plus className="w-3.5 h-3.5" />}
         >
-          {language === 'vi' ? 'Thêm dòng sản phẩm' : 'Add Product Line'}
+          {t('stockOps.lineEditor.addLine')}
         </Button>
       </div>
 
@@ -118,9 +117,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
               warehouseCode &&
               Number.isFinite(line.quantity) &&
               line.quantity > available
-                ? language === 'vi'
-                  ? `Vượt quá tồn kho khả dụng (${available})`
-                  : `Exceeds available stock (${available})`
+                ? t('stockOps.lineEditor.overStockLive', { available })
                 : undefined;
 
             const qtyError = err.quantity || liveOverStockError;
@@ -138,7 +135,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                       htmlFor={`line-product-${index}`}
                       className="block text-[11px] font-medium text-[#475569] mb-1"
                     >
-                      {language === 'vi' ? `Sản phẩm #${index + 1}` : `Product #${index + 1}`}
+                      {t('stockOps.lineEditor.productLabel', { index: index + 1 })}
                     </label>
                     <select
                       id={`line-product-${index}`}
@@ -161,12 +158,12 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                       }`}
                     >
                       <option value="">
-                        {language === 'vi' ? '-- Chọn sản phẩm --' : '-- Select product --'}
+                        {t('stockOps.lineEditor.selectProduct')}
                       </option>
                       {products.map((p) => {
                         const stockLabel =
                           mode === 'out' && warehouseCode
-                            ? ` · ${language === 'vi' ? 'Tồn' : 'Avail'}: ${getWarehouseAvailableStock(
+                            ? ` · ${t('stockOps.lineEditor.availShort')}: ${getWarehouseAvailableStock(
                                 p.id,
                                 warehouseCode,
                                 products
@@ -191,11 +188,9 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                           available === 0 ? 'text-[#DC2626]' : 'text-[#475569]'
                         }`}
                       >
-                        {language === 'vi'
-                          ? `Tồn kho khả dụng tại ${warehouseCode}: `
-                          : `Available in ${warehouseCode}: `}
+                        {t('stockOps.lineEditor.availInWarehouse', { warehouse: warehouseCode })}
                         <strong className="font-mono">
-                          {available} {product?.unit ?? ''}
+                          {available} {product?.unit ? translateDomainLabel(language, 'units', product.unit) : ''}
                         </strong>
                       </p>
                     )}
@@ -207,7 +202,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                       htmlFor={`line-qty-${index}`}
                       className="block text-[11px] font-medium text-[#475569] mb-1"
                     >
-                      {language === 'vi' ? 'Số lượng' : 'Quantity'}
+                      {t('stockOps.lineEditor.qtyLabel')}
                     </label>
                     <input
                       id={`line-qty-${index}`}
@@ -242,7 +237,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                       htmlFor={`line-cost-${index}`}
                       className="block text-[11px] font-medium text-[#475569] mb-1"
                     >
-                      {language === 'vi' ? 'Đơn giá (₫)' : 'Unit Cost (₫)'}
+                      {t('stockOps.lineEditor.unitCostLabel')}
                     </label>
                     {mode === 'in' ? (
                       <>
@@ -285,7 +280,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                   {/* Line total & Remove button */}
                   <div className={mode === 'in' ? 'md:col-span-3' : 'md:col-span-2'}>
                     <span className="block text-[11px] font-medium text-[#475569] mb-1">
-                      {language === 'vi' ? 'Thành tiền' : 'Line Total'}
+                      {t('stockOps.lineEditor.lineTotalLabel')}
                     </span>
                     <div className="flex items-center justify-between gap-2 h-9">
                       <span
@@ -300,9 +295,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                         onClick={() => onRemoveLine(line.id)}
                         disabled={items.length <= 1}
                         aria-label={
-                          language === 'vi'
-                            ? `Xóa dòng sản phẩm #${index + 1}`
-                            : `Remove product line #${index + 1}`
+                          t('stockOps.lineEditor.removeLine', { index: index + 1 })
                         }
                         className="p-1.5 rounded-md text-[#64748B] hover:text-[#DC2626] hover:bg-[#FEF2F2] disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
                       >
@@ -319,12 +312,12 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
         {/* Totals Footer */}
         <div className="bg-[#F8FAFC] border-t border-[#E2E8F0] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
           <div className="text-xs text-[#475569]">
-            {language === 'vi' ? 'Số dòng hàng:' : 'Line count:'}{' '}
+            {t('stockOps.lineEditor.lineCount')}{' '}
             <strong className="font-mono tabular-nums text-[#0F172A]">{items.length}</strong>
           </div>
           <div className="flex flex-wrap items-center gap-6">
             <div className="text-xs text-[#475569]">
-              {language === 'vi' ? 'Tổng số lượng:' : 'Total Qty:'}{' '}
+              {t('stockOps.lineEditor.totalQty')}{' '}
               <strong
                 data-testid="voucher-total-qty"
                 className="font-mono tabular-nums text-sm text-[#0F172A]"
@@ -333,7 +326,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
               </strong>
             </div>
             <div className="text-xs text-[#475569]">
-              {language === 'vi' ? 'Tổng giá trị:' : 'Total Value:'}{' '}
+              {t('stockOps.lineEditor.totalValue')}{' '}
               <strong
                 data-testid="voucher-total-amount"
                 className="font-mono tabular-nums text-sm font-bold text-[#0284C7]"

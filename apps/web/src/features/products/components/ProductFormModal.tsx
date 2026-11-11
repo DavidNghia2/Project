@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import type { Product, ProductFormData, ValidationErrors } from '../types';
 import { CATEGORIES_LIST, UNITS_LIST, WAREHOUSES_LIST } from '../mockData';
 import { Modal, Button, Input, Select } from '../../../design-system';
+import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
 export interface ProductFormModalProps {
   open: boolean;
@@ -38,6 +40,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t, language } = useTranslation();
   const [formData, setFormData] = useState<ProductFormData>(() => {
     if (mode === 'edit' && initialProduct) {
       return {
@@ -91,13 +94,13 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Input
             id="product-input-sku"
-            label="Mã SKU (Duy nhất)"
+            label={t('products.form.skuLabel')}
             required
-            placeholder="VD: SKU-DELL-P2419"
+            placeholder={t('products.form.skuPlaceholder')}
             value={formData.sku}
             onChange={(e) => handleChange('sku', e.target.value.toUpperCase())}
             error={errors.sku}
-            hint="Mã định danh duy nhất không được trùng lặp"
+            hint={t('products.form.skuHint')}
             size="sm"
           />
         </div>
@@ -106,12 +109,12 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Input
             id="product-input-barcode"
-            label="Mã vạch (Barcode / EAN-13)"
-            placeholder="VD: 8936012345678"
+            label={t('products.form.barcodeLabel')}
+            placeholder={t('products.form.barcodePlaceholder')}
             value={formData.barcode}
             onChange={(e) => handleChange('barcode', e.target.value)}
             error={errors.barcode}
-            hint="Để trống nếu muốn hệ thống tự sinh mã vạch"
+            hint={t('products.form.barcodeHint')}
             size="sm"
           />
         </div>
@@ -121,9 +124,9 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
       <div>
         <Input
           id="product-input-name"
-          label="Tên sản phẩm"
+          label={t('products.form.nameLabel')}
           required
-          placeholder="VD: Màn hình Dell Professional 24 inch FHD IPS"
+          placeholder={t('products.form.namePlaceholder')}
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
           error={errors.name}
@@ -136,12 +139,15 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Select
             id="product-select-category"
-            label="Danh mục ngành hàng"
+            label={t('products.form.categoryLabel')}
             required
             value={formData.category}
             onChange={(e) => handleChange('category', e.target.value)}
             error={errors.category}
-            options={CATEGORIES_LIST.map((c) => ({ value: c, label: c }))}
+            options={CATEGORIES_LIST.map((c) => ({
+              value: c,
+              label: translateDomainLabel(language, 'categories', c),
+            }))}
             size="sm"
           />
         </div>
@@ -150,12 +156,15 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Select
             id="product-select-unit"
-            label="Đơn vị tính"
+            label={t('products.form.unitLabel')}
             required
             value={formData.unit}
             onChange={(e) => handleChange('unit', e.target.value)}
             error={errors.unit}
-            options={UNITS_LIST.map((u) => ({ value: u, label: u }))}
+            options={UNITS_LIST.map((u) => ({
+              value: u,
+              label: translateDomainLabel(language, 'units', u),
+            }))}
             size="sm"
           />
         </div>
@@ -166,7 +175,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Input
             id="product-input-reorder"
-            label="Ngưỡng tồn an toàn"
+            label={t('products.form.reorderLabel')}
             required
             type="number"
             min={0}
@@ -174,7 +183,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
             value={formData.reorderLevel}
             onChange={(e) => handleChange('reorderLevel', Math.max(0, parseInt(e.target.value) || 0))}
             error={errors.reorderLevel}
-            hint="Cảnh báo khi tồn <= ngưỡng"
+            hint={t('products.form.reorderHint')}
             size="sm"
           />
         </div>
@@ -183,7 +192,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Input
             id="product-input-stock"
-            label={mode === 'create' ? 'Tồn ban đầu' : 'Tồn hiện tại'}
+            label={mode === 'create' ? t('products.form.initialStockLabel') : t('products.form.currentStockLabel')}
             type="number"
             min={0}
             placeholder="0"
@@ -191,7 +200,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
             onChange={(e) => handleChange('initialStock', Math.max(0, parseInt(e.target.value) || 0))}
             error={errors.initialStock}
             disabled={mode === 'edit'}
-            hint={mode === 'edit' ? 'Tồn kho chỉ đổi qua phiếu nhập/xuất' : 'Số lượng nhập ban đầu'}
+            hint={mode === 'edit' ? t('products.form.stockEditHint') : t('products.form.stockCreateHint')}
             size="sm"
           />
         </div>
@@ -200,13 +209,16 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Select
             id="product-select-warehouse"
-            label="Kho lưu trữ ban đầu"
+            label={t('products.form.warehouseLabel')}
             required={mode === 'create'}
             disabled={mode === 'edit'}
             value={formData.primaryWarehouse}
             onChange={(e) => handleChange('primaryWarehouse', e.target.value)}
             error={errors.primaryWarehouse}
-            options={WAREHOUSES_LIST.map((w) => ({ value: w.code, label: w.name }))}
+            options={WAREHOUSES_LIST.map((w) => ({
+              value: w.code,
+              label: translateDomainLabel(language, 'warehouseNames', w.code, w.name),
+            }))}
             size="sm"
           />
         </div>
@@ -217,11 +229,11 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Input
             id="product-input-image"
-            label="Đường dẫn ảnh sản phẩm (URL)"
-            placeholder="https://images.unsplash.com/..."
+            label={t('products.form.imageLabel')}
+            placeholder={t('products.form.imagePlaceholder')}
             value={formData.imageUrl}
             onChange={(e) => handleChange('imageUrl', e.target.value)}
-            hint="Để trống nếu sử dụng ảnh mặc định"
+            hint={t('products.form.imageHint')}
             size="sm"
           />
         </div>
@@ -230,12 +242,12 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
         <div>
           <Select
             id="product-select-status"
-            label="Trạng thái kinh doanh"
+            label={t('products.form.statusLabel')}
             value={formData.status}
             onChange={(e) => handleChange('status', e.target.value as 'active' | 'inactive')}
             options={[
-              { value: 'active', label: 'Đang hoạt động (Active)' },
-              { value: 'inactive', label: 'Ngừng kinh doanh (Inactive)' },
+              { value: 'active', label: t('products.filters.statusActiveOpt') },
+              { value: 'inactive', label: t('products.filters.statusInactiveOpt') },
             ]}
             size="sm"
           />
@@ -245,12 +257,12 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
       {/* Description */}
       <div>
         <label htmlFor="productDesc" className="block text-xs font-medium text-[#0F172A] mb-1">
-          Mô tả thông số kỹ thuật & quy cách
+          {t('products.form.descLabel')}
         </label>
         <textarea
           id="productDesc"
           rows={3}
-          placeholder="Nhập thông tin xuất xứ, chất liệu, tiêu chuẩn đóng gói..."
+          placeholder={t('products.form.descPlaceholder')}
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
           className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
@@ -260,7 +272,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
       {/* Actions */}
       <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
         <Button variant="secondary" onClick={onClose} disabled={isSubmitting} type="button">
-          Hủy bỏ
+          {t('products.form.cancelBtn')}
         </Button>
         <Button
           variant="primary"
@@ -268,7 +280,7 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
           type="submit"
           id="btn-submit-product"
         >
-          {mode === 'create' ? 'Tạo sản phẩm' : 'Lưu thay đổi'}
+          {mode === 'create' ? t('products.form.createSubmitBtn') : t('products.form.editSubmitBtn')}
         </Button>
       </div>
     </form>
@@ -282,16 +294,22 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   initialProduct,
   mode,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Modal
       open={open}
       onClose={onClose}
       size="lg"
-      title={mode === 'create' ? 'Thêm mới sản phẩm vào kho' : `Chỉnh sửa sản phẩm: ${initialProduct?.sku}`}
+      title={
+        mode === 'create'
+          ? t('products.form.createTitle')
+          : t('products.form.editTitle', { sku: initialProduct?.sku ?? '' })
+      }
       description={
         mode === 'create'
-          ? 'Khai báo thông tin chi tiết mặt hàng, mã SKU, quy cách và định mức tồn an toàn.'
-          : 'Cập nhật thông tin danh mục, quy cách và mức tồn tối thiểu cho sản phẩm.'
+          ? t('products.form.createDesc')
+          : t('products.form.editDesc')
       }
     >
       {open ? (

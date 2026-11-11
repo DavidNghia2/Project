@@ -1,5 +1,8 @@
 import { INITIAL_PRODUCTS } from '../products/mockData';
 import type { Product } from '../products/types';
+import type { Language } from '../../i18n';
+import { translateKey } from '../../i18n/translate';
+import { translateDomainLabel } from '../../i18n/domainTranslate';
 import type {
   Warehouse,
   Category,
@@ -416,7 +419,8 @@ export const INITIAL_SUPPLIERS: Supplier[] = [
    ========================================================================== */
 export function getWarehouseReferences(
   warehouseCode: string,
-  products: Product[] = INITIAL_PRODUCTS
+  products: Product[] = INITIAL_PRODUCTS,
+  language: Language = 'vi'
 ): ProductReferenceSummary[] {
   return products
     .filter((p) => {
@@ -425,11 +429,12 @@ export function getWarehouseReferences(
     })
     .map((p) => {
       const qty = p.warehouses.find((w) => w.warehouseCode === warehouseCode)?.quantity ?? 0;
+      const unitLabel = translateDomainLabel(language, 'units', p.unit);
       return {
         id: p.id,
         sku: p.sku,
         name: p.name,
-        detailText: `Tồn tại kho: ${qty} ${p.unit}`,
+        detailText: translateKey(language, 'masterData.common.refStockAtWh', { qty, unit: unitLabel }),
         status: p.status,
       };
     });
@@ -437,7 +442,8 @@ export function getWarehouseReferences(
 
 export function getCategoryReferences(
   categoryName: string,
-  products: Product[] = INITIAL_PRODUCTS
+  products: Product[] = INITIAL_PRODUCTS,
+  language: Language = 'vi'
 ): ProductReferenceSummary[] {
   return products
     .filter((p) => p.category.toLowerCase() === categoryName.trim().toLowerCase())
@@ -445,14 +451,18 @@ export function getCategoryReferences(
       id: p.id,
       sku: p.sku,
       name: p.name,
-      detailText: `Tổng tồn: ${p.onHand} ${p.unit}`,
+      detailText: translateKey(language, 'masterData.common.refTotalOnHand', {
+        qty: p.onHand,
+        unit: translateDomainLabel(language, 'units', p.unit),
+      }),
       status: p.status,
     }));
 }
 
 export function getUnitReferences(
   unitName: string,
-  products: Product[] = INITIAL_PRODUCTS
+  products: Product[] = INITIAL_PRODUCTS,
+  language: Language = 'vi'
 ): ProductReferenceSummary[] {
   return products
     .filter((p) => p.unit.toLowerCase() === unitName.trim().toLowerCase())
@@ -460,14 +470,17 @@ export function getUnitReferences(
       id: p.id,
       sku: p.sku,
       name: p.name,
-      detailText: `Danh mục: ${p.category}`,
+      detailText: translateKey(language, 'masterData.common.refCategory', {
+        category: translateDomainLabel(language, 'categories', p.category),
+      }),
       status: p.status,
     }));
 }
 
 export function getSupplierReferences(
   supplierCode: string,
-  products: Product[] = INITIAL_PRODUCTS
+  products: Product[] = INITIAL_PRODUCTS,
+  language: Language = 'vi'
 ): ProductReferenceSummary[] {
   return products
     .filter((p) => p.supplierCode?.toUpperCase() === supplierCode.trim().toUpperCase())
@@ -475,7 +488,10 @@ export function getSupplierReferences(
       id: p.id,
       sku: p.sku,
       name: p.name,
-      detailText: `Tồn khả dụng: ${p.onHand} ${p.unit}`,
+      detailText: translateKey(language, 'masterData.common.refAvailableStock', {
+        qty: p.onHand,
+        unit: translateDomainLabel(language, 'units', p.unit),
+      }),
       status: p.status,
     }));
 }

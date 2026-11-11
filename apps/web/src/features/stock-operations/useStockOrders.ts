@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { INITIAL_PRODUCTS } from '../products/mockData';
 import type { Language } from '../../i18n';
+import { translateKey } from '../../i18n/translate';
+import { useHookLanguage } from '../../i18n/useTranslation';
 import {
   INITIAL_STOCK_IN_ORDERS,
   INITIAL_STOCK_OUT_ORDERS,
@@ -42,7 +44,7 @@ function nextVoucherCode(existingCodes: string[], prefix: 'IN-2026-' | 'OUT-2026
   return `${prefix}${String(maxNum + 1).padStart(3, '0')}`;
 }
 
-function hydrateStockInItems(form: StockInFormData): StockInLineItem[] {
+function hydrateStockInItems(form: StockInFormData, language: Language): StockInLineItem[] {
   return form.items.map((line) => {
     const product = INITIAL_PRODUCTS.find((p) => p.id === line.productId);
     const quantity = Math.floor(line.quantity);
@@ -51,8 +53,8 @@ function hydrateStockInItems(form: StockInFormData): StockInLineItem[] {
       id: line.id,
       productId: line.productId,
       sku: product?.sku ?? 'UNKNOWN',
-      productName: product?.name ?? 'Unknown Product',
-      unit: product?.unit ?? 'Pcs',
+      productName: product?.name ?? translateKey(language, 'stockOps.errors.unknownProduct'),
+      unit: product?.unit ?? 'Cái (Piece)',
       quantity,
       unitCost,
       lineTotal: calcLineTotal(quantity, unitCost),
@@ -60,7 +62,7 @@ function hydrateStockInItems(form: StockInFormData): StockInLineItem[] {
   });
 }
 
-function hydrateStockOutItems(form: StockOutFormData): StockOutLineItem[] {
+function hydrateStockOutItems(form: StockOutFormData, language: Language): StockOutLineItem[] {
   return form.items.map((line) => {
     const product = INITIAL_PRODUCTS.find((p) => p.id === line.productId);
     const availableStock = getWarehouseAvailableStock(
@@ -74,8 +76,8 @@ function hydrateStockOutItems(form: StockOutFormData): StockOutLineItem[] {
       id: line.id,
       productId: line.productId,
       sku: product?.sku ?? 'UNKNOWN',
-      productName: product?.name ?? 'Unknown Product',
-      unit: product?.unit ?? 'Pcs',
+      productName: product?.name ?? translateKey(language, 'stockOps.errors.unknownProduct'),
+      unit: product?.unit ?? 'Cái (Piece)',
       availableStock,
       quantity,
       unitCost,
@@ -110,7 +112,9 @@ function useCommonOrderControls(defaultActor: string = SIMULATED_ACTORS[0]) {
   };
 }
 
-export function useStockInOrders(language: Language = 'vi') {
+export function useStockInOrders(language?: Language) {
+  const hookLanguage = useHookLanguage('vi');
+  const activeLanguage = language ?? hookLanguage;
   const [orders, setOrders] = useState<StockInOrder[]>(INITIAL_STOCK_IN_ORDERS);
   const controls = useCommonOrderControls();
 
@@ -146,14 +150,11 @@ export function useStockInOrders(language: Language = 'vi') {
     form: StockInFormData,
     targetStatus: 'DRAFT' | 'SUBMITTED'
   ): { ok: true; order: StockInOrder } | { ok: false; error: string } => {
-    const errors = validateStockInForm(form, language);
+    const errors = validateStockInForm(form, activeLanguage);
     if (hasValidationErrors(errors)) {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Dữ liệu phiếu nhập chưa hợp lệ. Vui lòng kiểm tra lại.'
-            : 'Invalid stock-in form data. Please check all fields.',
+        error: translateKey(activeLanguage, 'stockOps.errors.invalidStockIn'),
       };
     }
 
@@ -163,7 +164,7 @@ export function useStockInOrders(language: Language = 'vi') {
       'IN-2026-',
       89
     );
-    const items = hydrateStockInItems(form);
+    const items = hydrateStockInItems(form, activeLanguage);
     const totals = calcOrderTotals(items);
     const history = [
       {
@@ -172,7 +173,7 @@ export function useStockInOrders(language: Language = 'vi') {
         toStatus: 'DRAFT' as const,
         actor: controls.currentActor,
         timestamp: now,
-        note: language === 'vi' ? 'Khởi tạo phiếu nhập kho' : 'Created stock-in voucher',
+        note: translateKey(activeLanguage, 'stockOps.history.createdIn'),
       },
       ...(targetStatus === 'SUBMITTED'
         ? [
@@ -182,10 +183,7 @@ export function useStockInOrders(language: Language = 'vi') {
               toStatus: 'SUBMITTED' as const,
               actor: controls.currentActor,
               timestamp: now,
-              note:
-                language === 'vi'
-                  ? 'Gửi phiếu chờ quản lý phê duyệt'
-                  : 'Submitted voucher for approval',
+              note: translateKey(activeLanguage, 'stockOps.history.submittedIn'),
             },
           ]
         : []),
@@ -220,31 +218,25 @@ export function useStockInOrders(language: Language = 'vi') {
   ): { ok: true; order: StockInOrder } | { ok: false; error: string } => {
     const existing = orders.find((o) => o.id === id);
     if (!existing) {
-      return { ok: false, error: language === 'vi' ? 'Không tìm thấy phiếu.' : 'Voucher not found.' };
+      return { ok: false, error: translateKey(activeLanguage, 'stockOps.errors.notFound') };
     }
     if (existing.status !== 'DRAFT') {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Chỉ có thể chỉnh sửa phiếu đang ở trạng thái Bản nháp (DRAFT).'
-            : 'Only DRAFT vouchers can be edited.',
+        error: translateKey(activeLanguage, 'stockOps.errors.onlyDraftEdit'),
       };
     }
 
-    const errors = validateStockInForm(form, language);
+    const errors = validateStockInForm(form, activeLanguage);
     if (hasValidationErrors(errors)) {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Dữ liệu phiếu nhập chưa hợp lệ. Vui lòng kiểm tra lại.'
-            : 'Invalid stock-in form data.',
+        error: translateKey(activeLanguage, 'stockOps.errors.invalidStockIn'),
       };
     }
 
     const now = new Date().toISOString();
-    const items = hydrateStockInItems(form);
+    const items = hydrateStockInItems(form, activeLanguage);
     const totals = calcOrderTotals(items);
     const nextHistory =
       targetStatus === 'SUBMITTED'
@@ -256,10 +248,7 @@ export function useStockInOrders(language: Language = 'vi') {
               toStatus: 'SUBMITTED' as const,
               actor: controls.currentActor,
               timestamp: now,
-              note:
-                language === 'vi'
-                  ? 'Cập nhật nội dung và gửi duyệt'
-                  : 'Updated draft and submitted for approval',
+              note: translateKey(activeLanguage, 'stockOps.history.updatedSubmittedIn'),
             },
           ]
         : existing.statusHistory;
@@ -286,15 +275,12 @@ export function useStockInOrders(language: Language = 'vi') {
   const deleteDraft = (id: string): { ok: true } | { ok: false; error: string } => {
     const existing = orders.find((o) => o.id === id);
     if (!existing) {
-      return { ok: false, error: language === 'vi' ? 'Không tìm thấy phiếu.' : 'Voucher not found.' };
+      return { ok: false, error: translateKey(activeLanguage, 'stockOps.errors.notFound') };
     }
     if (existing.status !== 'DRAFT') {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Chỉ được xóa phiếu ở trạng thái Bản nháp (DRAFT).'
-            : 'Only DRAFT vouchers can be deleted.',
+        error: translateKey(activeLanguage, 'stockOps.errors.onlyDraftDelete'),
       };
     }
     setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -308,9 +294,9 @@ export function useStockInOrders(language: Language = 'vi') {
   ): { ok: true; order: StockInOrder } | { ok: false; error: string } => {
     const existing = orders.find((o) => o.id === id);
     if (!existing) {
-      return { ok: false, error: language === 'vi' ? 'Không tìm thấy phiếu.' : 'Voucher not found.' };
+      return { ok: false, error: translateKey(activeLanguage, 'stockOps.errors.notFound') };
     }
-    const result = applyStatusTransition(existing, nextStatus, controls.currentActor, note, language);
+    const result = applyStatusTransition(existing, nextStatus, controls.currentActor, note, activeLanguage);
     if (!result.ok) {
       return result;
     }
@@ -329,7 +315,9 @@ export function useStockInOrders(language: Language = 'vi') {
   };
 }
 
-export function useStockOutOrders(language: Language = 'vi') {
+export function useStockOutOrders(language?: Language) {
+  const hookLanguage = useHookLanguage('vi');
+  const activeLanguage = language ?? hookLanguage;
   const [orders, setOrders] = useState<StockOutOrder[]>(INITIAL_STOCK_OUT_ORDERS);
   const controls = useCommonOrderControls();
 
@@ -364,14 +352,11 @@ export function useStockOutOrders(language: Language = 'vi') {
     form: StockOutFormData,
     targetStatus: 'DRAFT' | 'SUBMITTED'
   ): { ok: true; order: StockOutOrder } | { ok: false; error: string } => {
-    const errors = validateStockOutForm(form, INITIAL_PRODUCTS, language);
+    const errors = validateStockOutForm(form, INITIAL_PRODUCTS, activeLanguage);
     if (hasValidationErrors(errors)) {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Phiếu xuất không hợp lệ hoặc vượt quá tồn kho khả dụng.'
-            : 'Invalid stock-out form data or quantity exceeds available stock.',
+        error: translateKey(activeLanguage, 'stockOps.errors.invalidStockOut'),
       };
     }
 
@@ -381,7 +366,7 @@ export function useStockOutOrders(language: Language = 'vi') {
       'OUT-2026-',
       42
     );
-    const items = hydrateStockOutItems(form);
+    const items = hydrateStockOutItems(form, activeLanguage);
     const totals = calcOrderTotals(items);
     const history = [
       {
@@ -390,7 +375,7 @@ export function useStockOutOrders(language: Language = 'vi') {
         toStatus: 'DRAFT' as const,
         actor: controls.currentActor,
         timestamp: now,
-        note: language === 'vi' ? 'Khởi tạo phiếu xuất kho' : 'Created stock-out voucher',
+        note: translateKey(activeLanguage, 'stockOps.history.createdOut'),
       },
       ...(targetStatus === 'SUBMITTED'
         ? [
@@ -400,10 +385,7 @@ export function useStockOutOrders(language: Language = 'vi') {
               toStatus: 'SUBMITTED' as const,
               actor: controls.currentActor,
               timestamp: now,
-              note:
-                language === 'vi'
-                  ? 'Gửi phiếu xuất chờ quản lý duyệt'
-                  : 'Submitted dispatch voucher for approval',
+              note: translateKey(activeLanguage, 'stockOps.history.submittedOut'),
             },
           ]
         : []),
@@ -437,31 +419,25 @@ export function useStockOutOrders(language: Language = 'vi') {
   ): { ok: true; order: StockOutOrder } | { ok: false; error: string } => {
     const existing = orders.find((o) => o.id === id);
     if (!existing) {
-      return { ok: false, error: language === 'vi' ? 'Không tìm thấy phiếu.' : 'Voucher not found.' };
+      return { ok: false, error: translateKey(activeLanguage, 'stockOps.errors.notFound') };
     }
     if (existing.status !== 'DRAFT') {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Chỉ có thể chỉnh sửa phiếu đang ở trạng thái Bản nháp (DRAFT).'
-            : 'Only DRAFT vouchers can be edited.',
+        error: translateKey(activeLanguage, 'stockOps.errors.onlyDraftEdit'),
       };
     }
 
-    const errors = validateStockOutForm(form, INITIAL_PRODUCTS, language);
+    const errors = validateStockOutForm(form, INITIAL_PRODUCTS, activeLanguage);
     if (hasValidationErrors(errors)) {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Phiếu xuất không hợp lệ hoặc vượt quá tồn kho khả dụng.'
-            : 'Invalid stock-out form data or exceeds stock.',
+        error: translateKey(activeLanguage, 'stockOps.errors.invalidStockOut'),
       };
     }
 
     const now = new Date().toISOString();
-    const items = hydrateStockOutItems(form);
+    const items = hydrateStockOutItems(form, activeLanguage);
     const totals = calcOrderTotals(items);
     const nextHistory =
       targetStatus === 'SUBMITTED'
@@ -473,10 +449,7 @@ export function useStockOutOrders(language: Language = 'vi') {
               toStatus: 'SUBMITTED' as const,
               actor: controls.currentActor,
               timestamp: now,
-              note:
-                language === 'vi'
-                  ? 'Cập nhật số lượng và gửi duyệt xuất kho'
-                  : 'Updated draft and submitted for approval',
+              note: translateKey(activeLanguage, 'stockOps.history.updatedSubmittedOut'),
             },
           ]
         : existing.statusHistory;
@@ -502,15 +475,12 @@ export function useStockOutOrders(language: Language = 'vi') {
   const deleteDraft = (id: string): { ok: true } | { ok: false; error: string } => {
     const existing = orders.find((o) => o.id === id);
     if (!existing) {
-      return { ok: false, error: language === 'vi' ? 'Không tìm thấy phiếu.' : 'Voucher not found.' };
+      return { ok: false, error: translateKey(activeLanguage, 'stockOps.errors.notFound') };
     }
     if (existing.status !== 'DRAFT') {
       return {
         ok: false,
-        error:
-          language === 'vi'
-            ? 'Chỉ được xóa phiếu ở trạng thái Bản nháp (DRAFT).'
-            : 'Only DRAFT vouchers can be deleted.',
+        error: translateKey(activeLanguage, 'stockOps.errors.onlyDraftDelete'),
       };
     }
     setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -524,9 +494,9 @@ export function useStockOutOrders(language: Language = 'vi') {
   ): { ok: true; order: StockOutOrder } | { ok: false; error: string } => {
     const existing = orders.find((o) => o.id === id);
     if (!existing) {
-      return { ok: false, error: language === 'vi' ? 'Không tìm thấy phiếu.' : 'Voucher not found.' };
+      return { ok: false, error: translateKey(activeLanguage, 'stockOps.errors.notFound') };
     }
-    const result = applyStatusTransition(existing, nextStatus, controls.currentActor, note, language);
+    const result = applyStatusTransition(existing, nextStatus, controls.currentActor, note, activeLanguage);
     if (!result.ok) {
       return result;
     }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
 import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
 import {
@@ -72,14 +73,21 @@ export const SuppliersPage: React.FC = () => {
     if (formMode === 'create') {
       const res = addItem(data);
       if (res.success) {
-        showToast(`Đã thêm nhà cung cấp mới: ${data.name} (${data.code.toUpperCase()}).`);
+        showToast(
+          t('masterData.suppliers.toastCreated', {
+            name: data.name,
+            code: data.code.toUpperCase(),
+          })
+        );
       }
       return res;
     }
     if (selectedItem) {
       const res = updateItem(selectedItem.id, data);
       if (res.success) {
-        showToast(`Đã cập nhật thông tin nhà cung cấp ${data.code.toUpperCase()}.`);
+        showToast(
+          t('masterData.suppliers.toastUpdated', { code: data.code.toUpperCase() })
+        );
       }
       return res;
     }
@@ -90,7 +98,12 @@ export const SuppliersPage: React.FC = () => {
     if (!selectedItem) return;
     const res = deleteItem(selectedItem.id, forceConfirm);
     if (res.success) {
-      showToast(`Đã xóa nhà cung cấp ${selectedItem.name} (${selectedItem.code}).`);
+      showToast(
+        t('masterData.suppliers.toastDeleted', {
+          name: selectedItem.name,
+          code: selectedItem.code,
+        })
+      );
       setDeleteOpen(false);
       setSelectedItem(null);
     }
@@ -99,14 +112,14 @@ export const SuppliersPage: React.FC = () => {
   const columns: Column<Supplier>[] = [
     {
       key: 'code',
-      label: 'Mã NCC',
+      label: t('masterData.suppliers.colCode'),
       render: (_val, row) => (
         <span className="font-mono text-xs font-bold text-[#2563EB]">{row.code}</span>
       ),
     },
     {
       key: 'name',
-      label: 'Nhà cung cấp & Khu vực',
+      label: t('masterData.suppliers.colNameAddr'),
       render: (_val, row) => (
         <div className="space-y-0.5 max-w-xs">
           <button
@@ -122,7 +135,7 @@ export const SuppliersPage: React.FC = () => {
     },
     {
       key: 'contactPerson',
-      label: 'Liên hệ',
+      label: t('masterData.suppliers.colContact'),
       render: (_val, row) => (
         <div className="text-xs space-y-0.5">
           <span className="font-medium text-[#0F172A] block">{row.contactPerson}</span>
@@ -132,14 +145,16 @@ export const SuppliersPage: React.FC = () => {
     },
     {
       key: 'paymentTerms',
-      label: 'Công nợ',
+      label: t('masterData.suppliers.colTerms'),
       render: (_val, row) => (
-        <span className="text-xs text-[#334155] font-medium">{row.paymentTerms}</span>
+        <span className="text-xs text-[#334155] font-medium">
+          {translateDomainLabel(language, 'paymentTerms', row.paymentTerms)}
+        </span>
       ),
     },
     {
       key: 'productsCount',
-      label: 'SP cung ứng',
+      label: t('masterData.suppliers.colProducts'),
       align: 'center',
       render: (_val, row) => (
         <span className="font-mono text-xs font-medium text-[#0F172A] tabular-nums">
@@ -149,7 +164,7 @@ export const SuppliersPage: React.FC = () => {
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      label: t('masterData.suppliers.colStatus'),
       align: 'center',
       render: (_val, row) => (
         <Badge variant={row.status === 'active' ? 'success' : 'neutral'} size="sm" dot>
@@ -159,7 +174,7 @@ export const SuppliersPage: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Thao tác',
+      label: t('masterData.suppliers.colActions'),
       align: 'right',
       render: (_val, row) => (
         <MasterDataRowActions
@@ -189,7 +204,7 @@ export const SuppliersPage: React.FC = () => {
               iconLeft={<Plus className="w-4 h-4" />}
               onClick={handleOpenCreate}
             >
-              {language === 'vi' ? 'Thêm nhà cung cấp' : 'Add Supplier'}
+              {t('masterData.suppliers.createBtn')}
             </Button>
           ) : undefined
         }
@@ -200,7 +215,7 @@ export const SuppliersPage: React.FC = () => {
       {toastMessage && (
         <Alert
           variant="success"
-          title="Thao tác thành công"
+          title={t('common.operationSuccess')}
           message={toastMessage}
           dismissible
           onDismiss={() => setToastMessage(null)}
@@ -211,33 +226,40 @@ export const SuppliersPage: React.FC = () => {
         <MasterDataToolbar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Tìm theo mã NCC, tên công ty, người liên hệ, email hoặc địa chỉ..."
+          searchPlaceholder={t('masterData.suppliers.searchPlaceholder')}
           searchInputId="sup-search-input"
           statusFilter={statusFilter}
           onStatusChange={setStatusFilter}
           secondaryFilter={secondaryFilter}
           onSecondaryFilterChange={setSecondaryFilter}
-          secondaryLabel="Điều khoản thanh toán"
+          secondaryLabel={t('masterData.suppliers.filterTermsLabel')}
           secondaryOptions={[
-            { value: 'ALL', label: 'Tất cả điều khoản' },
-            ...SUPPLIER_PAYMENT_TERMS.map((p) => ({ value: p, label: p })),
+            { value: 'ALL', label: t('masterData.suppliers.allPaymentTerms') },
+            ...SUPPLIER_PAYMENT_TERMS.map((p) => ({
+              value: p,
+              label: translateDomainLabel(language, 'paymentTerms', p),
+            })),
           ]}
           isFiltered={isFiltered}
           onReset={resetFilters}
           totalFiltered={filteredItems.length}
           totalItems={items.length}
-          itemUnitLabel="nhà cung cấp"
+          itemUnitLabel={t('masterData.suppliers.unitLabel')}
         />
 
         <Table
           columns={columns}
           data={filteredItems}
-          caption="Danh bạ nhà cung cấp hàng hóa"
-          emptyTitle={isFiltered ? 'Không tìm thấy nhà cung cấp phù hợp' : 'Chưa có nhà cung cấp nào'}
+          caption={t('masterData.suppliers.tableCaption')}
+          emptyTitle={
+            isFiltered
+              ? t('masterData.suppliers.emptyFilteredTitle')
+              : t('masterData.suppliers.emptyTitle')
+          }
           emptyDescription={
             isFiltered
-              ? 'Không có đối tác cung ứng nào khớp với điều kiện tìm kiếm.'
-              : 'Khai báo nhà cung cấp để liên kết nguồn hàng khi tạo phiếu nhập kho.'
+              ? t('masterData.suppliers.emptyFilteredDesc')
+              : t('masterData.suppliers.emptyDesc')
           }
           emptyAction={
             isFiltered ? (
@@ -247,7 +269,7 @@ export const SuppliersPage: React.FC = () => {
                 onClick={resetFilters}
                 iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
               >
-                Xóa bộ lọc
+                {t('masterData.common.clearFilters')}
               </Button>
             ) : canManageCatalog ? (
               <Button
@@ -256,7 +278,7 @@ export const SuppliersPage: React.FC = () => {
                 onClick={handleOpenCreate}
                 iconLeft={<Plus className="w-3.5 h-3.5" />}
               >
-                Thêm nhà cung cấp
+                {t('masterData.suppliers.createBtn')}
               </Button>
             ) : undefined
           }
@@ -275,7 +297,7 @@ export const SuppliersPage: React.FC = () => {
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
         onEdit={canManageCatalog ? () => selectedItem && handleOpenEdit(selectedItem) : undefined}
-        titlePrefix="Chi tiết nhà cung cấp"
+        titlePrefix={t('masterData.suppliers.detailPrefix')}
         code={selectedItem?.code}
         name={selectedItem?.name}
         status={selectedItem?.status}
@@ -283,12 +305,18 @@ export const SuppliersPage: React.FC = () => {
         fields={
           selectedItem
             ? [
-                { label: 'Người liên hệ chính', value: selectedItem.contactPerson },
-                { label: 'Điện thoại / Máy lẻ', value: selectedItem.phone },
-                { label: 'Email giao dịch', value: selectedItem.email },
-                { label: 'Điều khoản thanh toán', value: selectedItem.paymentTerms },
-                { label: 'Ngành hàng cung ứng chính', value: selectedItem.categoryFocus },
-                { label: 'Địa chỉ khu vực', value: selectedItem.address },
+                { label: t('masterData.suppliers.detailContact'), value: selectedItem.contactPerson },
+                { label: t('masterData.suppliers.detailPhone'), value: selectedItem.phone },
+                { label: t('masterData.suppliers.detailEmail'), value: selectedItem.email },
+                {
+                  label: t('masterData.suppliers.detailTerms'),
+                  value: translateDomainLabel(language, 'paymentTerms', selectedItem.paymentTerms),
+                },
+                {
+                  label: t('masterData.suppliers.detailFocus'),
+                  value: translateDomainLabel(language, 'categories', selectedItem.categoryFocus),
+                },
+                { label: t('masterData.suppliers.detailAddress'), value: selectedItem.address },
               ]
             : []
         }
@@ -301,7 +329,7 @@ export const SuppliersPage: React.FC = () => {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleConfirmDelete}
-        entityLabel="nhà cung cấp"
+        entityLabel={t('masterData.suppliers.entity')}
         itemCode={selectedItem?.code}
         itemName={selectedItem?.name}
         references={selectedRefs}

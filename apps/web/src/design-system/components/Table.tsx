@@ -2,6 +2,7 @@ import React from 'react';
 import { Checkbox } from './Checkbox';
 import { Skeleton } from './Loading';
 import { EmptyState } from './EmptyState';
+import { useTranslation } from '../../i18n';
 
 export interface Column<T = Record<string, unknown>> {
   key: string;
@@ -35,8 +36,8 @@ export function Table<T = Record<string, unknown>>({
   columns,
   data,
   loading = false,
-  emptyTitle = 'No data available',
-  emptyDescription = 'There are no records to display at this time.',
+  emptyTitle,
+  emptyDescription,
   emptyAction,
   onSort,
   sortBy,
@@ -54,6 +55,9 @@ export function Table<T = Record<string, unknown>>({
   caption,
   className = '',
 }: TableProps<T>) {
+  const { t } = useTranslation();
+  const resolvedEmptyTitle = emptyTitle ?? t('table.noDataTitle');
+  const resolvedEmptyDesc = emptyDescription ?? t('table.noDataDesc');
   const totalRows = data.length;
   const numSelected = selectedRows.length;
   const isAllSelected = totalRows > 0 && numSelected === totalRows;
@@ -92,7 +96,7 @@ export function Table<T = Record<string, unknown>>({
                       checked={isAllSelected}
                       indeterminate={isIndeterminate}
                       onChange={handleHeaderCheckboxChange}
-                      aria-label="Select all rows"
+                      aria-label={t('table.select_all')}
                     />
                   </div>
                 </th>
@@ -172,8 +176,8 @@ export function Table<T = Record<string, unknown>>({
                   className="px-4 py-8 text-center"
                 >
                   <EmptyState
-                    title={emptyTitle}
-                    description={emptyDescription}
+                    title={resolvedEmptyTitle}
+                    description={resolvedEmptyDesc}
                     action={emptyAction}
                   />
                 </td>
@@ -205,7 +209,7 @@ export function Table<T = Record<string, unknown>>({
                           <Checkbox
                             checked={isSelected}
                             onChange={(checked) => onSelectRow?.(rowId, checked)}
-                            aria-label={`Select row ${index + 1}`}
+                            aria-label={t('table.selectRowAria', { index: index + 1 })}
                           />
                         </div>
                       </td>

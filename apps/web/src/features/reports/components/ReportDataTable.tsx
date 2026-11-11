@@ -2,6 +2,7 @@ import React from 'react';
 import { FileSpreadsheet } from 'lucide-react';
 import { Badge, Button, Card, EmptyState, Table, type Column } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type {
   ComputedReportResult,
@@ -25,20 +26,13 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
   onExportCsv,
 }) => {
   const { t, language } = useTranslation();
-  const isVi = language === 'vi';
 
   const titleMap = {
-    current_stock: isVi
-      ? 'Bảng chi tiết tồn kho hiện tại'
-      : 'Current Stock Valuation Table',
-    stock_in: isVi ? 'Bảng chi tiết giao dịch nhập kho' : 'Inbound Stock Receipts Detail',
-    stock_out: isVi ? 'Bảng chi tiết giao dịch xuất kho' : 'Outbound Stock Dispatches Detail',
-    stock_movement: isVi
-      ? 'Bảng tổng hợp Nhập – Xuất – Tồn theo SKU'
-      : 'Stock Movement Summary (Opening – In – Out – Closing)',
-    low_stock: isVi
-      ? 'Danh sách sản phẩm tồn dưới ngưỡng an toàn'
-      : 'Below-Threshold Low Stock Products',
+    current_stock: t('reports.table.titles.current_stock'),
+    stock_in: t('reports.table.titles.stock_in'),
+    stock_out: t('reports.table.titles.stock_out'),
+    stock_movement: t('reports.table.titles.stock_movement'),
+    low_stock: t('reports.table.titles.low_stock'),
   };
 
   const renderTypedTable = () => {
@@ -48,33 +42,34 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
         const columns: Column<CurrentStockRow>[] = [
           {
             key: 'sku',
-            label: 'SKU',
+            label: t('reports.table.cols.sku'),
             render: (_, r) => (
               <span className="font-mono text-xs font-semibold text-[#0F172A]">{r.sku}</span>
             ),
           },
           {
             key: 'productName',
-            label: isVi ? 'Sản phẩm' : 'Product',
+            label: t('reports.table.cols.product'),
             render: (_, r) => (
               <div className="min-w-0 max-w-[260px]">
                 <span className="text-xs font-medium text-[#0F172A] block truncate">
                   {r.productName}
                 </span>
                 <span className="text-[11px] text-[#64748B]">
-                  {r.category} · {r.unit}
+                  {translateDomainLabel(language, 'categories', r.category)} ·{' '}
+                  {translateDomainLabel(language, 'units', r.unit)}
                 </span>
               </div>
             ),
           },
           {
             key: 'warehouseLabel',
-            label: isVi ? 'Phạm vi kho' : 'Warehouse Scope',
+            label: t('reports.table.cols.warehouseScope'),
             render: (_, r) => <span className="text-xs text-[#475569]">{r.warehouseLabel}</span>,
           },
           {
             key: 'quantity',
-            label: isVi ? 'Tồn hiện tại' : 'On Hand',
+            label: t('reports.table.cols.onHand'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0F172A]">
@@ -84,7 +79,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'reorderLevel',
-            label: isVi ? 'Ngưỡng tối thiểu' : 'Min Level',
+            label: t('reports.table.cols.minLevel'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#64748B]">{r.reorderLevel}</span>
@@ -92,7 +87,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'unitCost',
-            label: isVi ? 'Giá vốn' : 'Unit Cost',
+            label: t('reports.table.cols.unitCost'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#475569] whitespace-nowrap">
@@ -102,7 +97,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'totalValue',
-            label: isVi ? 'Giá trị tồn' : 'Stock Valuation',
+            label: t('reports.table.cols.stockValuation'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0284C7] whitespace-nowrap">
@@ -112,7 +107,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'status',
-            label: isVi ? 'Trạng thái' : 'Status',
+            label: t('reports.table.cols.status'),
             align: 'center',
             render: (_, r) => (
               <Badge variant={r.status === 'active' ? 'success' : 'neutral'} size="sm" dot>
@@ -126,16 +121,12 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           <Table
             columns={columns}
             data={rows}
-            caption={isVi ? 'Dữ liệu tồn kho chi tiết' : 'Detailed stock rows'}
-            emptyTitle={isVi ? 'Không có mặt hàng phù hợp' : 'No matching inventory items'}
-            emptyDescription={
-              isVi
-                ? 'Không có sản phẩm nào khớp với bộ lọc kho hoặc danh mục.'
-                : 'No products match the active warehouse or category filter.'
-            }
+            caption={t('reports.table.captions.current_stock')}
+            emptyTitle={t('reports.table.empty.currentTitle')}
+            emptyDescription={t('reports.table.empty.currentDesc')}
             emptyAction={
               <Button variant="secondary" size="sm" onClick={onResetFilters}>
-                {isVi ? 'Đặt lại bộ lọc' : 'Reset Filters'}
+                {t('reports.table.empty.resetFilters')}
               </Button>
             }
           />
@@ -149,7 +140,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
         const columns: Column<StockTransactionReportRow>[] = [
           {
             key: 'date',
-            label: isVi ? 'Ngày chứng từ' : 'Date',
+            label: t('reports.table.cols.date'),
             render: (_, r) => (
               <span className="font-mono text-xs tabular-nums text-[#0F172A] whitespace-nowrap">
                 {r.date}
@@ -158,7 +149,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'voucherCode',
-            label: isVi ? 'Mã phiếu' : 'Voucher',
+            label: t('reports.table.cols.voucher'),
             render: (_, r) => (
               <span className="font-mono text-xs font-semibold text-[#0284C7]">
                 {r.voucherCode}
@@ -167,21 +158,21 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'warehouseCode',
-            label: isVi ? 'Kho' : 'Warehouse',
+            label: t('reports.table.cols.warehouse'),
             render: (_, r) => (
               <div>
                 <span className="font-mono text-xs font-semibold text-[#0F172A]">
                   {r.warehouseCode}
                 </span>
                 <p className="text-[11px] text-[#64748B] truncate max-w-[140px]">
-                  {r.warehouseName}
+                  {translateDomainLabel(language, 'warehouseNames', r.warehouseCode, r.warehouseName)}
                 </p>
               </div>
             ),
           },
           {
             key: 'partnerName',
-            label: isIn ? (isVi ? 'Nhà cung cấp' : 'Supplier') : isVi ? 'Nơi nhận' : 'Destination',
+            label: isIn ? t('reports.table.cols.supplier') : t('reports.table.cols.destination'),
             render: (_, r) => (
               <span className="text-xs text-[#334155] block truncate max-w-[190px]">
                 {r.partnerName}
@@ -190,20 +181,22 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'sku',
-            label: isVi ? 'Sản phẩm / Danh mục' : 'SKU & Product',
+            label: t('reports.table.cols.skuProduct'),
             render: (_, r) => (
               <div className="min-w-0 max-w-[220px]">
                 <span className="font-mono text-[11px] font-semibold text-[#0F172A]">
                   {r.sku}
                 </span>
                 <p className="text-xs text-[#334155] truncate">{r.productName}</p>
-                <span className="text-[11px] text-[#64748B]">{r.category}</span>
+                <span className="text-[11px] text-[#64748B]">
+                  {translateDomainLabel(language, 'categories', r.category)}
+                </span>
               </div>
             ),
           },
           {
             key: 'quantity',
-            label: isVi ? 'Số lượng' : 'Qty',
+            label: t('reports.table.cols.qty'),
             align: 'right',
             render: (_, r) => (
               <span
@@ -218,7 +211,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'unitCost',
-            label: isVi ? 'Đơn giá' : 'Unit Cost',
+            label: t('reports.table.cols.unitCost'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#475569] whitespace-nowrap">
@@ -228,7 +221,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'lineTotal',
-            label: isVi ? 'Thành tiền' : 'Line Total',
+            label: t('reports.table.cols.lineTotal'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0F172A] whitespace-nowrap">
@@ -243,17 +236,11 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             columns={columns}
             data={rows}
             caption={titleMap[report.reportType]}
-            emptyTitle={
-              isVi ? 'Không có giao dịch trong khoảng lọc' : 'No matching transactions'
-            }
-            emptyDescription={
-              isVi
-                ? 'Không có chứng từ hoàn tất nào nằm trong khoảng ngày, kho và danh mục đã chọn.'
-                : 'No completed transactions fall within the selected date range, warehouse, and category.'
-            }
+            emptyTitle={t('reports.table.empty.txTitle')}
+            emptyDescription={t('reports.table.empty.txDesc')}
             emptyAction={
               <Button variant="secondary" size="sm" onClick={onResetFilters}>
-                {isVi ? 'Đặt lại bộ lọc' : 'Reset Filters'}
+                {t('reports.table.empty.resetFilters')}
               </Button>
             }
           />
@@ -265,28 +252,29 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
         const columns: Column<StockMovementRow>[] = [
           {
             key: 'sku',
-            label: 'SKU',
+            label: t('reports.table.cols.sku'),
             render: (_, r) => (
               <span className="font-mono text-xs font-semibold text-[#0F172A]">{r.sku}</span>
             ),
           },
           {
             key: 'productName',
-            label: isVi ? 'Sản phẩm & Danh mục' : 'Product & Category',
+            label: t('reports.table.cols.productCategory'),
             render: (_, r) => (
               <div className="min-w-0 max-w-[240px]">
                 <span className="text-xs font-medium text-[#0F172A] block truncate">
                   {r.productName}
                 </span>
                 <span className="text-[11px] text-[#64748B]">
-                  {r.category} · {r.unit}
+                  {translateDomainLabel(language, 'categories', r.category)} ·{' '}
+                  {translateDomainLabel(language, 'units', r.unit)}
                 </span>
               </div>
             ),
           },
           {
             key: 'openingQty',
-            label: isVi ? 'Tồn đầu kỳ' : 'Opening',
+            label: t('reports.table.cols.opening'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#475569]">{r.openingQty}</span>
@@ -294,7 +282,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'inQty',
-            label: isVi ? 'Nhập kỳ' : 'Inbound (+)',
+            label: t('reports.table.cols.inboundPlus'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#16A34A]">
@@ -304,7 +292,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'outQty',
-            label: isVi ? 'Xuất kỳ' : 'Outbound (-)',
+            label: t('reports.table.cols.outboundMinus'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#D97706]">
@@ -314,7 +302,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'closingQty',
-            label: isVi ? 'Tồn cuối kỳ' : 'Closing',
+            label: t('reports.table.cols.closing'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-bold tabular-nums text-[#0F172A]">
@@ -324,7 +312,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'closingValue',
-            label: isVi ? 'Giá trị tồn cuối' : 'Closing Value',
+            label: t('reports.table.cols.closingValue'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0284C7] whitespace-nowrap">
@@ -339,12 +327,8 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             columns={columns}
             data={rows}
             caption={titleMap.stock_movement}
-            emptyTitle={isVi ? 'Không có dữ liệu biến động' : 'No movement records'}
-            emptyDescription={
-              isVi
-                ? 'Hãy chọn danh mục hoặc kho khác để xem số dư đầu kỳ, nhập, xuất và tồn cuối.'
-                : 'Select another category or warehouse filter to inspect stock movements.'
-            }
+            emptyTitle={t('reports.table.empty.movementTitle')}
+            emptyDescription={t('reports.table.empty.movementDesc')}
           />
         );
       }
@@ -354,28 +338,28 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
         const columns: Column<LowStockRow>[] = [
           {
             key: 'sku',
-            label: 'SKU',
+            label: t('reports.table.cols.sku'),
             render: (_, r) => (
               <span className="font-mono text-xs font-semibold text-[#0F172A]">{r.sku}</span>
             ),
           },
           {
             key: 'productName',
-            label: isVi ? 'Sản phẩm' : 'Product',
+            label: t('reports.table.cols.product'),
             render: (_, r) => (
               <div className="min-w-0 max-w-[240px]">
                 <span className="text-xs font-medium text-[#0F172A] block truncate">
                   {r.productName}
                 </span>
                 <span className="text-[11px] text-[#64748B]">
-                  {r.category} · {r.warehouseLabel}
+                  {translateDomainLabel(language, 'categories', r.category)} · {r.warehouseLabel}
                 </span>
               </div>
             ),
           },
           {
             key: 'currentQty',
-            label: isVi ? 'Tồn hiện tại' : 'On Hand',
+            label: t('reports.table.cols.onHand'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-bold tabular-nums text-[#DC2626]">
@@ -385,7 +369,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'reorderLevel',
-            label: isVi ? 'Ngưỡng an toàn' : 'Min Level',
+            label: t('reports.table.cols.minLevel'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#475569]">{r.reorderLevel}</span>
@@ -393,7 +377,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'deficitQty',
-            label: isVi ? 'Thiếu hụt' : 'Deficit',
+            label: t('reports.table.cols.deficit'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#D97706]">
@@ -403,7 +387,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'estimatedRestockValue',
-            label: isVi ? 'Dự trù nhập bù' : 'Est. Restock Cost',
+            label: t('reports.table.cols.estRestockCost'),
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0F172A] whitespace-nowrap">
@@ -413,7 +397,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           },
           {
             key: 'severity',
-            label: isVi ? 'Mức cảnh báo' : 'Severity',
+            label: t('reports.table.cols.severity'),
             align: 'center',
             render: (_, r) => (
               <Badge
@@ -421,17 +405,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                 size="sm"
                 dot
               >
-                {r.severity === 'out'
-                  ? isVi
-                    ? 'Hết hàng'
-                    : 'Out of Stock'
-                  : r.severity === 'critical'
-                    ? isVi
-                      ? 'Nguy cấp'
-                      : 'Critical'
-                    : isVi
-                      ? 'Dưới ngưỡng'
-                      : 'Low Stock'}
+                {t(`reports.table.severity.${r.severity}`)}
               </Badge>
             ),
           },
@@ -442,14 +416,8 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             columns={columns}
             data={rows}
             caption={titleMap.low_stock}
-            emptyTitle={
-              isVi ? 'Không có mặt hàng nào dưới ngưỡng' : 'No Below-Threshold SKUs'
-            }
-            emptyDescription={
-              isVi
-                ? 'Tất cả sản phẩm trong bộ lọc hiện tại đều đạt định mức tồn kho an toàn.'
-                : 'All inventory items in the active scope meet minimum safety levels.'
-            }
+            emptyTitle={t('reports.table.empty.lowTitle')}
+            emptyDescription={t('reports.table.empty.lowDesc')}
           />
         );
       }
@@ -461,12 +429,8 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
       title={titleMap[report.reportType]}
       description={
         validDateRange
-          ? isVi
-            ? `Hiển thị ${report.totals.rowCount} bản ghi chính xác từ mock data (không trùng lặp giao dịch)`
-            : `Showing ${report.totals.rowCount} deduplicated records from mock dataset`
-          : isVi
-            ? 'Vui lòng sửa khoảng thời gian lọc để xem dữ liệu báo cáo.'
-            : 'Resolve the invalid date range to load report rows.'
+          ? t('reports.table.descValid', { count: report.totals.rowCount })
+          : t('reports.table.descInvalid')
       }
       actions={
         <Button
@@ -478,21 +442,17 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
           onClick={onExportCsv}
           iconLeft={<FileSpreadsheet className="w-4 h-4 text-[#16A34A]" />}
         >
-          {isVi ? 'Xuất CSV báo cáo này' : 'Export Report CSV'}
+          {t('reports.table.exportCsv')}
         </Button>
       }
     >
       {!validDateRange ? (
         <EmptyState
-          title={isVi ? 'Khoảng ngày lọc không hợp lệ' : 'Invalid Date Range Selected'}
-          description={
-            isVi
-              ? 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc trước khi tổng hợp báo cáo.'
-              : 'Start date must be on or before end date before compiling report data.'
-          }
+          title={t('reports.table.invalidRangeTitle')}
+          description={t('reports.table.invalidRangeDesc')}
           action={
             <Button variant="secondary" size="sm" onClick={onResetFilters}>
-              {isVi ? 'Khôi phục ngày mặc định' : 'Restore Default Dates'}
+              {t('reports.table.restoreDates')}
             </Button>
           }
         />
@@ -507,50 +467,50 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
               className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs"
             >
               <span className="font-semibold text-[#0F172A]">
-                {isVi ? 'Tổng hợp bảng báo cáo' : 'Report Totals Summary'} (
-                {report.totals.rowCount} {isVi ? 'dòng' : 'rows'})
+                {t('reports.table.footer.summaryTitle')} (
+                {report.totals.rowCount} {t('reports.table.footer.rowsUnit')})
               </span>
 
               <div className="flex flex-wrap items-center gap-6 font-mono tabular-nums text-[#0F172A]">
                 {report.reportType === 'stock_movement' ? (
                   <>
                     <span>
-                      {isVi ? 'Tổng nhập:' : 'Total In:'}{' '}
+                      {t('reports.table.footer.totalIn')}{' '}
                       <strong className="text-[#16A34A]">
                         +{report.totals.totalPrimaryQty.toLocaleString('en-US')}
                       </strong>
                     </span>
                     <span>
-                      {isVi ? 'Tổng xuất:' : 'Total Out:'}{' '}
+                      {t('reports.table.footer.totalOut')}{' '}
                       <strong className="text-[#D97706]">
                         -{(report.totals.totalSecondaryQty ?? 0).toLocaleString('en-US')}
                       </strong>
                     </span>
                     <span>
-                      {isVi ? 'Tồn cuối:' : 'Closing:'}{' '}
+                      {t('reports.table.footer.closing')}{' '}
                       <strong className="text-[#0284C7]">
                         {(report.totals.totalClosingQty ?? 0).toLocaleString('en-US')}
                       </strong>
                     </span>
                     <span>
-                      {isVi ? 'Giá trị nhập:' : 'In Value:'}{' '}
+                      {t('reports.table.footer.inValue')}{' '}
                       <strong>{formatCurrencyVND(report.totals.totalPrimaryValue)}</strong>
                     </span>
                   </>
                 ) : report.reportType === 'low_stock' ? (
                   <>
                     <span>
-                      {isVi ? 'Tồn hiện có:' : 'Current Qty:'}{' '}
+                      {t('reports.table.footer.currentQty')}{' '}
                       <strong>{report.totals.totalPrimaryQty.toLocaleString('en-US')}</strong>
                     </span>
                     <span>
-                      {isVi ? 'Thiếu hụt:' : 'Deficit Qty:'}{' '}
+                      {t('reports.table.footer.deficitQty')}{' '}
                       <strong className="text-[#D97706]">
                         {(report.totals.totalSecondaryQty ?? 0).toLocaleString('en-US')}
                       </strong>
                     </span>
                     <span>
-                      {isVi ? 'Dự trù bổ sung:' : 'Est. Restock:'}{' '}
+                      {t('reports.table.footer.estRestock')}{' '}
                       <strong className="text-[#0284C7]">
                         {formatCurrencyVND(report.totals.totalPrimaryValue)}
                       </strong>
@@ -559,11 +519,11 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                 ) : (
                   <>
                     <span>
-                      {isVi ? 'Tổng số lượng:' : 'Total Quantity:'}{' '}
+                      {t('reports.table.footer.totalQty')}{' '}
                       <strong>{report.totals.totalPrimaryQty.toLocaleString('en-US')}</strong>
                     </span>
                     <span>
-                      {isVi ? 'Tổng giá trị:' : 'Total Value:'}{' '}
+                      {t('reports.table.footer.totalValue')}{' '}
                       <strong className="text-sm text-[#0284C7]">
                         {formatCurrencyVND(report.totals.totalPrimaryValue)}
                       </strong>

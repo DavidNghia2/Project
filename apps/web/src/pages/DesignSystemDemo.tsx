@@ -146,7 +146,7 @@ export const DesignSystemDemo: React.FC = () => {
                 </svg>
               }
             >
-              {language === 'en' ? 'Tiếng Việt (VI)' : 'English (EN)'}
+              {language === 'en' ? t('demo.togglePillVi') : t('demo.togglePillEn')}
             </Button>
           </div>
         </div>
@@ -155,7 +155,7 @@ export const DesignSystemDemo: React.FC = () => {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-12">
         {/* Banner Notice */}
-        <section aria-label="System mode description">
+        <section aria-label={t('demo.modeAria')}>
           <div className="p-4 rounded-lg bg-white border border-[#E2E8F0] shadow-xs flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" />
@@ -164,7 +164,7 @@ export const DesignSystemDemo: React.FC = () => {
                 {t('demo.mode_desc')}
               </p>
             </div>
-            <span className="text-xs text-[#94A3B8] font-mono">Tailwind v4 • Tokens Active</span>
+            <span className="text-xs text-[#94A3B8] font-mono">{t('demo.tokensTechBadge')}</span>
           </div>
         </section>
 
@@ -172,14 +172,14 @@ export const DesignSystemDemo: React.FC = () => {
         <section className="space-y-4">
           <div>
             <h2 className="text-lg font-semibold text-[#0F172A]">{t('demo.theme_tokens')}</h2>
-            <p className="text-xs text-[#64748B]">Professional Enterprise palette with cool neutral base (#0F172A, #F8FAFC) and single primary blue (#2563EB).</p>
+            <p className="text-xs text-[#64748B]">{t('demo.tokensDesc')}</p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
             <div className="p-3 bg-white rounded-lg border border-[#E2E8F0] shadow-xs space-y-2">
               <div className="h-10 rounded bg-[#2563EB]" />
               <div>
-                <p className="text-xs font-semibold text-[#0F172A]">Primary</p>
+                <p className="text-xs font-semibold text-[#0F172A]">{t('demo.swatchPrimary')}</p>
                 <p className="text-[11px] text-[#64748B] font-mono">#2563EB</p>
               </div>
             </div>
@@ -187,7 +187,7 @@ export const DesignSystemDemo: React.FC = () => {
             <div className="p-3 bg-white rounded-lg border border-[#E2E8F0] shadow-xs space-y-2">
               <div className="h-10 rounded bg-[#1D4ED8]" />
               <div>
-                <p className="text-xs font-semibold text-[#0F172A]">Primary Dark</p>
+                <p className="text-xs font-semibold text-[#0F172A]">{t('demo.swatchPrimaryDark')}</p>
                 <p className="text-[11px] text-[#64748B] font-mono">#1D4ED8</p>
               </div>
             </div>
@@ -195,7 +195,7 @@ export const DesignSystemDemo: React.FC = () => {
             <div className="p-3 bg-white rounded-lg border border-[#E2E8F0] shadow-xs space-y-2">
               <div className="h-10 rounded bg-[#EFF6FF] border border-[#BFDBFE]" />
               <div>
-                <p className="text-xs font-semibold text-[#0F172A]">Primary Light</p>
+                <p className="text-xs font-semibold text-[#0F172A]">{t('demo.swatchPrimaryLight')}</p>
                 <p className="text-[11px] text-[#64748B] font-mono">#EFF6FF</p>
               </div>
             </div>
@@ -203,7 +203,7 @@ export const DesignSystemDemo: React.FC = () => {
             <div className="p-3 bg-white rounded-lg border border-[#E2E8F0] shadow-xs space-y-2">
               <div className="h-10 rounded bg-[#16A34A]" />
               <div>
-                <p className="text-xs font-semibold text-[#0F172A]">Success</p>
+                <p className="text-xs font-semibold text-[#0F172A]">{t('demo.swatchSuccess')}</p>
                 <p className="text-[11px] text-[#64748B] font-mono">#16A34A</p>
               </div>
             </div>
@@ -211,7 +211,7 @@ export const DesignSystemDemo: React.FC = () => {
             <div className="p-3 bg-white rounded-lg border border-[#E2E8F0] shadow-xs space-y-2">
               <div className="h-10 rounded bg-[#D97706]" />
               <div>
-                <p className="text-xs font-semibold text-[#0F172A]">Warning</p>
+                <p className="text-xs font-semibold text-[#0F172A]">{t('demo.swatchWarning')}</p>
                 <p className="text-[11px] text-[#64748B] font-mono">#D97706</p>
               </div>
             </div>
@@ -219,7 +219,7 @@ export const DesignSystemDemo: React.FC = () => {
             <div className="p-3 bg-white rounded-lg border border-[#E2E8F0] shadow-xs space-y-2">
               <div className="h-10 rounded bg-[#DC2626]" />
               <div>
-                <p className="text-xs font-semibold text-[#0F172A]">Error</p>
+                <p className="text-xs font-semibold text-[#0F172A]">{t('demo.swatchError')}</p>
                 <p className="text-[11px] text-[#64748B] font-mono">#DC2626</p>
               </div>
             </div>
@@ -237,7 +237,7 @@ export const DesignSystemDemo: React.FC = () => {
             <div className="space-y-6">
               {/* Variants */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">Variants</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">{t('demo.btnVariantsHeading')}</h4>
                 <div className="flex flex-wrap items-center gap-3">
                   <Button variant="primary">{t('common.save')}</Button>
                   <Button variant="secondary">{t('common.cancel')}</Button>
@@ -248,17 +248,17 @@ export const DesignSystemDemo: React.FC = () => {
 
               {/* Sizes */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">Sizes (sm, md, lg)</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">{t('demo.btnSizesHeading')}</h4>
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button size="sm" variant="primary">Small (32px)</Button>
-                  <Button size="md" variant="primary">Medium (36px)</Button>
-                  <Button size="lg" variant="primary">Large (44px)</Button>
+                  <Button size="sm" variant="primary">{t('demo.btnSizeSm')}</Button>
+                  <Button size="md" variant="primary">{t('demo.btnSizeMd')}</Button>
+                  <Button size="lg" variant="primary">{t('demo.btnSizeLg')}</Button>
                 </div>
               </div>
 
               {/* States: Loading, Disabled, Icons */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">Interactive States & Icons</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">{t('demo.btnStatesHeading')}</h4>
                 <div className="flex flex-wrap items-center gap-3">
                   <Button
                     variant="primary"
@@ -268,15 +268,15 @@ export const DesignSystemDemo: React.FC = () => {
                       setTimeout(() => setBtnLoading(false), 1500);
                     }}
                   >
-                    {btnLoading ? t('common.loading') : 'Click for Loading State'}
+                    {btnLoading ? t('common.loading') : t('demo.clickLoadingBtn')}
                   </Button>
 
                   <Button variant="primary" disabled>
-                    Disabled Primary
+                    {t('demo.disabledPrimaryBtn')}
                   </Button>
 
                   <Button variant="secondary" disabled>
-                    Disabled Secondary
+                    {t('demo.disabledSecondaryBtn')}
                   </Button>
 
                   <Button
@@ -316,27 +316,27 @@ export const DesignSystemDemo: React.FC = () => {
           <Card padding="md">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Input
-                label="Standard Input"
-                placeholder="Enter stock keeping unit..."
+                label={t('demo.inputStandardLabel')}
+                placeholder={t('demo.inputStandardPlaceholder')}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                hint="Alphanumeric unique identifier for warehouse inventory."
+                hint={t('demo.inputStandardHint')}
                 required
               />
 
               <Input
-                label="Input with Prefix Icon"
+                label={t('demo.inputPrefixLabel')}
                 placeholder={t('common.search')}
                 prefix={
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 }
-                hint="Type keywords to filter SKU or location."
+                hint={t('demo.inputPrefixHint')}
               />
 
               <Input
-                label="Validation Error State"
+                label={t('demo.inputErrorLabel')}
                 value="invalid@@format"
                 error={inputError || t('validation.invalid_email')}
                 onChange={() => setInputError('')}
@@ -344,27 +344,27 @@ export const DesignSystemDemo: React.FC = () => {
               />
 
               <Input
-                label="Disabled Input"
+                label={t('demo.inputDisabledLabel')}
                 value="SYSTEM-MANAGED-AUTO"
                 onChange={() => {}}
                 disabled
-                hint="Auto-generated by ERP backend."
+                hint={t('demo.inputDisabledHint')}
               />
 
               <Input
-                label="Character Count Limited"
-                placeholder="Bin Coordinate Note"
+                label={t('demo.inputCounterLabel')}
+                placeholder={t('demo.inputCounterPlaceholder')}
                 maxLength={20}
                 showCharCount
                 value="Bay 04, Shelf 2"
                 onChange={() => {}}
-                hint="Max 20 characters allowed."
+                hint={t('demo.inputCounterHint')}
               />
 
               <Input
-                label="Small Size Input (sm)"
+                label={t('demo.inputSmallLabel')}
                 size="sm"
-                placeholder="Quick barcode scan"
+                placeholder={t('demo.inputSmallPlaceholder')}
               />
             </div>
           </Card>
@@ -380,39 +380,39 @@ export const DesignSystemDemo: React.FC = () => {
 
               <Card padding="md" className="space-y-4">
                 <Select
-                  label="Warehouse Zone"
+                  label={t('demo.selectZoneLabel')}
                   value={selectVal}
                   onChange={(e) => setSelectVal(e.target.value)}
                   options={[
-                    { value: 'wh_north', label: 'North Distribution Hub (Zone A)' },
-                    { value: 'wh_south', label: 'South Transit Facility (Zone B)' },
-                    { value: 'wh_cold', label: 'Cold Storage Vault (Zone C)' },
-                    { value: 'wh_quarantine', label: 'Quarantine Inspection Bay (Disabled)', disabled: true },
+                    { value: 'wh_north', label: t('demo.selectOptNorthHub') },
+                    { value: 'wh_south', label: t('demo.selectOptSouthTransit') },
+                    { value: 'wh_cold', label: t('demo.selectOptColdVault') },
+                    { value: 'wh_quarantine', label: t('demo.selectOptQuarantine'), disabled: true },
                   ]}
-                  hint="Select target fulfillment facility."
+                  hint={t('demo.selectZoneHint')}
                   required
                 />
 
                 <Select
-                  label="Select with Error State"
+                  label={t('demo.selectErrorLabel')}
                   value=""
                   onChange={() => {}}
                   placeholder={t('common.select')}
                   options={[
-                    { value: 'opt1', label: 'Category A' },
-                    { value: 'opt2', label: 'Category B' },
+                    { value: 'opt1', label: t('demo.selectCatA') },
+                    { value: 'opt2', label: t('demo.selectCatB') },
                   ]}
                   error={t('validation.required')}
                   required
                 />
 
                 <Select
-                  label="Disabled Select"
+                  label={t('demo.selectDisabledLabel')}
                   value="wh_north"
                   onChange={() => {}}
                   disabled
                   options={[
-                    { value: 'wh_north', label: 'North Distribution Hub (Locked)' },
+                    { value: 'wh_north', label: t('demo.selectDisabledLockedOpt') },
                   ]}
                 />
               </Card>
@@ -425,41 +425,41 @@ export const DesignSystemDemo: React.FC = () => {
 
               <Card padding="md" className="space-y-4">
                 <Checkbox
-                  label="Checked State: Automatic stock replenishment alert enabled"
+                  label={t('demo.cbCheckedLabel')}
                   checked={cb1}
                   onChange={(checked) => setCb1(checked)}
-                  hint="Sends immediate notification when stock reaches reorder point."
+                  hint={t('demo.cbCheckedHint')}
                 />
 
                 <Checkbox
-                  label="Unchecked State: Require supervisor dual-signoff on dispatch"
+                  label={t('demo.cbUncheckedLabel')}
                   checked={cb2}
                   onChange={(checked) => setCb2(checked)}
                 />
 
                 <Checkbox
-                  label="Indeterminate State: Select all SKUs in Bay 14 (3 of 7 selected)"
+                  label={t('demo.cbIndeterminate')}
                   checked={false}
                   indeterminate={cbIndeterminate}
                   onChange={() => setCbIndeterminate(!cbIndeterminate)}
-                  hint="Click to toggle indeterminate tri-state."
+                  hint={t('demo.cbIndeterminateHint')}
                 />
 
                 <div className="pt-2 border-t border-[#E2E8F0] space-y-3">
                   <Checkbox
-                    label="Disabled Checked Checkbox"
+                    label={t('demo.cbDisabledChecked')}
                     checked={true}
                     onChange={() => {}}
                     disabled
                   />
                   <Checkbox
-                    label="Disabled Unchecked Checkbox"
+                    label={t('demo.cbDisabledUnchecked')}
                     checked={false}
                     onChange={() => {}}
                     disabled
                   />
                   <Checkbox
-                    label="Checkbox with Validation Error"
+                    label={t('demo.cbError')}
                     checked={false}
                     onChange={() => {}}
                     error={t('validation.required')}
@@ -480,7 +480,7 @@ export const DesignSystemDemo: React.FC = () => {
           <Card padding="md">
             <div className="space-y-4">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">With Status Dot (Default MD)</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">{t('demo.badgeWithDot')}</h4>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge variant="success" dot>{t('status.active')}</Badge>
                   <Badge variant="warning" dot>{t('status.pending')}</Badge>
@@ -492,7 +492,7 @@ export const DesignSystemDemo: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">Without Dot & Small Size (SM)</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-3">{t('demo.badgeNoDot')}</h4>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge variant="success" size="sm">{t('status.active')}</Badge>
                   <Badge variant="warning" size="sm">{t('status.pending')}</Badge>
@@ -515,14 +515,14 @@ export const DesignSystemDemo: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card
-              title="Standard Panel"
-              description="Warehouse Sector A Capacity"
+              title={t('demo.cardStdTitle')}
+              description={t('demo.cardStdDesc')}
               actions={<Button size="sm" variant="ghost">{t('common.edit')}</Button>}
-              footer={<span className="text-xs text-[#64748B]">Updated 5m ago</span>}
+              footer={<span className="text-xs text-[#64748B]">{t('demo.cardUpdated')}</span>}
             >
               <div className="space-y-2">
                 <div className="flex justify-between text-xs">
-                  <span className="text-[#64748B]">Utilization:</span>
+                  <span className="text-[#64748B]">{t('demo.cardUtilization')}</span>
                   <span className="font-semibold text-[#0F172A]">84.2%</span>
                 </div>
                 <div className="w-full bg-[#E2E8F0] h-2 rounded-full overflow-hidden">
@@ -532,19 +532,19 @@ export const DesignSystemDemo: React.FC = () => {
             </Card>
 
             <Card
-              title="Hoverable Elevation"
-              description="Micro-lift 2px on pointer hover"
+              title={t('demo.cardHoverTitle')}
+              description={t('demo.cardHoverDesc')}
               hoverable
-              footer={<span className="text-xs text-[#2563EB] font-medium">Click to inspect →</span>}
+              footer={<span className="text-xs text-[#2563EB] font-medium">{t('demo.cardHoverFooter')}</span>}
             >
               <p className="text-xs text-[#64748B] leading-relaxed">
-                Notice the subtle 150ms transform and shadow elevation without harsh borders or zero-blur offsets.
+                {t('demo.cardHoverBodyLong')}
               </p>
             </Card>
 
             <Card
-              title="Action Menu Card"
-              description="With dropdown inside header"
+              title={t('demo.cardActionTitle')}
+              description={t('demo.cardActionDesc')}
               actions={
                 <Dropdown
                   trigger={
@@ -562,7 +562,7 @@ export const DesignSystemDemo: React.FC = () => {
               }
             >
               <p className="text-xs text-[#64748B]">
-                Dropdown menu integrated seamlessly into card header actions bar.
+                {t('demo.cardActionBodyLong')}
               </p>
             </Card>
           </div>
@@ -596,12 +596,12 @@ export const DesignSystemDemo: React.FC = () => {
 
           <Table
             columns={[
-              { key: 'sku', label: 'SKU Code', sortable: true, width: '140px' },
-              { key: 'name', label: 'Product Name', sortable: true },
-              { key: 'location', label: 'Location Bin', width: '120px' },
+              { key: 'sku', label: t('demo.colSku'), sortable: true, width: '140px' },
+              { key: 'name', label: t('demo.colProductName'), sortable: true },
+              { key: 'location', label: t('demo.colLocationBin'), width: '120px' },
               {
                 key: 'quantity',
-                label: 'Stock Qty',
+                label: t('demo.colQty'),
                 sortable: true,
                 align: 'right',
                 width: '110px',
@@ -611,7 +611,7 @@ export const DesignSystemDemo: React.FC = () => {
               },
               {
                 key: 'status',
-                label: 'Status',
+                label: t('demo.colStatus'),
                 width: '130px',
                 render: (val) => {
                   const s = String(val);
@@ -667,8 +667,8 @@ export const DesignSystemDemo: React.FC = () => {
           <Card padding="md">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-sm font-medium text-[#0F172A]">Accessible HTML5 &lt;dialog&gt; Component</h4>
-                <p className="text-xs text-[#64748B] mt-1">Supports Escape key dismissal, backdrop click closing, and focus restoration.</p>
+                <h4 className="text-sm font-medium text-[#0F172A]">{t('demo.modalCardTitle')}</h4>
+                <p className="text-xs text-[#64748B] mt-1">{t('demo.modalCardDesc')}</p>
               </div>
               <Button variant="primary" onClick={() => setIsModalOpen(true)}>
                 {t('demo.open_modal')}
@@ -694,21 +694,21 @@ export const DesignSystemDemo: React.FC = () => {
           >
             <div className="space-y-4">
               <Input
-                label="Bin Location Identifier"
-                placeholder="e.g. AISLE-A-RACK-03"
+                label={t('demo.modalBinLabel')}
+                placeholder={t('demo.modalBinPlaceholder')}
                 value={modalLocationCode}
                 onChange={(e) => setModalLocationCode(e.target.value)}
-                hint="Use the standard warehouse numbering taxonomy."
+                hint={t('demo.modalBinHint')}
                 required
               />
               <Select
-                label="Storage Zone Designation"
+                label={t('demo.modalZoneLabel')}
                 value="ambient"
                 onChange={() => {}}
                 options={[
-                  { value: 'ambient', label: 'Ambient Temperature (Standard)' },
-                  { value: 'cold', label: 'Cold Storage (-18°C)' },
-                  { value: 'hazardous', label: 'Hazardous Materials Containment' },
+                  { value: 'ambient', label: t('demo.zoneAmbient') },
+                  { value: 'cold', label: t('demo.zoneCold') },
+                  { value: 'hazardous', label: t('demo.zoneHazardous') },
                 ]}
               />
             </div>
@@ -734,7 +734,7 @@ export const DesignSystemDemo: React.FC = () => {
                       </svg>
                     }
                   >
-                    Inventory Actions
+                    {t('demo.dropdownInventoryActions')}
                   </Button>
                 }
                 items={[
@@ -774,13 +774,13 @@ export const DesignSystemDemo: React.FC = () => {
                 align="left"
                 trigger={
                   <Button variant="ghost" size="sm">
-                    {t('common.filter')} Dropdown (Left Align)
+                    {t('demo.dropdownFilterLabelLeft')}
                   </Button>
                 }
                 items={[
-                  { label: 'Filter: In Stock Only', onClick: () => {} },
-                  { label: 'Filter: Low Stock Alerts', onClick: () => {} },
-                  { label: 'Filter: Quarantine Zone', disabled: true },
+                  { label: t('demo.dropdownFilterInStock'), onClick: () => {} },
+                  { label: t('demo.dropdownFilterLow'), onClick: () => {} },
+                  { label: t('demo.dropdownFilterQuarantine'), disabled: true },
                 ]}
               />
             </div>
@@ -795,24 +795,24 @@ export const DesignSystemDemo: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card title="Inline Spinners (Buttons & Small Controls)" padding="md">
+            <Card title={t('demo.loadingSpinnerTitle')} padding="md">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <Spinner size="sm" className="text-[#2563EB]" />
-                  <span className="text-xs text-[#64748B]">Small (16px)</span>
+                  <span className="text-xs text-[#64748B]">{t('demo.spinnerSm')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Spinner size="md" className="text-[#2563EB]" />
-                  <span className="text-xs text-[#64748B]">Medium (20px)</span>
+                  <span className="text-xs text-[#64748B]">{t('demo.spinnerMd')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Spinner size="lg" className="text-[#2563EB]" />
-                  <span className="text-xs text-[#64748B]">Large (32px)</span>
+                  <span className="text-xs text-[#64748B]">{t('demo.spinnerLg')}</span>
                 </div>
               </div>
             </Card>
 
-            <Card title="Content Skeleton Placeholders" padding="md">
+            <Card title={t('demo.loadingSkeletonTitle')} padding="md">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Skeleton width={40} height={40} rounded="full" />
@@ -828,7 +828,7 @@ export const DesignSystemDemo: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-2">Full Table Skeleton</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] mb-2">{t('demo.fullTableSkeleton')}</h4>
             <SkeletonTable rows={3} columns={4} />
           </div>
         </section>
@@ -884,7 +884,7 @@ export const DesignSystemDemo: React.FC = () => {
               message={t('alert.warning_msg')}
               action={
                 <Button size="sm" variant="secondary">
-                  Review Safety Stock
+                  {t('demo.alertWarningBtn')}
                 </Button>
               }
             />

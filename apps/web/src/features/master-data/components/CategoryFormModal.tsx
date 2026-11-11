@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Button, Input, Select } from '../../../design-system';
 import { CATEGORY_PARENT_GROUPS } from '../mockData';
 import type { Category, CategoryFormData, MasterStatus, ValidationErrors } from '../types';
+import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
 export interface CategoryFormModalProps {
   open: boolean;
@@ -32,6 +34,7 @@ const CategoryFormContent: React.FC<CategoryFormContentProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t, language } = useTranslation();
   const [formData, setFormData] = useState<CategoryFormData>(() => {
     if (mode === 'edit' && initialItem) {
       return {
@@ -69,9 +72,9 @@ const CategoryFormContent: React.FC<CategoryFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           id="cat-input-code"
-          label="Mã danh mục (Duy nhất)"
+          label={t('masterData.categories.formCodeLabel')}
           required
-          placeholder="VD: CAT-PRINTER"
+          placeholder={t('masterData.categories.formCodePlaceholder')}
           value={formData.code}
           onChange={(e) => handleChange('code', e.target.value.toUpperCase())}
           error={errors.code}
@@ -79,9 +82,9 @@ const CategoryFormContent: React.FC<CategoryFormContentProps> = ({
         />
         <Input
           id="cat-input-name"
-          label="Tên danh mục (Duy nhất)"
+          label={t('masterData.categories.formNameLabel')}
           required
-          placeholder="VD: Thiết bị in ấn"
+          placeholder={t('masterData.categories.formNamePlaceholder')}
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
           error={errors.name}
@@ -92,22 +95,25 @@ const CategoryFormContent: React.FC<CategoryFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           id="cat-select-parent"
-          label="Nhóm ngành chính"
+          label={t('masterData.categories.formParentGroupLabel')}
           required
           value={formData.parentGroup}
           onChange={(e) => handleChange('parentGroup', e.target.value)}
           error={errors.parentGroup}
-          options={CATEGORY_PARENT_GROUPS.map((g) => ({ value: g, label: g }))}
+          options={CATEGORY_PARENT_GROUPS.map((g) => ({
+            value: g,
+            label: translateDomainLabel(language, 'parentGroups', g),
+          }))}
           size="sm"
         />
         <Select
           id="cat-select-status"
-          label="Trạng thái"
+          label={t('masterData.categories.formStatusLabel')}
           value={formData.status}
           onChange={(e) => handleChange('status', e.target.value as MasterStatus)}
           options={[
-            { value: 'active', label: 'Đang hoạt động' },
-            { value: 'inactive', label: 'Ngừng hoạt động' },
+            { value: 'active', label: t('masterData.common.statusActive') },
+            { value: 'inactive', label: t('masterData.common.statusInactive') },
           ]}
           size="sm"
         />
@@ -115,12 +121,12 @@ const CategoryFormContent: React.FC<CategoryFormContentProps> = ({
 
       <div>
         <label htmlFor="cat-input-desc" className="block text-xs font-medium text-[#0F172A] mb-1">
-          Mô tả phạm vi danh mục
+          {t('masterData.categories.formDescLabel')}
         </label>
         <textarea
           id="cat-input-desc"
           rows={3}
-          placeholder="Mô tả nhóm mặt hàng thuộc danh mục này..."
+          placeholder={t('masterData.categories.formDescPlaceholder')}
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
           className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]"
@@ -129,10 +135,12 @@ const CategoryFormContent: React.FC<CategoryFormContentProps> = ({
 
       <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
         <Button variant="secondary" size="sm" onClick={onClose} type="button">
-          Hủy bỏ
+          {t('masterData.common.cancelBtn')}
         </Button>
         <Button id="btn-submit-category" variant="primary" size="sm" type="submit">
-          {mode === 'create' ? 'Tạo danh mục' : 'Lưu thay đổi'}
+          {mode === 'create'
+            ? t('masterData.categories.formCreateSubmit')
+            : t('masterData.common.saveBtn')}
         </Button>
       </div>
     </form>
@@ -145,26 +153,34 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
   onSubmit,
   initialItem,
   mode,
-}) => (
-  <Modal
-    open={open}
-    onClose={onClose}
-    size="md"
-    title={mode === 'create' ? 'Thêm danh mục sản phẩm mới' : `Chỉnh sửa danh mục: ${initialItem?.code}`}
-    description={
-      mode === 'create'
-        ? 'Khai báo mã danh mục và tên ngành hàng duy nhất để phân nhóm sản phẩm.'
-        : 'Cập nhật thông tin phân loại và trạng thái hoạt động của danh mục.'
-    }
-  >
-    {open ? (
-      <CategoryFormContent
-        key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
-        mode={mode}
-        initialItem={initialItem}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
-    ) : null}
-  </Modal>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="md"
+      title={
+        mode === 'create'
+          ? t('masterData.categories.formCreateTitle')
+          : t('masterData.categories.formEditTitle', { code: initialItem?.code ?? '' })
+      }
+      description={
+        mode === 'create'
+          ? t('masterData.categories.formCreateDesc')
+          : t('masterData.categories.formEditDesc')
+      }
+    >
+      {open ? (
+        <CategoryFormContent
+          key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
+          mode={mode}
+          initialItem={initialItem}
+          onClose={onClose}
+          onSubmit={onSubmit}
+        />
+      ) : null}
+    </Modal>
+  );
+};

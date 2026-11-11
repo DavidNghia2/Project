@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -20,6 +20,10 @@ function renderTopbar(activeWarehouse = 'WH-01', onSelectWarehouse = vi.fn()) {
 }
 
 describe('Topbar Component', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('renders current page title and breadcrumb', () => {
     renderTopbar();
     expect(screen.getByRole('heading', { level: 1, name: /products|sản phẩm/i })).toBeInTheDocument();

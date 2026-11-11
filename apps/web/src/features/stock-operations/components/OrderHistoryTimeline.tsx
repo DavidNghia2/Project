@@ -21,12 +21,12 @@ function formatTimestamp(iso: string, language: 'en' | 'vi'): string {
 }
 
 export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ history }) => {
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
 
   if (history.length === 0) {
     return (
       <p className="text-xs text-[#64748B]">
-        {language === 'vi' ? 'Chưa có lịch sử trạng thái.' : 'No status history recorded.'}
+        {t('stockOps.timeline.empty')}
       </p>
     );
   }

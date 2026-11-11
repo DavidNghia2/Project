@@ -146,8 +146,8 @@ describe('Dev-Only Role Preview & RBAC UI Enforcement', () => {
 
     // Zero edit / create / delete controls on Products for Viewer
     expect(document.getElementById('btn-add-product')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^sửa /i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^xóa /i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^(sửa|edit) /i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^(xóa|delete) /i })).not.toBeInTheDocument();
 
     // Reset back to ADMIN restores full access
     await user.click(document.getElementById('btn-reset-preview-role')!);
@@ -161,8 +161,8 @@ describe('Dev-Only Role Preview & RBAC UI Enforcement', () => {
 
     await user.click(document.getElementById('btn-preview-role-VIEWER')!);
     expect(document.getElementById('btn-add-supplier')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^sửa /i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^xóa /i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^(sửa|edit) /i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^(xóa|delete) /i })).not.toBeInTheDocument();
 
     // Verify VIEWER visiting /dashboard sees no quick Stock-In / Stock-Out create links
     const viewerDash = render(
@@ -209,5 +209,24 @@ describe('Dev-Only Role Preview & RBAC UI Enforcement', () => {
     expect(
       screen.getByText(/không có quyền phê duyệt|cannot approve or reject/i)
     ).toBeInTheDocument();
+  });
+
+  it('switches UsersPage and DevRolePreviewBar cleanly to English without leftover Vietnamese UI strings', async () => {
+    localStorage.setItem('smart_inventory_language', 'en');
+    const user = userEvent.setup();
+    renderAppWithRolePreview('/users');
+
+    expect(screen.getByText(/Administrator · 14 menus/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Create Mock User/i })).toBeInTheDocument();
+    expect(screen.getByText(/Total Mock Users/i)).toBeInTheDocument();
+    expect(screen.getByText(/Northern Warehouse Operations/i)).toBeInTheDocument();
+    expect(screen.getByText(/All Warehouses \(System\)/i)).toBeInTheDocument();
+
+    // Viewer restricted notice renders cleanly in English
+    await user.click(document.getElementById('btn-preview-role-VIEWER')!);
+    expect(screen.getByText(/Access restricted for current role/i)).toBeInTheDocument();
+    expect(screen.getByText(/\(Read-only\)/i)).toBeInTheDocument();
+
+    localStorage.removeItem('smart_inventory_language');
   });
 });

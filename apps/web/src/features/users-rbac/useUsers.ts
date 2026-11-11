@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { Language } from '../../i18n';
+import { type Language } from '../../i18n';
+import { translateKey } from '../../i18n/translate';
+import { useHookLanguage } from '../../i18n/useTranslation';
 import { INITIAL_SYSTEM_USERS } from './mockUsers';
 import type {
   RoleCode,
@@ -15,7 +17,7 @@ export function validateUserForm(
   data: UserFormData,
   existingUsers: SystemUser[],
   editingUserId: string | null,
-  language: Language
+  language: Language = 'vi'
 ): UserValidationErrors {
   const errors: UserValidationErrors = {};
   const trimmedName = data.fullName.trim();
@@ -23,47 +25,35 @@ export function validateUserForm(
   const trimmedDept = data.department.trim();
 
   if (!trimmedName) {
-    errors.fullName =
-      language === 'vi' ? 'Vui lòng nhập họ tên người dùng.' : 'Full name is required.';
+    errors.fullName = translateKey(language, 'usersRbac.validation.fullNameRequired');
   } else if (trimmedName.length < 2) {
-    errors.fullName =
-      language === 'vi'
-        ? 'Họ tên phải có ít nhất 2 ký tự.'
-        : 'Full name must be at least 2 characters.';
+    errors.fullName = translateKey(language, 'usersRbac.validation.fullNameMin');
   }
 
   if (!trimmedEmail) {
-    errors.email =
-      language === 'vi' ? 'Vui lòng nhập địa chỉ email.' : 'Email address is required.';
+    errors.email = translateKey(language, 'usersRbac.validation.emailRequired');
   } else if (!EMAIL_REGEX.test(trimmedEmail)) {
-    errors.email =
-      language === 'vi'
-        ? 'Định dạng email không hợp lệ (vd: ten@smartinventory.local).'
-        : 'Invalid email format (e.g. name@smartinventory.local).';
+    errors.email = translateKey(language, 'usersRbac.validation.emailInvalid');
   } else {
     const duplicate = existingUsers.some(
       (u) => u.email.trim().toLowerCase() === trimmedEmail && u.id !== editingUserId
     );
     if (duplicate) {
-      errors.email =
-        language === 'vi'
-          ? 'Email này đã tồn tại trong danh sách người dùng.'
-          : 'This email address already exists.';
+      errors.email = translateKey(language, 'usersRbac.validation.emailDuplicate');
     }
   }
 
   if (!trimmedDept) {
-    errors.department =
-      language === 'vi' ? 'Vui lòng nhập hoặc chọn phòng ban.' : 'Department is required.';
+    errors.department = translateKey(language, 'usersRbac.validation.departmentRequired');
   }
 
   if (data.role !== 'ADMIN') {
     const specificCodes = data.assignedWarehouses.filter((c) => c !== 'ALL');
     if (specificCodes.length === 0) {
-      errors.assignedWarehouses =
-        language === 'vi'
-          ? 'Vui lòng gán ít nhất 1 kho làm việc cho vai trò này.'
-          : 'Assign at least 1 warehouse for non-Admin roles.';
+      errors.assignedWarehouses = translateKey(
+        language,
+        'usersRbac.validation.warehousesRequired'
+      );
     }
   }
 
@@ -95,20 +85,21 @@ export interface UseUsersReturn {
   };
   createUser: (
     data: UserFormData,
-    language: Language
+    language?: Language
   ) => { ok: true; user: SystemUser } | { ok: false; errors: UserValidationErrors };
   updateUser: (
     id: string,
     data: UserFormData,
-    language: Language
+    language?: Language
   ) => { ok: true; user: SystemUser } | { ok: false; errors: UserValidationErrors };
   toggleUserStatus: (
     id: string,
-    language: Language
+    language?: Language
   ) => { ok: true; user: SystemUser } | { ok: false; error: string };
 }
 
 export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): UseUsersReturn {
+  const activeLanguage = useHookLanguage('vi');
   const [users, setUsers] = useState<SystemUser[]>(initialUsers);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleCode | 'ALL'>('ALL');
@@ -146,7 +137,7 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
   const createUser = useCallback(
     (
       data: UserFormData,
-      language: Language
+      language: Language = activeLanguage
     ): { ok: true; user: SystemUser } | { ok: false; errors: UserValidationErrors } => {
       const errors = validateUserForm(data, users, null, language);
       if (Object.keys(errors).length > 0) {
@@ -168,7 +159,7 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
         role: data.role,
         assignedWarehouses: normalizeWarehousesForRole(data.role, data.assignedWarehouses),
         status: data.status,
-        lastActive: language === 'vi' ? 'Vừa tạo (mô phỏng)' : 'Just created (mock)',
+        lastActive: translateKey(language, 'usersRbac.mockLastActive'),
         createdAt: nowIso,
         updatedAt: nowIso,
       };
@@ -176,14 +167,14 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
       setUsers((prev) => [newUser, ...prev]);
       return { ok: true, user: newUser };
     },
-    [users]
+    [users, activeLanguage]
   );
 
   const updateUser = useCallback(
     (
       id: string,
       data: UserFormData,
-      language: Language
+      language: Language = activeLanguage
     ): { ok: true; user: SystemUser } | { ok: false; errors: UserValidationErrors } => {
       const errors = validateUserForm(data, users, id, language);
       if (Object.keys(errors).length > 0) {
@@ -192,7 +183,10 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
 
       const target = users.find((u) => u.id === id);
       if (!target) {
-        return { ok: false, errors: { fullName: 'User not found' } };
+        return {
+          ok: false,
+          errors: { fullName: translateKey(language, 'usersRbac.errors.userNotFound') },
+        };
       }
 
       const normalizedWarehouses = normalizeWarehousesForRole(data.role, data.assignedWarehouses);
@@ -210,19 +204,19 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
       setUsers((prev) => prev.map((u) => (u.id === id ? updatedUser : u)));
       return { ok: true, user: updatedUser };
     },
-    [users]
+    [users, activeLanguage]
   );
 
   const toggleUserStatus = useCallback(
     (
       id: string,
-      language: Language
+      language: Language = activeLanguage
     ): { ok: true; user: SystemUser } | { ok: false; error: string } => {
       const target = users.find((u) => u.id === id);
       if (!target) {
         return {
           ok: false,
-          error: language === 'vi' ? 'Không tìm thấy người dùng.' : 'User not found.',
+          error: translateKey(language, 'usersRbac.errors.userNotFound'),
         };
       }
 
@@ -232,10 +226,7 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
       if (target.role === 'ADMIN' && target.status === 'active' && activeAdmins.length <= 1) {
         return {
           ok: false,
-          error:
-            language === 'vi'
-              ? 'Không thể vô hiệu hóa tài khoản Admin đang hoạt động duy nhất trong hệ thống.'
-              : 'Cannot deactivate the last active Administrator account.',
+          error: translateKey(language, 'usersRbac.errors.lastAdminDeactivate'),
         };
       }
 
@@ -247,7 +238,7 @@ export function useUsers(initialUsers: SystemUser[] = INITIAL_SYSTEM_USERS): Use
       setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
       return { ok: true, user: updated };
     },
-    [users]
+    [users, activeLanguage]
   );
 
   return {

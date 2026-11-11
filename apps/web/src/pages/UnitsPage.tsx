@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
 import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
 import {
@@ -14,13 +15,6 @@ import {
   type UnitFormData,
 } from '../features/master-data';
 import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
-
-const MEASURE_TYPE_LABELS: Record<UnitOfMeasure['measureType'], string> = {
-  discrete: 'Đếm rời',
-  packaging: 'Đóng gói',
-  length: 'Chiều dài / Cuộn',
-  weight: 'Khối lượng',
-};
 
 export const UnitsPage: React.FC = () => {
   const { t, language } = useTranslation();
@@ -78,14 +72,21 @@ export const UnitsPage: React.FC = () => {
     if (formMode === 'create') {
       const res = addItem(data);
       if (res.success) {
-        showToast(`Đã tạo đơn vị tính mới: ${data.name} (${data.code.toUpperCase()}).`);
+        showToast(
+          t('masterData.units.toastCreated', {
+            name: translateDomainLabel(language, 'units', data.name),
+            code: data.code.toUpperCase(),
+          })
+        );
       }
       return res;
     }
     if (selectedItem) {
       const res = updateItem(selectedItem.id, data);
       if (res.success) {
-        showToast(`Đã cập nhật đơn vị tính ${data.code.toUpperCase()}.`);
+        showToast(
+          t('masterData.units.toastUpdated', { code: data.code.toUpperCase() })
+        );
       }
       return res;
     }
@@ -96,7 +97,12 @@ export const UnitsPage: React.FC = () => {
     if (!selectedItem) return;
     const res = deleteItem(selectedItem.id, forceConfirm);
     if (res.success) {
-      showToast(`Đã xóa đơn vị tính ${selectedItem.name} (${selectedItem.code}).`);
+      showToast(
+        t('masterData.units.toastDeleted', {
+          name: translateDomainLabel(language, 'units', selectedItem.name),
+          code: selectedItem.code,
+        })
+      );
       setDeleteOpen(false);
       setSelectedItem(null);
     }
@@ -105,27 +111,27 @@ export const UnitsPage: React.FC = () => {
   const columns: Column<UnitOfMeasure>[] = [
     {
       key: 'code',
-      label: 'Mã đơn vị',
+      label: t('masterData.units.colCode'),
       render: (_val, row) => (
         <span className="font-mono text-xs font-bold text-[#2563EB]">{row.code}</span>
       ),
     },
     {
       key: 'name',
-      label: 'Tên đơn vị tính',
+      label: t('masterData.units.colName'),
       render: (_val, row) => (
         <button
           type="button"
           onClick={() => handleOpenDetail(row)}
           className="font-semibold text-[#0F172A] hover:text-[#2563EB] text-left cursor-pointer focus-visible:outline-none focus-visible:underline"
         >
-          {row.name}
+          {translateDomainLabel(language, 'units', row.name)}
         </button>
       ),
     },
     {
       key: 'symbol',
-      label: 'Ký hiệu',
+      label: t('masterData.units.colSymbol'),
       align: 'center',
       render: (_val, row) => (
         <span className="inline-block px-2 py-0.5 rounded bg-[#F1F5F9] border border-[#E2E8F0] font-mono text-xs font-semibold text-[#0F172A]">
@@ -135,16 +141,16 @@ export const UnitsPage: React.FC = () => {
     },
     {
       key: 'measureType',
-      label: 'Nhóm đo lường',
+      label: t('masterData.units.colMeasureType'),
       render: (_val, row) => (
         <span className="text-xs font-medium text-[#334155]">
-          {MEASURE_TYPE_LABELS[row.measureType]}
+          {t(`masterData.units.measureTypes.${row.measureType}`)}
         </span>
       ),
     },
     {
       key: 'conversionNote',
-      label: 'Quy ước quy đổi',
+      label: t('masterData.units.colConversion'),
       render: (_val, row) => (
         <span className="text-xs text-[#475569] line-clamp-1 max-w-sm block">
           {row.conversionNote || '—'}
@@ -153,7 +159,7 @@ export const UnitsPage: React.FC = () => {
     },
     {
       key: 'productsCount',
-      label: 'Sản phẩm',
+      label: t('masterData.units.colProducts'),
       align: 'center',
       render: (_val, row) => (
         <span className="font-mono text-xs font-medium text-[#0F172A] tabular-nums">
@@ -163,7 +169,7 @@ export const UnitsPage: React.FC = () => {
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      label: t('masterData.units.colStatus'),
       align: 'center',
       render: (_val, row) => (
         <Badge variant={row.status === 'active' ? 'success' : 'neutral'} size="sm" dot>
@@ -173,7 +179,7 @@ export const UnitsPage: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Thao tác',
+      label: t('masterData.units.colActions'),
       align: 'right',
       render: (_val, row) => (
         <MasterDataRowActions
@@ -188,6 +194,9 @@ export const UnitsPage: React.FC = () => {
   ];
 
   const selectedRefs = selectedItem ? getItemReferences(selectedItem) : [];
+  const selectedDisplayName = selectedItem
+    ? translateDomainLabel(language, 'units', selectedItem.name)
+    : undefined;
 
   return (
     <div className="space-y-6">
@@ -203,7 +212,7 @@ export const UnitsPage: React.FC = () => {
               iconLeft={<Plus className="w-4 h-4" />}
               onClick={handleOpenCreate}
             >
-              {language === 'vi' ? 'Thêm đơn vị tính' : 'Add Unit'}
+              {t('masterData.units.createBtn')}
             </Button>
           ) : undefined
         }
@@ -214,7 +223,7 @@ export const UnitsPage: React.FC = () => {
       {toastMessage && (
         <Alert
           variant="success"
-          title="Thao tác thành công"
+          title={t('common.operationSuccess')}
           message={toastMessage}
           dismissible
           onDismiss={() => setToastMessage(null)}
@@ -225,36 +234,40 @@ export const UnitsPage: React.FC = () => {
         <MasterDataToolbar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Tìm theo mã đơn vị, tên gọi, ký hiệu hoặc mô tả..."
+          searchPlaceholder={t('masterData.units.searchPlaceholder')}
           searchInputId="uom-search-input"
           statusFilter={statusFilter}
           onStatusChange={setStatusFilter}
           secondaryFilter={secondaryFilter}
           onSecondaryFilterChange={setSecondaryFilter}
-          secondaryLabel="Nhóm đo lường"
+          secondaryLabel={t('masterData.units.filterMeasureLabel')}
           secondaryOptions={[
-            { value: 'ALL', label: 'Tất cả nhóm đo' },
-            { value: 'discrete', label: 'Đếm rời' },
-            { value: 'packaging', label: 'Đóng gói' },
-            { value: 'length', label: 'Chiều dài / Cuộn' },
-            { value: 'weight', label: 'Khối lượng' },
+            { value: 'ALL', label: t('masterData.units.allMeasureTypes') },
+            { value: 'discrete', label: t('masterData.units.measureTypes.discrete') },
+            { value: 'packaging', label: t('masterData.units.measureTypes.packaging') },
+            { value: 'length', label: t('masterData.units.measureTypes.length') },
+            { value: 'weight', label: t('masterData.units.measureTypes.weight') },
           ]}
           isFiltered={isFiltered}
           onReset={resetFilters}
           totalFiltered={filteredItems.length}
           totalItems={items.length}
-          itemUnitLabel="đơn vị tính"
+          itemUnitLabel={t('masterData.units.unitLabel')}
         />
 
         <Table
           columns={columns}
           data={filteredItems}
-          caption="Danh mục đơn vị tính chuẩn"
-          emptyTitle={isFiltered ? 'Không tìm thấy đơn vị tính phù hợp' : 'Chưa có đơn vị tính nào'}
+          caption={t('masterData.units.tableCaption')}
+          emptyTitle={
+            isFiltered
+              ? t('masterData.units.emptyFilteredTitle')
+              : t('masterData.units.emptyTitle')
+          }
           emptyDescription={
             isFiltered
-              ? 'Không có đơn vị tính nào khớp với từ khóa hoặc bộ lọc hiện tại.'
-              : 'Khai báo đơn vị tính để thống nhất kiểm đếm hàng hóa nhập xuất.'
+              ? t('masterData.units.emptyFilteredDesc')
+              : t('masterData.units.emptyDesc')
           }
           emptyAction={
             isFiltered ? (
@@ -264,7 +277,7 @@ export const UnitsPage: React.FC = () => {
                 onClick={resetFilters}
                 iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
               >
-                Xóa bộ lọc
+                {t('masterData.common.clearFilters')}
               </Button>
             ) : canManageCatalog ? (
               <Button
@@ -273,7 +286,7 @@ export const UnitsPage: React.FC = () => {
                 onClick={handleOpenCreate}
                 iconLeft={<Plus className="w-3.5 h-3.5" />}
               >
-                Thêm đơn vị tính
+                {t('masterData.units.createBtn')}
               </Button>
             ) : undefined
           }
@@ -292,17 +305,24 @@ export const UnitsPage: React.FC = () => {
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
         onEdit={canManageCatalog ? () => selectedItem && handleOpenEdit(selectedItem) : undefined}
-        titlePrefix="Chi tiết đơn vị tính"
+        titlePrefix={t('masterData.units.detailPrefix')}
         code={selectedItem?.code}
-        name={selectedItem?.name}
+        name={selectedDisplayName}
         status={selectedItem?.status}
         description={selectedItem?.description}
         fields={
           selectedItem
             ? [
-                { label: 'Ký hiệu hiển thị', value: selectedItem.symbol },
-                { label: 'Nhóm đo lường', value: MEASURE_TYPE_LABELS[selectedItem.measureType] },
-                { label: 'Quy ước quy đổi chuẩn', value: selectedItem.conversionNote, fullWidth: true },
+                { label: t('masterData.units.detailSymbol'), value: selectedItem.symbol },
+                {
+                  label: t('masterData.units.detailMeasureType'),
+                  value: t(`masterData.units.measureTypes.${selectedItem.measureType}`),
+                },
+                {
+                  label: t('masterData.units.detailConversion'),
+                  value: selectedItem.conversionNote,
+                  fullWidth: true,
+                },
               ]
             : []
         }
@@ -315,9 +335,9 @@ export const UnitsPage: React.FC = () => {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleConfirmDelete}
-        entityLabel="đơn vị tính"
+        entityLabel={t('masterData.units.entity')}
         itemCode={selectedItem?.code}
-        itemName={selectedItem?.name}
+        itemName={selectedDisplayName}
         references={selectedRefs}
       />
     </div>

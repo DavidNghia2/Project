@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FileEdit, Send } from 'lucide-react';
 import { Button, Input, Modal, Select } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_WAREHOUSES } from '../../master-data/mockData';
 import { INITIAL_PRODUCTS } from '../../products/mockData';
 import { STOCK_OUT_REASONS } from '../mockData';
@@ -56,7 +57,7 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
   onClose,
   onSave,
 }) => {
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
 
   const [formData, setFormData] = useState<StockOutFormData>(() => {
     if (mode === 'edit' && initialOrder) {
@@ -85,12 +86,12 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
 
   const warehouseOptions = INITIAL_WAREHOUSES.filter((w) => w.status === 'active').map((w) => ({
     value: w.code,
-    label: `${w.code} — ${w.name}`,
+    label: `${w.code} — ${translateDomainLabel(language, 'warehouseNames', w.code, w.name)}`,
   }));
 
   const reasonOptions = STOCK_OUT_REASONS.map((r) => ({
     value: r.value,
-    label: language === 'vi' ? r.labelVi : r.labelEn,
+    label: t(`stockOps.reasons.${r.value}`),
   }));
 
   const handleChangeLine = (lineId: string, patch: Partial<EditableLineItem>) => {
@@ -175,7 +176,7 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           id="stock-out-warehouse"
-          label={language === 'vi' ? 'Kho xuất hàng' : 'Dispatch Warehouse'}
+          label={t('stockOps.form.out.dispatchWarehouse')}
           required
           value={formData.warehouseCode}
           onChange={(e) => {
@@ -189,7 +190,7 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
 
         <Select
           id="stock-out-reason"
-          label={language === 'vi' ? 'Lý do xuất kho' : 'Dispatch Reason'}
+          label={t('stockOps.form.out.reason')}
           required
           value={formData.reason}
           onChange={(e) => {
@@ -204,13 +205,9 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
 
       <Input
         id="stock-out-destination"
-        label={language === 'vi' ? 'Nơi nhận / Khách hàng / Kho đích' : 'Destination / Recipient'}
+        label={t('stockOps.form.out.destination')}
         required
-        placeholder={
-          language === 'vi'
-            ? 'VD: Công ty TNHH Công nghệ Việt Phát (Đơn #SO-9902)'
-            : 'e.g. VietPhat Tech Co., Ltd (Order #SO-9902)'
-        }
+        placeholder={t('stockOps.form.out.destinationPlaceholder')}
         value={formData.destination}
         onChange={(e) => {
           setFormData((prev) => ({ ...prev, destination: e.target.value }));
@@ -233,7 +230,7 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
 
       <div className="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
         <Button type="button" variant="ghost" onClick={onClose}>
-          {language === 'vi' ? 'Hủy bỏ' : 'Cancel'}
+          {t('stockOps.form.cancel')}
         </Button>
         <Button
           id="btn-save-draft"
@@ -242,7 +239,7 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
           onClick={() => handleAction('DRAFT')}
           iconLeft={<FileEdit className="w-4 h-4" />}
         >
-          {language === 'vi' ? 'Lưu nháp' : 'Save Draft'}
+          {t('stockOps.form.saveDraft')}
         </Button>
         <Button
           id="btn-submit-order"
@@ -250,7 +247,7 @@ const StockOutFormContent: React.FC<FormContentProps> = ({
           variant="primary"
           iconLeft={<Send className="w-4 h-4" />}
         >
-          {language === 'vi' ? 'Gửi chờ duyệt' : 'Submit for Approval'}
+          {t('stockOps.form.submitForApproval')}
         </Button>
       </div>
     </form>
@@ -264,21 +261,14 @@ export const StockOutFormModal: React.FC<StockOutFormModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const { language } = useTranslation();
+  const { t } = useTranslation();
 
   const title =
     mode === 'edit' && initialOrder
-      ? language === 'vi'
-        ? `Chỉnh sửa phiếu xuất ${initialOrder.code}`
-        : `Edit Stock-Out Voucher ${initialOrder.code}`
-      : language === 'vi'
-        ? 'Tạo phiếu xuất kho mới'
-        : 'Create New Stock-Out Voucher';
+      ? t('stockOps.form.out.editTitle', { code: initialOrder.code })
+      : t('stockOps.form.out.createTitle');
 
-  const description =
-    language === 'vi'
-      ? 'Chọn kho xuất và kiểm tra tồn kho khả dụng theo dữ liệu mẫu. Không cho phép xuất vượt tồn kho.'
-      : 'Select warehouse and dispatch items against mock warehouse stock. Over-stock quantities are strictly blocked.';
+  const description = t('stockOps.form.out.description');
 
   return (
     <Modal open={open} onClose={onClose} title={title} description={description} size="xl">

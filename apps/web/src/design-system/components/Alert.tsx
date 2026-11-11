@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../../i18n';
 
 export type AlertVariant = 'error' | 'warning' | 'success' | 'info';
 
@@ -83,6 +84,7 @@ export const Alert: React.FC<AlertProps> = ({
   dismissible = false,
   className = '',
 }) => {
+  const { t } = useTranslation();
   const config = variantConfig[variant];
 
   return (
@@ -115,7 +117,7 @@ export const Alert: React.FC<AlertProps> = ({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Dismiss alert"
+          aria-label={t('alert.dismiss')}
           className="
             -mr-1 -mt-1 p-1 text-[#64748B] hover:text-[#0F172A] rounded-md
             transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer

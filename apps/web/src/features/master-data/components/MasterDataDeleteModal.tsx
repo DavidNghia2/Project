@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AlertTriangle, Link2 } from 'lucide-react';
 import { Modal, Button, Checkbox, Badge } from '../../../design-system';
 import type { ProductReferenceSummary } from '../types';
+import { useTranslation } from '../../../i18n';
 
 export interface MasterDataDeleteModalProps {
   open: boolean;
@@ -30,9 +31,17 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const { t } = useTranslation();
   const [acknowledgeReferenced, setAcknowledgeReferenced] = useState(false);
   const hasReferences = references.length > 0;
   const canConfirm = !hasReferences || acknowledgeReferenced;
+  const capitalizedEntity = entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1);
+  const descText = t('masterData.common.refBlockDesc', {
+    entity: capitalizedEntity,
+    code: itemCode,
+    name: itemName,
+  });
+  const [descBeforeCode, descAfterCode] = descText.split(itemCode);
 
   return (
     <div className="space-y-4 text-xs sm:text-sm">
@@ -42,11 +51,12 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
             <AlertTriangle className="w-5 h-5 text-[#D97706] shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="font-semibold text-xs sm:text-sm text-[#78350F]">
-                Dữ liệu đang được sản phẩm tham chiếu ({references.length} mặt hàng)
+                {t('masterData.common.refBlockTitle', { count: references.length })}
               </p>
               <p className="text-xs text-[#92400E] leading-relaxed">
-                {entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1)}{' '}
-                <strong className="font-mono">{itemCode}</strong> ({itemName}) hiện đang liên kết với các mặt hàng sau trong kho. Không thể xóa nếu chưa có xác nhận rủi ro:
+                {descBeforeCode}
+                <strong className="font-mono">{itemCode}</strong>
+                {descAfterCode}
               </p>
             </div>
           </div>
@@ -62,7 +72,7 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
             ))}
             {references.length > 6 && (
               <Badge variant="neutral" size="sm">
-                +{references.length - 6} sản phẩm khác
+                {t('masterData.common.refMoreItems', { count: references.length - 6 })}
               </Badge>
             )}
           </div>
@@ -74,7 +84,7 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
               onChange={(checked) => setAcknowledgeReferenced(checked)}
               label={
                 <span className="text-xs font-medium text-[#78350F]">
-                  Tôi hiểu dữ liệu này đang được sản phẩm tham chiếu và xác nhận tiếp tục xóa
+                  {t('masterData.common.refAckCheckbox')}
                 </span>
               }
             />
@@ -85,11 +95,11 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
           <AlertTriangle className="w-5 h-5 text-[#DC2626] shrink-0 mt-0.5" />
           <div className="space-y-1">
             <p className="font-semibold text-xs sm:text-sm text-[#7F1D1D]">
-              Xác nhận xóa {entityLabel}
+              {t('masterData.common.deleteConfirmTitle', { entity: entityLabel })}
             </p>
             <p className="text-xs text-[#991B1B] leading-relaxed">
-              Bạn có chắc chắn muốn xóa {entityLabel}{' '}
-              <strong className="font-semibold text-[#7F1D1D]">{itemName}</strong> (Mã:{' '}
+              {t('masterData.common.deletePromptPrefix', { entity: entityLabel })}{' '}
+              <strong className="font-semibold text-[#7F1D1D]">{itemName}</strong> ({t('masterData.common.deletePromptCodeLabel')}{' '}
               <span className="font-mono font-bold">{itemCode}</span>)?
             </p>
           </div>
@@ -97,12 +107,12 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
       )}
 
       <p className="text-xs text-[#475569] leading-relaxed">
-        Mục dữ liệu sau khi xóa sẽ không còn hiển thị trong danh sách lựa chọn khi tạo hoặc cập nhật sản phẩm mới.
+        {t('masterData.common.deleteImpactNote')}
       </p>
 
       <div className="pt-3 border-t border-[#E2E8F0] flex items-center justify-end gap-2.5">
         <Button variant="secondary" size="sm" onClick={onClose}>
-          Hủy bỏ
+          {t('masterData.common.cancelBtn')}
         </Button>
         <Button
           id="btn-confirm-master-delete"
@@ -111,7 +121,7 @@ const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({
           disabled={!canConfirm}
           onClick={() => onConfirm(hasReferences ? acknowledgeReferenced : true)}
         >
-          {hasReferences ? 'Xác nhận xóa bất chấp liên kết' : 'Xác nhận xóa'}
+          {hasReferences ? t('masterData.common.forceDeleteBtn') : t('masterData.common.confirmDeleteBtn')}
         </Button>
       </div>
     </div>
@@ -127,6 +137,8 @@ export const MasterDataDeleteModal: React.FC<MasterDataDeleteModalProps> = ({
   itemName,
   references,
 }) => {
+  const { t } = useTranslation();
+
   if (!itemCode || !itemName) return null;
 
   return (
@@ -134,7 +146,7 @@ export const MasterDataDeleteModal: React.FC<MasterDataDeleteModalProps> = ({
       open={open}
       onClose={onClose}
       size="md"
-      title={`Xóa ${entityLabel}: ${itemCode}`}
+      title={t('masterData.common.deleteModalTitle', { entity: entityLabel, code: itemCode })}
     >
       {open ? (
         <DeleteModalBody

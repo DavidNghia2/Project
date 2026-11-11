@@ -1,4 +1,6 @@
 import type { Language } from '../../i18n';
+import { translateDomainLabel } from '../../i18n/domainTranslate';
+import { translateKey } from '../../i18n/translate';
 import { INITIAL_PRODUCTS } from '../products/mockData';
 import type { Product } from '../products/types';
 import { REPORT_LEDGER_ENTRIES } from './mockLedger';
@@ -33,30 +35,21 @@ export function validateDateRange(
   if (!startDate || !endDate) {
     return {
       valid: false,
-      error:
-        language === 'vi'
-          ? 'Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc.'
-          : 'Please specify both start date and end date.',
+      error: translateKey(language, 'reports.validation.missingDates'),
     };
   }
 
   if (!isValidIsoDate(startDate) || !isValidIsoDate(endDate)) {
     return {
       valid: false,
-      error:
-        language === 'vi'
-          ? 'Định dạng ngày không hợp lệ (YYYY-MM-DD).'
-          : 'Invalid date format (expected YYYY-MM-DD).',
+      error: translateKey(language, 'reports.validation.invalidFormat'),
     };
   }
 
   if (startDate > endDate) {
     return {
       valid: false,
-      error:
-        language === 'vi'
-          ? 'Khoảng thời gian không hợp lệ: Ngày bắt đầu không được lớn hơn ngày kết thúc.'
-          : 'Invalid date range: Start date cannot be later than end date.',
+      error: translateKey(language, 'reports.validation.startAfterEnd'),
     };
   }
 
@@ -97,12 +90,19 @@ export function getProductScopeQuantity(product: Product, warehouseCode: string)
 
 function getWarehouseLabel(product: Product, warehouseCode: string, language: Language): string {
   if (warehouseCode === 'ALL') {
-    return language === 'vi'
-      ? `Toàn hệ thống (${product.warehouses.length} kho)`
-      : `All Warehouses (${product.warehouses.length})`;
+    return translateKey(language, 'reports.warehouseScope.all', {
+      count: product.warehouses.length,
+    });
   }
   const found = product.warehouses.find((w) => w.warehouseCode === warehouseCode);
-  return found ? `${found.warehouseCode} — ${found.warehouseName}` : warehouseCode;
+  return found
+    ? `${found.warehouseCode} — ${translateDomainLabel(
+        language,
+        'warehouseNames',
+        found.warehouseCode,
+        found.warehouseName
+      )}`
+    : warehouseCode;
 }
 
 function groupSeriesByKey<T>(
@@ -176,7 +176,7 @@ export function computeReport(
           ? groupSeriesByKey(
               rows,
               (r) => r.category,
-              (r) => r.category,
+              (r) => translateDomainLabel(language, 'categories', r.category),
               (r) => ({ primaryQty: r.quantity, primaryValue: r.totalValue })
             )
           : rows.map((r) => ({
@@ -192,14 +192,12 @@ export function computeReport(
       return {
         reportType: 'current_stock',
         rows,
-        chartTitleVi:
+        chartTitle:
           filters.category === 'ALL'
-            ? 'Phân bổ giá trị & số lượng tồn hiện tại theo danh mục'
-            : `Tồn kho & giá trị theo SKU (${filters.category})`,
-        chartTitleEn:
-          filters.category === 'ALL'
-            ? 'Current Inventory Valuation & Qty by Category'
-            : `Stock & Valuation by SKU (${filters.category})`,
+            ? translateKey(language, 'reports.charts.titles.currentAll')
+            : translateKey(language, 'reports.charts.titles.currentCategory', {
+                category: translateDomainLabel(language, 'categories', filters.category),
+              }),
         chartSeries,
         totals: {
           rowCount: rows.length,
@@ -256,14 +254,10 @@ export function computeReport(
       return {
         reportType: filters.reportType,
         rows,
-        chartTitleVi:
+        chartTitle:
           dir === 'IN'
-            ? 'Biểu đồ lượng & giá trị nhập kho theo ngày'
-            : 'Biểu đồ lượng & giá trị xuất kho theo ngày',
-        chartTitleEn:
-          dir === 'IN'
-            ? 'Inbound Volume & Value by Date'
-            : 'Outbound Volume & Value by Date',
+            ? translateKey(language, 'reports.charts.titles.stockInDate')
+            : translateKey(language, 'reports.charts.titles.stockOutDate'),
         chartSeries,
         totals: {
           rowCount: rows.length,
@@ -329,7 +323,7 @@ export function computeReport(
           ? groupSeriesByKey(
               rows,
               (r) => r.category,
-              (r) => r.category,
+              (r) => translateDomainLabel(language, 'categories', r.category),
               (r) => ({
                 primaryQty: r.inQty,
                 secondaryQty: r.outQty,
@@ -349,14 +343,12 @@ export function computeReport(
       return {
         reportType: 'stock_movement',
         rows,
-        chartTitleVi:
+        chartTitle:
           filters.category === 'ALL'
-            ? 'Đối chiếu Nhập kho vs Xuất kho theo danh mục'
-            : `Biến động Nhập vs Xuất theo SKU (${filters.category})`,
-        chartTitleEn:
-          filters.category === 'ALL'
-            ? 'Inbound vs Outbound Movement by Category'
-            : `Inbound vs Outbound Movement by SKU (${filters.category})`,
+            ? translateKey(language, 'reports.charts.titles.movementAll')
+            : translateKey(language, 'reports.charts.titles.movementCategory', {
+                category: translateDomainLabel(language, 'categories', filters.category),
+              }),
         chartSeries,
         totals: {
           rowCount: rows.length,
@@ -411,8 +403,7 @@ export function computeReport(
       return {
         reportType: 'low_stock',
         rows: lowRows,
-        chartTitleVi: 'So sánh tồn hiện tại với ngưỡng an toàn (Mặt hàng dưới ngưỡng)',
-        chartTitleEn: 'Current Stock vs Safety Threshold (Below-Reorder Items)',
+        chartTitle: translateKey(language, 'reports.charts.titles.lowStock'),
         chartSeries,
         totals: {
           rowCount: lowRows.length,
@@ -445,40 +436,47 @@ export function buildReportCsvContent(
   report: ComputedReportResult,
   language: Language = 'vi'
 ): string {
-  const isVi = language === 'vi';
-  const totalLabel = isVi ? 'TỔNG CỘNG' : 'TOTAL';
+  const c = (key: string) => translateKey(language, `reports.csv.cols.${key}`);
+  const totalLabel = translateKey(language, 'reports.csv.totalLabel');
   const lines: string[] = [];
 
   switch (report.reportType) {
     case 'current_stock': {
       const rows = report.rows as CurrentStockRow[];
       lines.push(
-        toCsvLine(
-          isVi
-            ? ['SKU', 'Tên sản phẩm', 'Danh mục', 'Đơn vị', 'Kho', 'Tồn hiện tại', 'Ngưỡng an toàn', 'Đơn giá vốn (VND)', 'Giá trị tồn (VND)', 'Trạng thái']
-            : ['SKU', 'Product Name', 'Category', 'Unit', 'Warehouse', 'On Hand Qty', 'Reorder Level', 'Unit Cost (VND)', 'Stock Value (VND)', 'Status']
-        )
+        toCsvLine([
+          c('sku'),
+          c('productName'),
+          c('category'),
+          c('unit'),
+          c('warehouse'),
+          c('onHandQty'),
+          c('reorderLevel'),
+          c('unitCostVnd'),
+          c('stockValueVnd'),
+          c('status'),
+        ])
       );
       for (const r of rows) {
         lines.push(
           toCsvLine([
             r.sku,
             r.productName,
-            r.category,
-            r.unit,
+            translateDomainLabel(language, 'categories', r.category),
+            translateDomainLabel(language, 'units', r.unit),
             r.warehouseLabel,
             r.quantity,
             r.reorderLevel,
             r.unitCost,
             r.totalValue,
-            r.status,
+            translateKey(language, r.status === 'active' ? 'status.active' : 'status.inactive'),
           ])
         );
       }
       lines.push(
         toCsvLine([
           totalLabel,
-          `${rows.length} SKU`,
+          translateKey(language, 'reports.csv.skuCount', { count: rows.length }),
           '',
           '',
           '',
@@ -496,11 +494,21 @@ export function buildReportCsvContent(
     case 'stock_out': {
       const rows = report.rows as StockTransactionReportRow[];
       lines.push(
-        toCsvLine(
-          isVi
-            ? ['Ngày', 'Mã phiếu', 'Loại', 'Mã kho', 'Tên kho', 'Đối tác / Nơi nhận', 'SKU', 'Tên sản phẩm', 'Danh mục', 'Số lượng', 'Đơn giá (VND)', 'Thành tiền (VND)', 'Người thực hiện']
-            : ['Date', 'Voucher Code', 'Direction', 'Warehouse Code', 'Warehouse Name', 'Partner / Destination', 'SKU', 'Product Name', 'Category', 'Quantity', 'Unit Cost (VND)', 'Line Total (VND)', 'Operator']
-        )
+        toCsvLine([
+          c('date'),
+          c('voucherCode'),
+          c('direction'),
+          c('warehouseCode'),
+          c('warehouseName'),
+          c('partnerDest'),
+          c('sku'),
+          c('productName'),
+          c('category'),
+          c('quantity'),
+          c('unitCostVnd'),
+          c('lineTotalVnd'),
+          c('operator'),
+        ])
       );
       for (const r of rows) {
         lines.push(
@@ -509,11 +517,11 @@ export function buildReportCsvContent(
             r.voucherCode,
             r.direction,
             r.warehouseCode,
-            r.warehouseName,
+            translateDomainLabel(language, 'warehouseNames', r.warehouseCode, r.warehouseName),
             r.partnerName,
             r.sku,
             r.productName,
-            r.category,
+            translateDomainLabel(language, 'categories', r.category),
             r.quantity,
             r.unitCost,
             r.lineTotal,
@@ -524,7 +532,7 @@ export function buildReportCsvContent(
       lines.push(
         toCsvLine([
           totalLabel,
-          `${rows.length} lines`,
+          translateKey(language, 'reports.csv.linesCount', { count: rows.length }),
           '',
           '',
           '',
@@ -544,19 +552,27 @@ export function buildReportCsvContent(
     case 'stock_movement': {
       const rows = report.rows as StockMovementRow[];
       lines.push(
-        toCsvLine(
-          isVi
-            ? ['SKU', 'Tên sản phẩm', 'Danh mục', 'Đơn vị', 'Tồn đầu kỳ', 'Nhập trong kỳ', 'Xuất trong kỳ', 'Tồn cuối kỳ', 'Giá trị nhập (VND)', 'Giá trị xuất (VND)', 'Giá trị tồn cuối (VND)']
-            : ['SKU', 'Product Name', 'Category', 'Unit', 'Opening Qty', 'Inbound Qty', 'Outbound Qty', 'Closing Qty', 'Inbound Value (VND)', 'Outbound Value (VND)', 'Closing Value (VND)']
-        )
+        toCsvLine([
+          c('sku'),
+          c('productName'),
+          c('category'),
+          c('unit'),
+          c('openingQty'),
+          c('inboundQty'),
+          c('outboundQty'),
+          c('closingQty'),
+          c('inboundValueVnd'),
+          c('outboundValueVnd'),
+          c('closingValueVnd'),
+        ])
       );
       for (const r of rows) {
         lines.push(
           toCsvLine([
             r.sku,
             r.productName,
-            r.category,
-            r.unit,
+            translateDomainLabel(language, 'categories', r.category),
+            translateDomainLabel(language, 'units', r.unit),
             r.openingQty,
             r.inQty,
             r.outQty,
@@ -572,7 +588,7 @@ export function buildReportCsvContent(
       lines.push(
         toCsvLine([
           totalLabel,
-          `${rows.length} SKU`,
+          translateKey(language, 'reports.csv.skuCount', { count: rows.length }),
           '',
           '',
           totalOpening,
@@ -590,32 +606,39 @@ export function buildReportCsvContent(
     case 'low_stock': {
       const rows = report.rows as LowStockRow[];
       lines.push(
-        toCsvLine(
-          isVi
-            ? ['SKU', 'Tên sản phẩm', 'Danh mục', 'Kho', 'Tồn hiện tại', 'Ngưỡng tối thiểu', 'Số lượng thiếu hụt', 'Đơn giá dự kiến (VND)', 'Dự trù nhập bổ sung (VND)', 'Mức độ']
-            : ['SKU', 'Product Name', 'Category', 'Warehouse', 'Current Qty', 'Reorder Level', 'Deficit Qty', 'Unit Cost (VND)', 'Est. Restock Value (VND)', 'Severity']
-        )
+        toCsvLine([
+          c('sku'),
+          c('productName'),
+          c('category'),
+          c('warehouse'),
+          c('currentQty'),
+          c('reorderLevel'),
+          c('deficitQty'),
+          c('estUnitCostVnd'),
+          c('estRestockValueVnd'),
+          c('severity'),
+        ])
       );
       for (const r of rows) {
         lines.push(
           toCsvLine([
             r.sku,
             r.productName,
-            r.category,
+            translateDomainLabel(language, 'categories', r.category),
             r.warehouseLabel,
             r.currentQty,
             r.reorderLevel,
             r.deficitQty,
             r.unitCost,
             r.estimatedRestockValue,
-            r.severity,
+            translateKey(language, `reports.table.severity.${r.severity}`),
           ])
         );
       }
       lines.push(
         toCsvLine([
           totalLabel,
-          `${rows.length} SKU`,
+          translateKey(language, 'reports.csv.skuCount', { count: rows.length }),
           '',
           '',
           report.totals.totalPrimaryQty,

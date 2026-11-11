@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../../i18n';
 
 export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -15,15 +16,17 @@ const spinnerSizes = {
 export const Spinner: React.FC<SpinnerProps> = ({
   size = 'md',
   className = 'text-current',
-  ariaLabel = 'Loading',
+  ariaLabel,
 }) => {
+  const { t } = useTranslation();
+  const label = ariaLabel ?? t('common.loading');
   return (
     <span
       role="status"
-      aria-label={ariaLabel}
+      aria-label={label}
       className={`inline-block animate-spin rounded-full border-solid border-current border-t-transparent ${spinnerSizes[size]} ${className}`}
     >
-      <span className="sr-only">{ariaLabel}</span>
+      <span className="sr-only">{label}</span>
     </span>
   );
 };
@@ -73,9 +76,10 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({
   columns = 4,
   className = '',
 }) => {
+  const { t } = useTranslation();
   return (
     <div
-      aria-label="Loading table data"
+      aria-label={t('table.loadingAria')}
       role="status"
       className={`w-full overflow-hidden border border-[#E2E8F0] rounded-lg bg-white shadow-sm ${className}`}
     >
@@ -113,14 +117,15 @@ export interface PageLoaderProps {
   message?: string;
 }
 
-export const PageLoader: React.FC<PageLoaderProps> = ({ message = 'Loading...' }) => {
+export const PageLoader: React.FC<PageLoaderProps> = ({ message }) => {
+  const { t } = useTranslation();
   return (
     <div
       role="status"
       className="flex flex-col items-center justify-center min-h-[320px] w-full p-8"
     >
       <Spinner size="lg" className="text-[#2563EB] mb-4" />
-      <p className="text-sm font-medium text-[#475569]">{message}</p>
+      <p className="text-sm font-medium text-[#475569]">{message ?? t('common.loading')}</p>
     </div>
   );
 };

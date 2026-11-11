@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Button, Input, Select } from '../../../design-system';
 import { WAREHOUSE_REGIONS } from '../mockData';
 import type { Warehouse, WarehouseFormData, WarehouseType, MasterStatus, ValidationErrors } from '../types';
+import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
 export interface WarehouseFormModalProps {
   open: boolean;
@@ -37,6 +39,7 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t, language } = useTranslation();
   const [formData, setFormData] = useState<WarehouseFormData>(() => {
     if (mode === 'edit' && initialItem) {
       return {
@@ -79,9 +82,9 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           id="wh-input-code"
-          label="Mã kho (Duy nhất)"
+          label={t('masterData.warehouses.formCodeLabel')}
           required
-          placeholder="VD: WH-05"
+          placeholder={t('masterData.warehouses.formCodePlaceholder')}
           value={formData.code}
           onChange={(e) => handleChange('code', e.target.value.toUpperCase())}
           error={errors.code}
@@ -89,9 +92,9 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
         />
         <Input
           id="wh-input-name"
-          label="Tên kho hàng"
+          label={t('masterData.warehouses.formNameLabel')}
           required
-          placeholder="VD: Kho Trung Chuyển Cần Thơ"
+          placeholder={t('masterData.warehouses.formNamePlaceholder')}
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
           error={errors.name}
@@ -102,36 +105,39 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Select
           id="wh-select-region"
-          label="Khu vực"
+          label={t('masterData.warehouses.formRegionLabel')}
           required
           value={formData.region}
           onChange={(e) => handleChange('region', e.target.value)}
           error={errors.region}
-          options={WAREHOUSE_REGIONS.map((r) => ({ value: r, label: r }))}
+          options={WAREHOUSE_REGIONS.map((r) => ({
+            value: r,
+            label: translateDomainLabel(language, 'regions', r),
+          }))}
           size="sm"
         />
         <Select
           id="wh-select-type"
-          label="Loại hình kho"
+          label={t('masterData.warehouses.formTypeLabel')}
           required
           value={formData.type}
           onChange={(e) => handleChange('type', e.target.value as WarehouseType)}
           options={[
-            { value: 'main', label: 'Kho trung tâm (Main Hub)' },
-            { value: 'regional', label: 'Kho vùng (Regional)' },
-            { value: 'transit', label: 'Kho trung chuyển (Transit)' },
-            { value: 'reserve', label: 'Kho dự phòng (Reserve)' },
+            { value: 'main', label: t('masterData.warehouses.typeFormOpts.main') },
+            { value: 'regional', label: t('masterData.warehouses.typeFormOpts.regional') },
+            { value: 'transit', label: t('masterData.warehouses.typeFormOpts.transit') },
+            { value: 'reserve', label: t('masterData.warehouses.typeFormOpts.reserve') },
           ]}
           size="sm"
         />
         <Select
           id="wh-select-status"
-          label="Trạng thái"
+          label={t('masterData.warehouses.formStatusLabel')}
           value={formData.status}
           onChange={(e) => handleChange('status', e.target.value as MasterStatus)}
           options={[
-            { value: 'active', label: 'Đang hoạt động' },
-            { value: 'inactive', label: 'Ngừng hoạt động' },
+            { value: 'active', label: t('masterData.common.statusActive') },
+            { value: 'inactive', label: t('masterData.common.statusInactive') },
           ]}
           size="sm"
         />
@@ -139,9 +145,9 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
 
       <Input
         id="wh-input-address"
-        label="Địa điểm / Khu công nghiệp"
+        label={t('masterData.warehouses.formAddressLabel')}
         required
-        placeholder="VD: Đường số 2, KCN Trà Nóc, Bình Thủy, Cần Thơ"
+        placeholder={t('masterData.warehouses.formAddressPlaceholder')}
         value={formData.address}
         onChange={(e) => handleChange('address', e.target.value)}
         error={errors.address}
@@ -151,9 +157,9 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Input
           id="wh-input-manager"
-          label="Quản lý phụ trách"
+          label={t('masterData.warehouses.formManagerLabel')}
           required
-          placeholder="VD: Nguyễn Minh Hải"
+          placeholder={t('masterData.warehouses.formManagerPlaceholder')}
           value={formData.manager}
           onChange={(e) => handleChange('manager', e.target.value)}
           error={errors.manager}
@@ -161,7 +167,7 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
         />
         <Input
           id="wh-input-staff"
-          label="Số nhân sự"
+          label={t('masterData.warehouses.formStaffLabel')}
           type="number"
           min={0}
           value={formData.staffCount}
@@ -171,7 +177,7 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
         />
         <Input
           id="wh-input-capacity"
-          label="Tỷ lệ lấp đầy (%)"
+          label={t('masterData.warehouses.formCapacityLabel')}
           type="number"
           min={0}
           max={100}
@@ -184,12 +190,12 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
 
       <div>
         <label htmlFor="wh-input-desc" className="block text-xs font-medium text-[#0F172A] mb-1">
-          Ghi chú vận hành
+          {t('masterData.warehouses.formNotesLabel')}
         </label>
         <textarea
           id="wh-input-desc"
           rows={2}
-          placeholder="Ghi chú phân khu kệ, năng lực bốc xếp hoặc giờ nhận hàng..."
+          placeholder={t('masterData.warehouses.formNotesPlaceholder')}
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
           className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]"
@@ -198,10 +204,12 @@ const WarehouseFormContent: React.FC<WarehouseFormContentProps> = ({
 
       <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
         <Button variant="secondary" size="sm" onClick={onClose} type="button">
-          Hủy bỏ
+          {t('masterData.common.cancelBtn')}
         </Button>
         <Button id="btn-submit-warehouse" variant="primary" size="sm" type="submit">
-          {mode === 'create' ? 'Tạo kho hàng' : 'Lưu thay đổi'}
+          {mode === 'create'
+            ? t('masterData.warehouses.formCreateSubmit')
+            : t('masterData.common.saveBtn')}
         </Button>
       </div>
     </form>
@@ -214,26 +222,34 @@ export const WarehouseFormModal: React.FC<WarehouseFormModalProps> = ({
   onSubmit,
   initialItem,
   mode,
-}) => (
-  <Modal
-    open={open}
-    onClose={onClose}
-    size="lg"
-    title={mode === 'create' ? 'Thêm kho hàng mới' : `Chỉnh sửa kho hàng: ${initialItem?.code}`}
-    description={
-      mode === 'create'
-        ? 'Khai báo thông tin mã kho duy nhất, địa điểm lưu trữ và nhân sự quản lý.'
-        : 'Cập nhật thông tin vận hành, phụ trách và trạng thái kho hàng.'
-    }
-  >
-    {open ? (
-      <WarehouseFormContent
-        key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
-        mode={mode}
-        initialItem={initialItem}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
-    ) : null}
-  </Modal>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="lg"
+      title={
+        mode === 'create'
+          ? t('masterData.warehouses.formCreateTitle')
+          : t('masterData.warehouses.formEditTitle', { code: initialItem?.code ?? '' })
+      }
+      description={
+        mode === 'create'
+          ? t('masterData.warehouses.formCreateDesc')
+          : t('masterData.warehouses.formEditDesc')
+      }
+    >
+      {open ? (
+        <WarehouseFormContent
+          key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
+          mode={mode}
+          initialItem={initialItem}
+          onClose={onClose}
+          onSubmit={onSubmit}
+        />
+      ) : null}
+    </Modal>
+  );
+};

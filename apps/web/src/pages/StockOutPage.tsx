@@ -12,6 +12,7 @@ import {
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Button, Card, Modal, Table, type Column } from '../design-system';
 import { useTranslation } from '../i18n';
+import { translateDomainLabel } from '../i18n/domainTranslate';
 import {
   OrderFiltersBar,
   OrderStatusBadge,
@@ -70,7 +71,7 @@ export const StockOutPage: React.FC = () => {
   const getReasonLabel = (reasonCode: string) => {
     const found = STOCK_OUT_REASONS.find((r) => r.value === reasonCode);
     if (!found) return reasonCode;
-    return language === 'vi' ? found.labelVi : found.labelEn;
+    return t(`stockOps.reasons.${found.value}`);
   };
 
   const handleOpenCreate = () => {
@@ -93,12 +94,8 @@ export const StockOutPage: React.FC = () => {
         notify(
           'success',
           targetStatus === 'SUBMITTED'
-            ? language === 'vi'
-              ? `Đã cập nhật và gửi duyệt phiếu xuất ${res.order.code}.`
-              : `Updated and submitted dispatch ${res.order.code}.`
-            : language === 'vi'
-              ? `Đã lưu bản nháp phiếu xuất ${res.order.code}.`
-              : `Saved draft dispatch ${res.order.code}.`
+            ? t('stockOps.outPage.toasts.updatedSubmitted', { code: res.order.code })
+            : t('stockOps.outPage.toasts.savedDraft', { code: res.order.code })
         );
       }
       return res;
@@ -109,12 +106,8 @@ export const StockOutPage: React.FC = () => {
       notify(
         'success',
         targetStatus === 'SUBMITTED'
-          ? language === 'vi'
-            ? `Đã tạo và gửi duyệt phiếu xuất ${res.order.code}.`
-            : `Created and submitted dispatch ${res.order.code}.`
-          : language === 'vi'
-            ? `Đã lưu nháp phiếu xuất ${res.order.code}.`
-            : `Saved draft dispatch ${res.order.code}.`
+          ? t('stockOps.outPage.toasts.createdSubmitted', { code: res.order.code })
+          : t('stockOps.outPage.toasts.createdDraft', { code: res.order.code })
       );
     }
     return res;
@@ -125,9 +118,10 @@ export const StockOutPage: React.FC = () => {
     if (res.ok) {
       notify(
         'success',
-        language === 'vi'
-          ? `Phiếu ${res.order.code} đã chuyển sang trạng thái ${nextStatus}.`
-          : `Voucher ${res.order.code} transitioned to ${nextStatus}.`
+        t('stockOps.shared.transitionedToast', {
+          code: res.order.code,
+          status: t(`status.${nextStatus.toLowerCase()}`),
+        })
       );
     }
     return res;
@@ -139,9 +133,7 @@ export const StockOutPage: React.FC = () => {
     if (res.ok) {
       notify(
         'success',
-        language === 'vi'
-          ? `Đã xóa phiếu nháp ${deleteTarget.code}.`
-          : `Deleted draft voucher ${deleteTarget.code}.`
+        t('stockOps.shared.deletedDraftToast', { code: deleteTarget.code })
       );
       setDeleteTarget(null);
     } else {
@@ -152,7 +144,7 @@ export const StockOutPage: React.FC = () => {
   const columns: Column<StockOutOrder>[] = [
     {
       key: 'code',
-      label: language === 'vi' ? 'Mã phiếu' : 'Voucher Code',
+      label: t('stockOps.shared.colCode'),
       render: (_, record) => (
         <button
           type="button"
@@ -165,24 +157,32 @@ export const StockOutPage: React.FC = () => {
     },
     {
       key: 'warehouseName',
-      label: language === 'vi' ? 'Kho xuất' : 'Warehouse',
-      render: (_, record) => (
-        <div className="min-w-0">
-          <span className="font-mono text-xs font-semibold text-[#0F172A]">
-            {record.warehouseCode}
-          </span>
-          <p
-            title={record.warehouseName}
-            className="text-xs text-[#64748B] truncate max-w-[115px]"
-          >
-            {record.warehouseName}
-          </p>
-        </div>
-      ),
+      label: t('stockOps.outPage.colWarehouse'),
+      render: (_, record) => {
+        const localizedWarehouse = translateDomainLabel(
+          language,
+          'warehouseNames',
+          record.warehouseCode,
+          record.warehouseName
+        );
+        return (
+          <div className="min-w-0">
+            <span className="font-mono text-xs font-semibold text-[#0F172A]">
+              {record.warehouseCode}
+            </span>
+            <p
+              title={localizedWarehouse}
+              className="text-xs text-[#64748B] truncate max-w-[115px]"
+            >
+              {localizedWarehouse}
+            </p>
+          </div>
+        );
+      },
     },
     {
       key: 'destination',
-      label: language === 'vi' ? 'Nơi nhận & Lý do' : 'Destination & Reason',
+      label: t('stockOps.outPage.colDestReason'),
       render: (_, record) => (
         <div className="min-w-0">
           <span
@@ -199,20 +199,20 @@ export const StockOutPage: React.FC = () => {
     },
     {
       key: 'totalQty',
-      label: language === 'vi' ? 'SL / Dòng hàng' : 'Qty / Lines',
+      label: t('stockOps.shared.colQtyLines'),
       align: 'right',
       render: (_, record) => (
         <div className="font-mono tabular-nums text-right">
           <span className="font-semibold text-[#0F172A]">{record.totalQty}</span>
           <span className="block text-[11px] text-[#64748B] whitespace-nowrap">
-            {record.items.length} {language === 'vi' ? 'dòng' : 'lines'}
+            {record.items.length} {t('stockOps.shared.linesUnit')}
           </span>
         </div>
       ),
     },
     {
       key: 'totalAmount',
-      label: language === 'vi' ? 'Giá trị xuất' : 'Dispatch Value',
+      label: t('stockOps.outPage.colDispatchValue'),
       align: 'right',
       render: (_, record) => (
         <span className="font-mono font-semibold tabular-nums text-[#0F172A] whitespace-nowrap">
@@ -222,7 +222,7 @@ export const StockOutPage: React.FC = () => {
     },
     {
       key: 'createdBy',
-      label: language === 'vi' ? 'Người lập' : 'Created By',
+      label: t('stockOps.shared.colCreatedBy'),
       render: (_, record) => (
         <span
           title={record.createdBy}
@@ -234,12 +234,12 @@ export const StockOutPage: React.FC = () => {
     },
     {
       key: 'status',
-      label: language === 'vi' ? 'Trạng thái' : 'Status',
+      label: t('stockOps.shared.colStatus'),
       render: (_, record) => <OrderStatusBadge status={record.status} />,
     },
     {
       key: 'actions',
-      label: language === 'vi' ? 'Thao tác' : 'Actions',
+      label: t('stockOps.shared.colActions'),
       align: 'right',
       render: (_, record) => (
         <div className="inline-flex items-center justify-end gap-1">
@@ -247,8 +247,8 @@ export const StockOutPage: React.FC = () => {
             type="button"
             data-testid={`btn-view-${record.code}`}
             onClick={() => setDetailOrderId(record.id)}
-            title={language === 'vi' ? 'Xem chi tiết & lịch sử' : 'View details & timeline'}
-            aria-label={`${language === 'vi' ? 'Xem chi tiết' : 'View details'} ${record.code}`}
+            title={t('stockOps.shared.viewTooltip')}
+            aria-label={t('stockOps.shared.viewAria', { code: record.code })}
             className="p-1.5 rounded-md text-[#475569] hover:text-[#0284C7] hover:bg-[#F0F9FF] transition-colors cursor-pointer"
           >
             <Eye className="w-4 h-4" />
@@ -258,8 +258,8 @@ export const StockOutPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleOpenEdit(record)}
-                title={language === 'vi' ? 'Chỉnh sửa nháp' : 'Edit draft'}
-                aria-label={`${language === 'vi' ? 'Chỉnh sửa' : 'Edit'} ${record.code}`}
+                title={t('stockOps.shared.editTooltip')}
+                aria-label={t('stockOps.shared.editAria', { code: record.code })}
                 className="p-1.5 rounded-md text-[#475569] hover:text-[#0284C7] hover:bg-[#F0F9FF] transition-colors cursor-pointer"
               >
                 <Edit3 className="w-4 h-4" />
@@ -267,8 +267,8 @@ export const StockOutPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setDeleteTarget(record)}
-                title={language === 'vi' ? 'Xóa bản nháp' : 'Delete draft'}
-                aria-label={`${language === 'vi' ? 'Xóa' : 'Delete'} ${record.code}`}
+                title={t('stockOps.shared.deleteTooltip')}
+                aria-label={t('stockOps.shared.deleteAria', { code: record.code })}
                 className="p-1.5 rounded-md text-[#64748B] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition-colors cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
@@ -284,11 +284,7 @@ export const StockOutPage: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title={t('nav.stockOut')}
-        description={
-          language === 'vi'
-            ? 'Lập phiếu xuất kho kiểm soát tồn kho khả dụng theo từng kho (chặn xuất âm), hỗ trợ lưu nháp, gửi duyệt và theo dõi lịch sử.'
-            : 'Create dispatch vouchers validated against per-warehouse mock stock balances, blocking over-stock quantities.'
-        }
+        description={t('stockOps.outPage.subtitle')}
         actions={
           canCreate ? (
             <Button
@@ -297,7 +293,7 @@ export const StockOutPage: React.FC = () => {
               iconLeft={<FilePlus2 className="w-4 h-4" />}
               onClick={handleOpenCreate}
             >
-              {language === 'vi' ? 'Tạo phiếu xuất kho' : 'Create Stock-Out Voucher'}
+              {t('stockOps.outPage.createButton')}
             </Button>
           ) : undefined
         }
@@ -320,7 +316,7 @@ export const StockOutPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-[#64748B]">
-                {language === 'vi' ? 'Tổng phiếu xuất' : 'Total Dispatches'}
+                {t('stockOps.outPage.kpiTotal')}
               </p>
               <p className="text-2xl font-bold font-mono tabular-nums text-[#0F172A] mt-1">
                 {orders.length}
@@ -336,7 +332,7 @@ export const StockOutPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-[#64748B]">
-                {language === 'vi' ? 'Đang chờ duyệt' : 'Pending Approval'}
+                {t('stockOps.shared.pendingApproval')}
               </p>
               <p className="text-2xl font-bold font-mono tabular-nums text-[#D97706] mt-1">
                 {submittedCount}
@@ -352,7 +348,7 @@ export const StockOutPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-[#64748B]">
-                {language === 'vi' ? 'Đã hoàn tất xuất' : 'Completed'}
+                {t('stockOps.shared.completed')}
               </p>
               <p className="text-2xl font-bold font-mono tabular-nums text-[#16A34A] mt-1">
                 {completedCount}
@@ -368,7 +364,7 @@ export const StockOutPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <p className="text-xs font-medium text-[#64748B]">
-                {language === 'vi' ? 'Tổng giá trị xuất' : 'Total Dispatch Value'}
+                {t('stockOps.outPage.kpiTotalValue')}
               </p>
               <p className="text-lg font-bold font-mono tabular-nums text-[#0F172A] mt-1 truncate">
                 {formatCurrencyVND(totalValue)}
@@ -383,22 +379,17 @@ export const StockOutPage: React.FC = () => {
 
       {/* Filters & Orders Table */}
       <Card
-        title={language === 'vi' ? 'Danh sách phiếu xuất kho' : 'Outbound Stock Dispatches'}
-        description={
-          language === 'vi'
-            ? `Hiển thị ${filteredOrders.length} / ${orders.length} phiếu xuất (chế độ Prototype)`
-            : `Showing ${filteredOrders.length} of ${orders.length} outbound dispatches (Prototype mode)`
-        }
+        title={t('stockOps.outPage.cardTitle')}
+        description={t('stockOps.outPage.cardDescription', {
+          shown: filteredOrders.length,
+          total: orders.length,
+        })}
       >
         <div className="space-y-4">
           <OrderFiltersBar
             filters={filters}
             currentActor={currentActor}
-            searchPlaceholder={
-              language === 'vi'
-                ? 'Tìm theo mã phiếu, nơi nhận, SKU...'
-                : 'Search voucher code, destination, SKU...'
-            }
+            searchPlaceholder={t('stockOps.outPage.searchPlaceholder')}
             onSearchChange={setSearch}
             onStatusChange={setStatus}
             onWarehouseChange={setWarehouseCode}
@@ -409,18 +400,12 @@ export const StockOutPage: React.FC = () => {
           <Table
             columns={columns}
             data={filteredOrders}
-            caption={language === 'vi' ? 'Danh sách phiếu xuất kho' : 'Outbound Stock Dispatches'}
-            emptyTitle={
-              language === 'vi' ? 'Không tìm thấy phiếu xuất phù hợp' : 'No matching dispatches found'
-            }
-            emptyDescription={
-              language === 'vi'
-                ? 'Hãy thử điều chỉnh bộ lọc hoặc tạo mới một phiếu xuất kho.'
-                : 'Adjust active filters or create a new stock-out voucher.'
-            }
+            caption={t('stockOps.outPage.cardTitle')}
+            emptyTitle={t('stockOps.outPage.emptyTitle')}
+            emptyDescription={t('stockOps.outPage.emptyDescription')}
             emptyAction={
               <Button variant="secondary" size="sm" onClick={resetFilters}>
-                {language === 'vi' ? 'Đặt lại bộ lọc' : 'Reset Filters'}
+                {t('stockOps.shared.resetFilters')}
               </Button>
             }
           />
@@ -451,22 +436,20 @@ export const StockOutPage: React.FC = () => {
       <Modal
         open={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
-        title={language === 'vi' ? 'Xác nhận xóa phiếu nháp' : 'Confirm Delete Draft'}
+        title={t('stockOps.shared.deleteModalTitle')}
         size="sm"
       >
         {deleteTarget && (
           <div className="space-y-4 text-sm text-[#334155]">
             <p>
-              {language === 'vi'
-                ? `Bạn có chắc chắn muốn xóa phiếu nháp ${deleteTarget.code}? Thao tác này không thể hoàn tác.`
-                : `Are you sure you want to delete draft voucher ${deleteTarget.code}?`}
+              {t('stockOps.shared.deleteModalBody', { code: deleteTarget.code })}
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(null)}>
-                {language === 'vi' ? 'Hủy' : 'Cancel'}
+                {t('stockOps.shared.cancel')}
               </Button>
               <Button variant="danger" size="sm" onClick={handleConfirmDelete}>
-                {language === 'vi' ? 'Xác nhận xóa' : 'Delete Draft'}
+                {t('stockOps.shared.confirmDelete')}
               </Button>
             </div>
           </div>

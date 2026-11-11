@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input, Select } from '../../../design-system';
 import type { UnitOfMeasure, UnitFormData, MeasureType, MasterStatus, ValidationErrors } from '../types';
+import { useTranslation } from '../../../i18n';
 
 export interface UnitFormModalProps {
   open: boolean;
@@ -33,6 +34,7 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<UnitFormData>(() => {
     if (mode === 'edit' && initialItem) {
       return {
@@ -72,9 +74,9 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Input
           id="uom-input-code"
-          label="Mã đơn vị (Duy nhất)"
+          label={t('masterData.units.formCodeLabel')}
           required
-          placeholder="VD: UOM-PACK"
+          placeholder={t('masterData.units.formCodePlaceholder')}
           value={formData.code}
           onChange={(e) => handleChange('code', e.target.value.toUpperCase())}
           error={errors.code}
@@ -82,9 +84,9 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
         />
         <Input
           id="uom-input-name"
-          label="Tên đơn vị tính"
+          label={t('masterData.units.formNameLabel')}
           required
-          placeholder="VD: Gói (Pack)"
+          placeholder={t('masterData.units.formNamePlaceholder')}
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
           error={errors.name}
@@ -92,9 +94,9 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
         />
         <Input
           id="uom-input-symbol"
-          label="Ký hiệu (Duy nhất)"
+          label={t('masterData.units.formSymbolLabel')}
           required
-          placeholder="VD: Gói"
+          placeholder={t('masterData.units.formSymbolPlaceholder')}
           value={formData.symbol}
           onChange={(e) => handleChange('symbol', e.target.value)}
           error={errors.symbol}
@@ -105,26 +107,26 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           id="uom-select-type"
-          label="Nhóm đo lường"
+          label={t('masterData.units.formTypeLabel')}
           required
           value={formData.measureType}
           onChange={(e) => handleChange('measureType', e.target.value as MeasureType)}
           options={[
-            { value: 'discrete', label: 'Đơn vị đếm rời (Discrete)' },
-            { value: 'packaging', label: 'Quy cách đóng gói (Packaging)' },
-            { value: 'length', label: 'Chiều dài / Cuộn (Length)' },
-            { value: 'weight', label: 'Khối lượng (Weight)' },
+            { value: 'discrete', label: t('masterData.units.measureFormOpts.discrete') },
+            { value: 'packaging', label: t('masterData.units.measureFormOpts.packaging') },
+            { value: 'length', label: t('masterData.units.measureFormOpts.length') },
+            { value: 'weight', label: t('masterData.units.measureFormOpts.weight') },
           ]}
           size="sm"
         />
         <Select
           id="uom-select-status"
-          label="Trạng thái"
+          label={t('masterData.units.formStatusLabel')}
           value={formData.status}
           onChange={(e) => handleChange('status', e.target.value as MasterStatus)}
           options={[
-            { value: 'active', label: 'Đang hoạt động' },
-            { value: 'inactive', label: 'Ngừng hoạt động' },
+            { value: 'active', label: t('masterData.common.statusActive') },
+            { value: 'inactive', label: t('masterData.common.statusInactive') },
           ]}
           size="sm"
         />
@@ -132,8 +134,8 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
 
       <Input
         id="uom-input-conversion"
-        label="Quy ước quy đổi chuẩn"
-        placeholder="VD: 1 Gói = 10 Cái tiêu chuẩn"
+        label={t('masterData.units.formConversionLabel')}
+        placeholder={t('masterData.units.formConversionPlaceholder')}
         value={formData.conversionNote}
         onChange={(e) => handleChange('conversionNote', e.target.value)}
         size="sm"
@@ -141,12 +143,12 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
 
       <div>
         <label htmlFor="uom-input-desc" className="block text-xs font-medium text-[#0F172A] mb-1">
-          Mô tả áp dụng
+          {t('masterData.units.formDescLabel')}
         </label>
         <textarea
           id="uom-input-desc"
           rows={2}
-          placeholder="Ghi chú phạm vi mặt hàng áp dụng đơn vị tính này..."
+          placeholder={t('masterData.units.formDescPlaceholder')}
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
           className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]"
@@ -155,10 +157,12 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
 
       <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
         <Button variant="secondary" size="sm" onClick={onClose} type="button">
-          Hủy bỏ
+          {t('masterData.common.cancelBtn')}
         </Button>
         <Button id="btn-submit-unit" variant="primary" size="sm" type="submit">
-          {mode === 'create' ? 'Tạo đơn vị tính' : 'Lưu thay đổi'}
+          {mode === 'create'
+            ? t('masterData.units.formCreateSubmit')
+            : t('masterData.common.saveBtn')}
         </Button>
       </div>
     </form>
@@ -171,26 +175,34 @@ export const UnitFormModal: React.FC<UnitFormModalProps> = ({
   onSubmit,
   initialItem,
   mode,
-}) => (
-  <Modal
-    open={open}
-    onClose={onClose}
-    size="lg"
-    title={mode === 'create' ? 'Thêm đơn vị tính mới' : `Chỉnh sửa đơn vị tính: ${initialItem?.code}`}
-    description={
-      mode === 'create'
-        ? 'Khai báo mã đơn vị, tên gọi và ký hiệu viết tắt duy nhất cho hệ thống đo lường.'
-        : 'Cập nhật thông tin quy đổi và trạng thái sử dụng đơn vị tính.'
-    }
-  >
-    {open ? (
-      <UnitFormContent
-        key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
-        mode={mode}
-        initialItem={initialItem}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
-    ) : null}
-  </Modal>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="lg"
+      title={
+        mode === 'create'
+          ? t('masterData.units.formCreateTitle')
+          : t('masterData.units.formEditTitle', { code: initialItem?.code ?? '' })
+      }
+      description={
+        mode === 'create'
+          ? t('masterData.units.formCreateDesc')
+          : t('masterData.units.formEditDesc')
+      }
+    >
+      {open ? (
+        <UnitFormContent
+          key={mode === 'edit' ? initialItem?.id ?? 'edit' : 'new'}
+          mode={mode}
+          initialItem={initialItem}
+          onClose={onClose}
+          onSubmit={onSubmit}
+        />
+      ) : null}
+    </Modal>
+  );
+};

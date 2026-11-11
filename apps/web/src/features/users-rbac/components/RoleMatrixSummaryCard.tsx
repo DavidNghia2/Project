@@ -6,37 +6,37 @@ import type { RoleCode } from '../types';
 
 function renderPermissionCell(
   level: 'FULL' | 'SCOPED' | 'CREATE' | 'READ' | 'LIMITED' | 'NONE',
-  language: 'vi' | 'en'
+  t: (key: string) => string
 ) {
   switch (level) {
     case 'FULL':
       return (
         <Badge variant="success" size="sm">
-          {language === 'vi' ? 'Toàn quyền' : 'Full'}
+          {t('usersRbac.matrix.levels.FULL')}
         </Badge>
       );
     case 'SCOPED':
       return (
         <Badge variant="info" size="sm">
-          {language === 'vi' ? 'Theo kho gán' : 'Assigned scope'}
+          {t('usersRbac.matrix.levels.SCOPED')}
         </Badge>
       );
     case 'CREATE':
       return (
         <Badge variant="warning" size="sm">
-          {language === 'vi' ? 'Lập & gửi' : 'Create / Submit'}
+          {t('usersRbac.matrix.levels.CREATE')}
         </Badge>
       );
     case 'READ':
       return (
         <Badge variant="neutral" size="sm">
-          {language === 'vi' ? 'Chỉ xem' : 'Read-only'}
+          {t('usersRbac.matrix.levels.READ')}
         </Badge>
       );
     case 'LIMITED':
       return (
         <Badge variant="neutral" size="sm">
-          {language === 'vi' ? 'Giới hạn' : 'Limited'}
+          {t('usersRbac.matrix.levels.LIMITED')}
         </Badge>
       );
     default:
@@ -51,29 +51,19 @@ export interface RoleMatrixSummaryCardProps {
 export const RoleMatrixSummaryCard: React.FC<RoleMatrixSummaryCardProps> = ({
   highlightedRole,
 }) => {
-  const { language } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Card
-      title={
-        language === 'vi'
-          ? 'Ma trận phân quyền 4 vai trò (RBAC Reference)'
-          : '4-Role RBAC Permission Matrix'
-      }
-      description={
-        language === 'vi'
-          ? 'Đối chiếu quyền truy cập menu và thao tác nghiệp vụ theo đặc tả thiết kế hệ thống.'
-          : 'Module visibility and action permissions mapped across the four system roles.'
-      }
+      title={t('usersRbac.matrix.title')}
+      description={t('usersRbac.matrix.subtitle')}
       padding="md"
     >
       <div className="overflow-x-auto border border-[#E2E8F0] rounded-lg">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569] font-semibold">
-              <th className="py-2.5 px-3">
-                {language === 'vi' ? 'Phân hệ / Chức năng' : 'Module / Capability'}
-              </th>
+              <th className="py-2.5 px-3">{t('usersRbac.matrix.moduleHeader')}</th>
               <th
                 className={`py-2.5 px-3 text-center ${
                   highlightedRole === 'ADMIN' ? 'bg-[#EFF6FF] text-[#1D4ED8]' : ''
@@ -108,19 +98,19 @@ export const RoleMatrixSummaryCard: React.FC<RoleMatrixSummaryCardProps> = ({
             {SPEC_PERMISSION_ROWS.map((row) => (
               <tr key={row.moduleKey} className="hover:bg-[#F8FAFC]">
                 <td className="py-2.5 px-3 font-medium text-[#0F172A]">
-                  {language === 'vi' ? row.moduleVi : row.moduleEn}
+                  {t(row.moduleLabelKey)}
                 </td>
                 <td className="py-2.5 px-3 text-center">
-                  {renderPermissionCell(row.admin, language)}
+                  {renderPermissionCell(row.admin, t)}
                 </td>
                 <td className="py-2.5 px-3 text-center">
-                  {renderPermissionCell(row.manager, language)}
+                  {renderPermissionCell(row.manager, t)}
                 </td>
                 <td className="py-2.5 px-3 text-center">
-                  {renderPermissionCell(row.staff, language)}
+                  {renderPermissionCell(row.staff, t)}
                 </td>
                 <td className="py-2.5 px-3 text-center">
-                  {renderPermissionCell(row.viewer, language)}
+                  {renderPermissionCell(row.viewer, t)}
                 </td>
               </tr>
             ))}

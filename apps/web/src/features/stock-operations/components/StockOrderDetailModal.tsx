@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Alert, Button, Input, Modal, Select } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { SIMULATED_ACTORS, STOCK_OUT_REASONS } from '../mockData';
 import type { OrderStatus, StockInOrder, StockOutOrder } from '../types';
 import { canApproveOrReject, formatCurrencyVND } from '../workflow';
@@ -58,7 +59,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
   canCreate,
   canApprove,
 }) => {
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
   const [rejecting, setRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
@@ -72,7 +73,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
   const reasonLabel = stockOutOrder
     ? (() => {
         const found = STOCK_OUT_REASONS.find((r) => r.value === stockOutOrder.reason);
-        return found ? (language === 'vi' ? found.labelVi : found.labelEn) : stockOutOrder.reason;
+        return found ? t(`stockOps.reasons.${found.value}`) : stockOutOrder.reason;
       })()
     : '';
 
@@ -80,7 +81,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
     setActionError(null);
     const res = onTransition(order.id, nextStatus, note);
     if (!res.ok) {
-      setActionError(res.error ?? 'Transition failed');
+      setActionError(res.error ?? t('stockOps.errors.transitionFailed'));
     } else {
       setRejecting(false);
       setRejectReason('');
@@ -97,7 +98,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
             <OrderStatusBadge status={order.status} size="md" />
           </div>
           <span className="text-xs text-[#64748B]">
-            {language === 'vi' ? 'Người lập phiếu:' : 'Created by:'}{' '}
+            {t('stockOps.detail.createdBy')}{' '}
             <strong className="text-[#0F172A]">{order.createdBy}</strong>
           </span>
         </div>
@@ -105,23 +106,18 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div>
             <span className="text-[#64748B] block">
-              {isStockIn
-                ? language === 'vi'
-                  ? 'Kho tiếp nhận'
-                  : 'Receiving Warehouse'
-                : language === 'vi'
-                  ? 'Kho xuất hàng'
-                  : 'Dispatch Warehouse'}
+              {isStockIn ? t('stockOps.detail.receivingWarehouse') : t('stockOps.detail.dispatchWarehouse')}
             </span>
             <span className="font-semibold text-[#0F172A]">
-              {order.warehouseCode} — {order.warehouseName}
+              {order.warehouseCode} —{' '}
+              {translateDomainLabel(language, 'warehouseNames', order.warehouseCode, order.warehouseName)}
             </span>
           </div>
 
           {stockInOrder ? (
             <div>
               <span className="text-[#64748B] block">
-                {language === 'vi' ? 'Nhà cung cấp' : 'Supplier'}
+                {t('stockOps.detail.supplier')}
               </span>
               <span className="font-semibold text-[#0F172A]">
                 {stockInOrder.supplierCode} — {stockInOrder.supplierName}
@@ -131,7 +127,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
             stockOutOrder && (
               <div>
                 <span className="text-[#64748B] block">
-                  {language === 'vi' ? 'Nơi nhận / Khách hàng' : 'Destination / Recipient'}
+                  {t('stockOps.detail.destination')}
                 </span>
                 <span className="font-semibold text-[#0F172A]">{stockOutOrder.destination}</span>
               </div>
@@ -141,7 +137,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
           {stockInOrder && stockInOrder.referenceNote && (
             <div className="sm:col-span-2">
               <span className="text-[#64748B] block">
-                {language === 'vi' ? 'Ghi chú / Tham chiếu' : 'Reference Note'}
+                {t('stockOps.detail.referenceNote')}
               </span>
               <span className="text-[#334155]">{stockInOrder.referenceNote}</span>
             </div>
@@ -150,7 +146,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
           {stockOutOrder && (
             <div className="sm:col-span-2">
               <span className="text-[#64748B] block">
-                {language === 'vi' ? 'Lý do xuất kho' : 'Dispatch Reason'}
+                {t('stockOps.detail.dispatchReason')}
               </span>
               <span className="text-[#334155] font-medium">{reasonLabel}</span>
             </div>
@@ -161,27 +157,27 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
       {/* Items Table */}
       <div className="space-y-2">
         <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
-          {language === 'vi' ? 'Chi tiết sản phẩm' : 'Line Items Detail'}
+          {t('stockOps.detail.lineItemsTitle')}
         </h4>
         <div className="overflow-x-auto border border-[#E2E8F0] rounded-lg">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569] font-semibold">
                 <th className="py-2.5 px-3">SKU</th>
-                <th className="py-2.5 px-3">{language === 'vi' ? 'Sản phẩm' : 'Product'}</th>
+                <th className="py-2.5 px-3">{t('stockOps.detail.colProduct')}</th>
                 {!isStockIn && (
                   <th className="py-2.5 px-3 text-right">
-                    {language === 'vi' ? 'Tồn lúc lập' : 'Stock Snapshot'}
+                    {t('stockOps.detail.colStockSnapshot')}
                   </th>
                 )}
                 <th className="py-2.5 px-3 text-right">
-                  {language === 'vi' ? 'Số lượng' : 'Qty'}
+                  {t('stockOps.detail.colQty')}
                 </th>
                 <th className="py-2.5 px-3 text-right">
-                  {language === 'vi' ? 'Đơn giá' : 'Unit Cost'}
+                  {t('stockOps.detail.colUnitCost')}
                 </th>
                 <th className="py-2.5 px-3 text-right">
-                  {language === 'vi' ? 'Thành tiền' : 'Line Total'}
+                  {t('stockOps.detail.colLineTotal')}
                 </th>
               </tr>
             </thead>
@@ -193,7 +189,9 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                   </td>
                   <td className="py-2.5 px-3 text-[#334155]">
                     {item.productName}{' '}
-                    <span className="text-[11px] text-[#64748B]">({item.unit})</span>
+                    <span className="text-[11px] text-[#64748B]">
+                      ({translateDomainLabel(language, 'units', item.unit)})
+                    </span>
                   </td>
                   {!isStockIn && 'availableStock' in item && (
                     <td className="py-2.5 px-3 text-right font-mono tabular-nums text-[#64748B]">
@@ -215,7 +213,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
             <tfoot>
               <tr className="bg-[#F8FAFC] border-t border-[#E2E8F0] font-semibold">
                 <td colSpan={isStockIn ? 2 : 3} className="py-2.5 px-3 text-right text-[#475569]">
-                  {language === 'vi' ? 'Tổng cộng:' : 'Totals:'}
+                  {t('stockOps.detail.totalsLabel')}
                 </td>
                 <td className="py-2.5 px-3 text-right font-mono tabular-nums text-[#0F172A]">
                   {order.totalQty}
@@ -233,11 +231,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
       {/* Prototype Warning Note */}
       <Alert
         variant="info"
-        message={
-          language === 'vi'
-            ? 'Chế độ Prototype: Thao tác duyệt và hoàn tất phiếu chỉ mô phỏng quy trình, không ghi đè tồn kho thật.'
-            : 'Prototype mode: Approving or completing this voucher simulates state transitions without altering real master stock.'
-        }
+        message={t('stockOps.detail.prototypeNotice')}
       />
 
       {/* Workflow Actions & Maker-Checker Controls */}
@@ -245,13 +239,13 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
         <div className="border border-[#E2E8F0] rounded-lg p-4 bg-white space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
-              {language === 'vi' ? 'Xử lý trạng thái phiếu' : 'Workflow Transitions'}
+              {t('stockOps.detail.transitionsTitle')}
             </h4>
             {canApprove && (
               <div className="w-full sm:w-64">
                 <Select
                   id="detail-actor-select"
-                  label={language === 'vi' ? 'Người thực hiện hiện tại' : 'Current Operator'}
+                  label={t('stockOps.detail.currentOperator')}
                   value={currentActor}
                   onChange={(e) => {
                     onActorChange(e.target.value);
@@ -269,11 +263,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
           {order.status === 'SUBMITTED' && !canApprove && (
             <Alert
               variant="warning"
-              message={
-                language === 'vi'
-                  ? 'Nhân viên kho (Staff) không có quyền phê duyệt hoặc từ chối phiếu đã gửi.'
-                  : 'Warehouse Staff cannot approve or reject submitted vouchers.'
-              }
+              message={t('stockOps.detail.staffRestricted')}
             />
           )}
 
@@ -286,9 +276,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
               <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-[#D97706]" />
               <div>
                 <p className="font-semibold">
-                  {language === 'vi'
-                    ? 'Không thể tự phê duyệt phiếu của chính mình'
-                    : 'Self-approval blocked (Maker-Checker)'}
+                  {t('stockOps.detail.makerCheckerBlockedTitle')}
                 </p>
                 <p className="mt-0.5">{makerChecker.reason}</p>
               </div>
@@ -299,13 +287,9 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
             <div className="p-3 bg-[#FEF2F2]/60 border border-[#FECACA] rounded-md space-y-2.5">
               <Input
                 id="detail-reject-reason"
-                label={language === 'vi' ? 'Lý do từ chối phiếu' : 'Rejection Reason'}
+                label={t('stockOps.detail.rejectionReasonLabel')}
                 required
-                placeholder={
-                  language === 'vi'
-                    ? 'Nhập lý do yêu cầu lập lại chứng từ...'
-                    : 'Enter reason for rejecting this voucher...'
-                }
+                placeholder={t('stockOps.detail.rejectionPlaceholder')}
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 size="sm"
@@ -321,7 +305,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                     setActionError(null);
                   }}
                 >
-                  {language === 'vi' ? 'Đóng' : 'Cancel'}
+                  {t('stockOps.detail.close')}
                 </Button>
                 <Button
                   type="button"
@@ -329,7 +313,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                   size="sm"
                   onClick={() => handleTransitionClick('REJECTED', rejectReason)}
                 >
-                  {language === 'vi' ? 'Xác nhận từ chối' : 'Confirm Reject'}
+                  {t('stockOps.detail.confirmReject')}
                 </Button>
               </div>
             </div>
@@ -346,7 +330,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                     onClick={onEditDraft}
                     iconLeft={<Edit3 className="w-3.5 h-3.5" />}
                   >
-                    {language === 'vi' ? 'Chỉnh sửa nháp' : 'Edit Draft'}
+                    {t('stockOps.detail.editDraft')}
                   </Button>
                 )}
                 <Button
@@ -356,7 +340,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                   onClick={() => handleTransitionClick('SUBMITTED')}
                   iconLeft={<Send className="w-3.5 h-3.5" />}
                 >
-                  {language === 'vi' ? 'Gửi chờ duyệt' : 'Submit for Approval'}
+                  {t('stockOps.form.submitForApproval')}
                 </Button>
               </>
             )}
@@ -372,7 +356,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                   onClick={() => handleTransitionClick('APPROVED')}
                   iconLeft={<CheckCircle2 className="w-3.5 h-3.5" />}
                 >
-                  {language === 'vi' ? 'Phê duyệt phiếu' : 'Approve Voucher'}
+                  {t('stockOps.detail.approveVoucher')}
                 </Button>
                 <Button
                   type="button"
@@ -385,7 +369,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                   }}
                   iconLeft={<XCircle className="w-3.5 h-3.5" />}
                 >
-                  {language === 'vi' ? 'Từ chối' : 'Reject'}
+                  {t('stockOps.detail.reject')}
                 </Button>
               </>
             )}
@@ -398,7 +382,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                 onClick={() => handleTransitionClick('COMPLETED')}
                 iconLeft={<PackageCheck className="w-3.5 h-3.5" />}
               >
-                {language === 'vi' ? 'Xác nhận hoàn tất' : 'Mark Completed'}
+                {t('stockOps.detail.markCompleted')}
               </Button>
             )}
 
@@ -410,7 +394,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                 onClick={() => handleTransitionClick('DRAFT')}
                 iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
               >
-                {language === 'vi' ? 'Mở lại bản nháp' : 'Reopen as Draft'}
+                {t('stockOps.detail.reopenDraft')}
               </Button>
             )}
           </div>
@@ -420,7 +404,7 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
       {/* Timeline History */}
       <div className="space-y-2.5">
         <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
-          {language === 'vi' ? 'Lịch sử thay đổi trạng thái' : 'Status History'}
+          {t('stockOps.detail.statusHistoryTitle')}
         </h4>
         <OrderHistoryTimeline history={order.statusHistory} />
       </div>
@@ -440,16 +424,12 @@ export const StockOrderDetailModal: React.FC<StockOrderDetailModalProps> = ({
   canCreate = true,
   canApprove = true,
 }) => {
-  const { language } = useTranslation();
+  const { t } = useTranslation();
 
   const title = order
     ? direction === 'in'
-      ? language === 'vi'
-        ? `Chi tiết phiếu nhập kho ${order.code}`
-        : `Stock-In Voucher ${order.code}`
-      : language === 'vi'
-        ? `Chi tiết phiếu xuất kho ${order.code}`
-        : `Stock-Out Voucher ${order.code}`
+      ? t('stockOps.detail.titleIn', { code: order.code })
+      : t('stockOps.detail.titleOut', { code: order.code })
     : '';
 
   return (

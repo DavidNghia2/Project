@@ -21,8 +21,8 @@ describe('ReportsPage Component Integration', () => {
     const user = userEvent.setup();
     renderReportsPage();
 
-    // Default Current Stock tab (includes Inventory Balance Sheet label)
-    expect(screen.getByText(/Inventory Balance Sheet/i)).toBeInTheDocument();
+    // Default Current Stock tab (localized Vietnamese subtitle)
+    expect(screen.getByText(/Bảng cân đối tồn kho/i)).toBeInTheDocument();
     expect(screen.getByTestId('chart-totals-sync')).toBeInTheDocument();
     expect(screen.getByTestId('report-table-totals')).toBeInTheDocument();
 
@@ -95,6 +95,23 @@ describe('ReportsPage Component Integration', () => {
     expect(createObjectUrlSpy).toHaveBeenCalledTimes(1);
     expect(
       screen.getByText(/Đã xuất file inventory-report-current_stock-all-warehouses/i)
+    ).toBeInTheDocument();
+  });
+
+  it('renders full English localization when language is switched to en', async () => {
+    localStorage.setItem('smart_inventory_language', 'en');
+    const user = userEvent.setup();
+    renderReportsPage();
+
+    expect(screen.getByText(/Inventory Balance Sheet/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /Export Report CSV/i }).length).toBeGreaterThanOrEqual(1);
+
+    await user.click(document.getElementById('report-tab-stock_in')!);
+    expect(screen.getByRole('heading', { name: /Inbound Stock Receipts Detail/i })).toBeInTheDocument();
+
+    await user.click(document.getElementById('report-tab-stock_movement')!);
+    expect(
+      screen.getByRole('heading', { name: /Stock Movement Summary/i })
     ).toBeInTheDocument();
   });
 });

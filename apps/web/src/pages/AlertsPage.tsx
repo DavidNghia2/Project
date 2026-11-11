@@ -1,6 +1,7 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
 import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
 import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
@@ -14,31 +15,31 @@ export const AlertsPage: React.FC = () => {
     {
       sku: 'SKU-TONER-HP85A',
       name: 'Hộp mực in laser HP 85A Black LaserJet',
-      warehouse: 'Kho Tổng Hà Nội (WH-01)',
+      warehouseCode: 'WH-01',
       onHand: 0,
       threshold: 8,
-      status: 'active',
-      severity: 'critical',
+      status: 'active' as const,
+      severity: 'critical' as const,
       updatedAt: '10/11/2026 14:00',
     },
     {
       sku: 'SKU-CAB-TYPEC-2M',
       name: 'Cáp sạc USB-C to USB-C 100W bọc dù 2m',
-      warehouse: 'Kho Đà Nẵng (WH-02)',
+      warehouseCode: 'WH-02',
       onHand: 3,
       threshold: 15,
-      status: 'active',
-      severity: 'high',
+      status: 'active' as const,
+      severity: 'high' as const,
       updatedAt: '10/11/2026 11:20',
     },
     {
       sku: 'SKU-DELL-P2419',
       name: 'Màn hình Dell Professional 24 inch FHD IPS',
-      warehouse: 'Kho Tổng Hà Nội (WH-01)',
+      warehouseCode: 'WH-01',
       onHand: 8,
       threshold: 10,
-      status: 'acknowledged',
-      severity: 'medium',
+      status: 'acknowledged' as const,
+      severity: 'medium' as const,
       updatedAt: '09/11/2026 17:00',
     },
   ];
@@ -46,53 +47,59 @@ export const AlertsPage: React.FC = () => {
   const columns: Column<typeof alerts[0]>[] = [
     {
       key: 'sku',
-      label: 'SKU / Barcode',
-      render: (_val, r: typeof alerts[0]) => (
+      label: t('alerts.colSku'),
+      render: (_val, r) => (
         <span className="font-mono text-xs font-bold text-red-600">{r.sku}</span>
       ),
     },
-    { key: 'name', label: 'Item Name', render: (_val, r: typeof alerts[0]) => <span className="font-medium text-[#0F172A]">{r.name}</span> },
-    { key: 'warehouse', label: 'Warehouse Scope' },
+    {
+      key: 'name',
+      label: t('alerts.colItem'),
+      render: (_val, r) => <span className="font-medium text-[#0F172A]">{r.name}</span>,
+    },
+    {
+      key: 'warehouseCode',
+      label: t('alerts.colWarehouse'),
+      render: (_val, r) => translateDomainLabel(language, 'warehouses', r.warehouseCode),
+    },
     {
       key: 'onHand',
-      label: 'On-Hand / Threshold',
-      render: (_val, r: typeof alerts[0]) => (
+      label: t('alerts.colStockThreshold'),
+      render: (_val, r) => (
         <div className="font-mono text-xs">
           <span className="font-bold text-red-600">{r.onHand}</span>
-          <span className="text-slate-400"> / ngưỡng {r.threshold}</span>
+          <span className="text-slate-400"> {t('alerts.thresholdUnit', { threshold: r.threshold })}</span>
         </div>
       ),
     },
     {
       key: 'severity',
-      label: 'Urgency',
-      render: (_val, r: typeof alerts[0]) => (
+      label: t('alerts.colUrgency'),
+      render: (_val, r) => (
         <Badge variant={r.severity === 'critical' ? 'error' : 'warning'} size="sm">
-          {r.severity.toUpperCase()}
+          {t(`alerts.severity.${r.severity}`)}
         </Badge>
       ),
     },
     {
       key: 'status',
-      label: 'Status',
-      render: (_val, r: typeof alerts[0]) => (
+      label: t('alerts.colStatus'),
+      render: (_val, r) => (
         <Badge variant={r.status === 'active' ? 'error' : 'info'} size="sm" dot>
-          {r.status === 'active' ? 'Chưa xử lý' : 'Đã ghi nhận'}
+          {r.status === 'active' ? t('alerts.statusActive') : t('alerts.statusAck')}
         </Badge>
       ),
     },
     {
       key: 'actions',
-      label: 'Action',
-      render: (_val, r: typeof alerts[0]) =>
+      label: t('alerts.colAction'),
+      render: (_val, r) =>
         canConfigure ? (
           <Button variant="secondary" size="sm">
-            {r.status === 'active' ? 'Xác nhận xử lý' : 'Tạo PO bổ sung'}
+            {r.status === 'active' ? t('alerts.actionAck') : t('alerts.actionReorder')}
           </Button>
         ) : (
-          <span className="text-xs text-[#94A3B8]">
-            {language === 'vi' ? 'Chỉ xem' : 'Read-only'}
-          </span>
+          <span className="text-xs text-[#94A3B8]">{t('common.readOnly')}</span>
         ),
     },
   ];
@@ -105,7 +112,7 @@ export const AlertsPage: React.FC = () => {
         actions={
           canConfigure ? (
             <Button variant="secondary" size="sm" iconLeft={<RefreshCw className="w-4 h-4" />}>
-              {language === 'vi' ? 'Quét lại ngưỡng tồn' : 'Re-scan Thresholds'}
+              {t('alerts.rescanBtn')}
             </Button>
           ) : undefined
         }
@@ -115,8 +122,8 @@ export const AlertsPage: React.FC = () => {
 
       <Alert
         variant="warning"
-        title="Phát hiện 3 mặt hàng dưới ngưỡng an toàn"
-        message="Hệ thống tự động phát hiện số tồn khả dụng thấp hơn ngưỡng định mức đã cài đặt. Vui lòng kiểm tra và lên kế hoạch nhập bổ sung."
+        title={t('alerts.warningTitle', { count: alerts.length })}
+        message={t('alerts.warningMessage')}
       />
 
       <Card padding="md">

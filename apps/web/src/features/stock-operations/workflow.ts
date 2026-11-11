@@ -1,6 +1,7 @@
 import type { Product } from '../products/types';
 import { INITIAL_PRODUCTS } from '../products/mockData';
 import type { Language } from '../../i18n';
+import { translateKey } from '../../i18n/translate';
 import type {
   LineValidationError,
   OrderStatus,
@@ -84,10 +85,7 @@ function validateCommonLines(
   const lineErrors: Record<string, LineValidationError> = {};
   if (items.length === 0) {
     return {
-      itemsGeneral:
-        language === 'vi'
-          ? 'Vui lòng thêm ít nhất 1 sản phẩm vào phiếu'
-          : 'Please add at least one product line item',
+      itemsGeneral: translateKey(language, 'stockOps.validation.addAtLeastOneLine'),
       lineErrors,
     };
   }
@@ -97,21 +95,16 @@ function validateCommonLines(
     const err: LineValidationError = {};
     if (!item.productId) {
       err.productId =
-        language === 'vi' ? 'Vui lòng chọn sản phẩm' : 'Please select a product';
+        translateKey(language, 'stockOps.validation.selectProduct');
     } else if (seenProducts.has(item.productId)) {
       err.productId =
-        language === 'vi'
-          ? 'Sản phẩm bị trùng lặp trong cùng phiếu'
-          : 'Duplicate product on the same voucher';
+        translateKey(language, 'stockOps.validation.duplicateProduct');
     } else {
       seenProducts.add(item.productId);
     }
 
     if (!Number.isFinite(item.quantity) || item.quantity <= 0 || !Number.isInteger(item.quantity)) {
-      err.quantity =
-        language === 'vi'
-          ? 'Số lượng phải là số nguyên lớn hơn 0'
-          : 'Quantity must be a whole number greater than 0';
+      err.quantity = translateKey(language, 'stockOps.validation.qtyPositiveInt');
     }
 
     if (err.productId || err.quantity) {
@@ -130,11 +123,11 @@ export function validateStockInForm(
 
   if (!form.warehouseCode.trim()) {
     errors.warehouseCode =
-      language === 'vi' ? 'Vui lòng chọn kho nhập' : 'Please select a receiving warehouse';
+      translateKey(language, 'stockOps.validation.selectReceivingWarehouse');
   }
   if (!form.supplierCode.trim()) {
     errors.supplierCode =
-      language === 'vi' ? 'Vui lòng chọn nhà cung cấp' : 'Please select a supplier';
+      translateKey(language, 'stockOps.validation.selectSupplier');
   }
 
   const { itemsGeneral, lineErrors } = validateCommonLines(form.items, language);
@@ -146,10 +139,7 @@ export function validateStockInForm(
     if (!Number.isFinite(item.unitCost) || item.unitCost <= 0) {
       lineErrors[item.id] = {
         ...(lineErrors[item.id] ?? {}),
-        unitCost:
-          language === 'vi'
-            ? 'Đơn giá phải lớn hơn 0'
-            : 'Unit cost must be greater than 0',
+        unitCost: translateKey(language, 'stockOps.validation.unitCostPositive'),
       };
     }
   }
@@ -170,17 +160,14 @@ export function validateStockOutForm(
 
   if (!form.warehouseCode.trim()) {
     errors.warehouseCode =
-      language === 'vi' ? 'Vui lòng chọn kho xuất' : 'Please select a dispatch warehouse';
+      translateKey(language, 'stockOps.validation.selectDispatchWarehouse');
   }
   if (!form.destination.trim() || form.destination.trim().length < 2) {
-    errors.destination =
-      language === 'vi'
-        ? 'Vui lòng nhập nơi nhận / đối tác xuất kho (tối thiểu 2 ký tự)'
-        : 'Please enter a valid destination / recipient (min 2 chars)';
+    errors.destination = translateKey(language, 'stockOps.validation.destinationRequired');
   }
   if (!form.reason.trim()) {
     errors.reason =
-      language === 'vi' ? 'Vui lòng chọn lý do xuất kho' : 'Please select a dispatch reason';
+      translateKey(language, 'stockOps.validation.selectDispatchReason');
   }
 
   const { itemsGeneral, lineErrors } = validateCommonLines(form.items, language);
@@ -195,18 +182,15 @@ export function validateStockOutForm(
       if (available <= 0) {
         lineErrors[item.id] = {
           ...(lineErrors[item.id] ?? {}),
-          quantity:
-            language === 'vi'
-              ? 'Kho đã chọn hết tồn kho sản phẩm này (Tồn = 0)'
-              : 'Selected warehouse has 0 stock for this item',
+          quantity: translateKey(language, 'stockOps.validation.outOfStock'),
         };
       } else if (Number.isFinite(item.quantity) && item.quantity > available) {
         lineErrors[item.id] = {
           ...(lineErrors[item.id] ?? {}),
-          quantity:
-            language === 'vi'
-              ? `Vượt quá tồn kho tại ${form.warehouseCode} (Khả dụng: ${available})`
-              : `Exceeds stock in ${form.warehouseCode} (Available: ${available})`,
+          quantity: translateKey(language, 'stockOps.validation.exceedsStock', {
+            warehouse: form.warehouseCode,
+            available,
+          }),
         };
       }
     }
@@ -231,20 +215,14 @@ export function canApproveOrReject(
   if (!currentActor.trim()) {
     return {
       allowed: false,
-      reason:
-        language === 'vi'
-          ? 'Chưa xác định người thực hiện thao tác'
-          : 'Operator identity is required',
+      reason: translateKey(language, 'stockOps.validation.operatorRequired'),
     };
   }
 
   if (createdBy.trim().toLowerCase() === currentActor.trim().toLowerCase()) {
     return {
       allowed: false,
-      reason:
-        language === 'vi'
-          ? 'Quy tắc Maker-Checker: Người tạo phiếu không được tự phê duyệt hoặc từ chối phiếu của chính mình.'
-          : 'Maker-Checker rule: The voucher creator cannot approve or reject their own voucher.',
+      reason: translateKey(language, 'stockOps.validation.makerCheckerRule'),
     };
   }
 
@@ -261,10 +239,10 @@ export function applyStatusTransition<T extends StockInOrder | StockOutOrder>(
   if (!canTransition(order.status, nextStatus)) {
     return {
       ok: false,
-      error:
-        language === 'vi'
-          ? `Không thể chuyển trạng thái từ ${order.status} sang ${nextStatus}.`
-          : `Invalid status transition from ${order.status} to ${nextStatus}.`,
+      error: translateKey(language, 'stockOps.validation.invalidTransition', {
+        from: order.status,
+        to: nextStatus,
+      }),
     };
   }
 
@@ -273,7 +251,7 @@ export function applyStatusTransition<T extends StockInOrder | StockOutOrder>(
     if (!check.allowed) {
       return {
         ok: false,
-        error: check.reason ?? 'Maker-Checker check failed',
+        error: check.reason ?? translateKey(language, 'stockOps.validation.transitionNotAllowed'),
       };
     }
   }
@@ -281,22 +259,16 @@ export function applyStatusTransition<T extends StockInOrder | StockOutOrder>(
   if (nextStatus === 'REJECTED' && !note.trim()) {
     return {
       ok: false,
-      error:
-        language === 'vi'
-          ? 'Vui lòng nhập lý do từ chối phiếu.'
-          : 'Please provide a rejection reason.',
+      error: translateKey(language, 'stockOps.validation.rejectionReasonRequired'),
     };
   }
 
   const now = new Date().toISOString();
   const defaultNotes: Record<OrderStatus, string> = {
-    DRAFT: language === 'vi' ? 'Mở lại bản nháp để chỉnh sửa' : 'Reopened as draft for editing',
-    SUBMITTED: language === 'vi' ? 'Gửi phiếu chờ quản lý duyệt' : 'Submitted voucher for manager approval',
-    APPROVED: language === 'vi' ? 'Phê duyệt phiếu' : 'Approved voucher',
-    COMPLETED:
-      language === 'vi'
-        ? 'Xác nhận hoàn tất (Prototype: không ghi đè tồn kho gốc)'
-        : 'Marked completed (Prototype: master inventory untouched)',
+    DRAFT: translateKey(language, 'stockOps.history.defaultDRAFT'),
+    SUBMITTED: translateKey(language, 'stockOps.history.defaultSUBMITTED'),
+    APPROVED: translateKey(language, 'stockOps.history.defaultAPPROVED'),
+    COMPLETED: translateKey(language, 'stockOps.history.defaultCOMPLETED'),
     REJECTED: note.trim(),
   };
 

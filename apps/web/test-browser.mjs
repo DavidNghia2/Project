@@ -94,8 +94,8 @@ async function runBrowserTest() {
 
     // Verify modal is open
     let modalText = await page.textContent('dialog');
-    if (!modalText.includes('Thêm mới sản phẩm vào kho')) {
-      throw new Error('Create product modal failed to open');
+    if (!modalText.includes('Add New Product to Inventory')) {
+      throw new Error('Create product modal failed to open in English');
     }
     console.log('   ✓ Create Product modal opened');
 
@@ -104,7 +104,7 @@ async function runBrowserTest() {
     await page.waitForTimeout(300);
 
     modalText = await page.textContent('dialog');
-    if (!modalText.includes('không được để trống')) {
+    if (!modalText.includes('is required')) {
       throw new Error('Form validation failed: expected empty field errors');
     }
     console.log('   ✓ Empty field validation errors triggered and displayed correctly');
@@ -116,7 +116,7 @@ async function runBrowserTest() {
     await page.waitForTimeout(300);
 
     modalText = await page.textContent('dialog');
-    if (!modalText.includes('đã tồn tại trong hệ thống')) {
+    if (!modalText.includes('already exists in the system')) {
       throw new Error('Duplicate SKU validation failed: duplicate was allowed');
     }
     console.log('   ✓ Duplicate SKU validation triggered and prevented creation');
@@ -142,7 +142,7 @@ async function runBrowserTest() {
 
     // 5. Test Product Editing
     console.log('\n[5/7] Testing Product Edit Flow...');
-    const editBtn = await page.$('button[aria-label="Sửa SKU-E2E-AUTO-01"]');
+    const editBtn = await page.$('button[aria-label="Edit SKU-E2E-AUTO-01"]');
     if (!editBtn) {
       throw new Error('Edit button for newly created product not found');
     }
@@ -150,7 +150,7 @@ async function runBrowserTest() {
     await page.waitForTimeout(300);
 
     modalText = await page.textContent('dialog');
-    if (!modalText.includes('Chỉnh sửa sản phẩm: SKU-E2E-AUTO-01')) {
+    if (!modalText.includes('Edit Product: SKU-E2E-AUTO-01')) {
       throw new Error('Edit modal failed to open with correct product');
     }
 
@@ -181,21 +181,21 @@ async function runBrowserTest() {
 
     // 7. Test Product Deletion with Confirmation
     console.log('\n[7/7] Testing Product Deletion Confirmation...');
-    const deleteBtn = await page.$('button[aria-label="Xóa SKU-E2E-AUTO-01"]');
+    const deleteBtn = await page.$('button[aria-label="Delete SKU-E2E-AUTO-01"]');
     if (!deleteBtn) {
       throw new Error('Delete button for SKU-E2E-AUTO-01 not found');
     }
     await deleteBtn.click();
     await page.waitForTimeout(300);
 
-    const deleteModal = page.locator('dialog:has-text("Xác nhận xóa")');
+    const deleteModal = page.locator('dialog:has-text("Confirm Delete")');
     const deleteModalText = await deleteModal.textContent();
-    if (!deleteModalText.includes('Xác nhận xóa sản phẩm')) {
+    if (!deleteModalText.includes('Confirm Product Deletion')) {
       throw new Error('Delete confirmation modal did not open');
     }
 
     // Confirm deletion
-    await deleteModal.locator('button:has-text("Xác nhận xóa")').click();
+    await deleteModal.locator('button:has-text("Confirm Delete")').click();
     await page.waitForTimeout(500);
 
     const bodyAfterDelete = await page.textContent('body');
@@ -217,7 +217,7 @@ async function runBrowserTest() {
     await page.click('#btn-submit-warehouse');
     await page.waitForTimeout(200);
     const whDupMsg = await page.textContent('dialog');
-    if (!whDupMsg.includes('đã tồn tại')) {
+    if (!whDupMsg.includes('already exists in the system')) {
       throw new Error('Warehouse duplicate code validation failed');
     }
     await page.fill('#wh-input-code', 'WH-E2E-09');
@@ -228,7 +228,7 @@ async function runBrowserTest() {
       throw new Error('New warehouse WH-E2E-09 not added');
     }
     // Check referential guard on WH-01
-    await page.click('button[aria-label="Xóa WH-01"]');
+    await page.click('button[aria-label="Delete WH-01"]');
     await page.waitForTimeout(200);
     const isWhForceDisabled = await page.isDisabled('#btn-confirm-master-delete');
     if (!isWhForceDisabled) {
@@ -244,7 +244,7 @@ async function runBrowserTest() {
     await page.waitForTimeout(400);
     await page.fill('#cat-search-input', 'NON-EXISTENT-CAT-999');
     await page.waitForTimeout(300);
-    if (!(await page.textContent('body')).includes('Không tìm thấy danh mục')) {
+    if (!(await page.textContent('body')).includes('No matching categories found')) {
       throw new Error('Categories Empty State not displayed on unmatched search');
     }
     await page.fill('#cat-search-input', '');
@@ -265,7 +265,7 @@ async function runBrowserTest() {
     await page.fill('#uom-input-symbol', 'Cái'); // Duplicate symbol check
     await page.click('#btn-submit-unit');
     await page.waitForTimeout(200);
-    if (!(await page.textContent('dialog')).includes('đã được sử dụng')) {
+    if (!(await page.textContent('dialog')).includes('is already used by another unit')) {
       throw new Error('Unit duplicate symbol validation failed');
     }
     await page.fill('#uom-input-symbol', 'Kiện');
@@ -290,7 +290,7 @@ async function runBrowserTest() {
     await page.fill('#sup-input-address', 'Quận Hải Châu, Đà Nẵng');
     await page.click('#btn-submit-supplier');
     await page.waitForTimeout(200);
-    if (!(await page.textContent('dialog')).includes('không hợp lệ')) {
+    if (!(await page.textContent('dialog')).includes('Invalid email format')) {
       throw new Error('Supplier email format validation failed');
     }
     await page.fill('#sup-input-email', 'e2e@partner.example');
@@ -529,8 +529,12 @@ async function runBrowserTest() {
     await page.click('aside a[href="/products"]');
     await page.waitForTimeout(300);
     const addProductCount = await page.locator('#btn-add-product').count();
-    const editButtonsCount = await page.locator('button[aria-label^="Sửa "]').count();
-    const deleteButtonsCount = await page.locator('button[aria-label^="Xóa "]').count();
+    const editButtonsCount = await page
+      .locator('button[aria-label^="Edit "], button[aria-label^="Sửa "]')
+      .count();
+    const deleteButtonsCount = await page
+      .locator('button[aria-label^="Delete "], button[aria-label^="Xóa "]')
+      .count();
     if (addProductCount !== 0 || editButtonsCount !== 0 || deleteButtonsCount !== 0) {
       throw new Error(
         `VIEWER must see zero create/edit/delete controls on Products (add=${addProductCount}, edit=${editButtonsCount}, del=${deleteButtonsCount})`
@@ -543,6 +547,69 @@ async function runBrowserTest() {
       throw new Error('Resetting role preview to ADMIN did not restore /users sidebar menu');
     }
     console.log('   ✓ User CRUD, role/warehouse assignment, status toggle, and Dev Role Preview verified');
+
+    // 16. Bilingual Switching (EN <-> VI) & Persistence E2E Check
+    console.log('\n[16/16] Testing Bilingual Localization Switching (EN <-> VI) & Persistence...');
+    await page.click('aside a[href="/users"]');
+    await page.waitForTimeout(250);
+    await page.click('button[title="Switch Language"]');
+    await page.waitForTimeout(300);
+
+    const viStorage = await page.evaluate(() => ({
+      lang: localStorage.getItem('smart_inventory_language'),
+      htmlLang: document.documentElement.lang,
+    }));
+    if (viStorage.lang !== 'vi' || viStorage.htmlLang !== 'vi') {
+      throw new Error(`Expected language switch to vi, got ${JSON.stringify(viStorage)}`);
+    }
+
+    const viUsersBody = await page.textContent('body');
+    if (
+      !viUsersBody?.includes('Quản Trị Người Dùng & Phân Quyền') ||
+      !viUsersBody?.includes('Tổng tài khoản mẫu') ||
+      !viUsersBody?.includes('Toàn hệ thống (All)') ||
+      viUsersBody?.includes('Total Mock Users')
+    ) {
+      throw new Error('Users page did not switch cleanly to Vietnamese');
+    }
+
+    await page.click('aside a[href="/reports"]');
+    await page.waitForTimeout(250);
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForTimeout(300);
+
+    const viPersisted = await page.evaluate(() => ({
+      lang: localStorage.getItem('smart_inventory_language'),
+      htmlLang: document.documentElement.lang,
+    }));
+    const viReportsBody = await page.textContent('body');
+    if (
+      viPersisted.lang !== 'vi' ||
+      viPersisted.htmlLang !== 'vi' ||
+      !viReportsBody?.includes('Báo Cáo & Phân Tích Thống Kê') ||
+      !viReportsBody?.includes('Tồn kho hiện tại') ||
+      !viReportsBody?.includes('Bảng cân đối tồn kho') ||
+      viReportsBody?.includes('Inventory Balance Sheet')
+    ) {
+      throw new Error('Vietnamese localization did not persist properly after reload on /reports');
+    }
+
+    await page.click('button[title="Đổi ngôn ngữ"]');
+    await page.waitForTimeout(300);
+    const enRestored = await page.evaluate(() => ({
+      lang: localStorage.getItem('smart_inventory_language'),
+      htmlLang: document.documentElement.lang,
+    }));
+    const enReportsBody = await page.textContent('body');
+    if (
+      enRestored.lang !== 'en' ||
+      enRestored.htmlLang !== 'en' ||
+      !enReportsBody?.includes('Reports & Analytics') ||
+      !enReportsBody?.includes('Inventory Balance Sheet')
+    ) {
+      throw new Error('Switching back to English from Vietnamese failed on /reports');
+    }
+    console.log('   ✓ Bilingual EN <-> VI live switching and localStorage persistence verified');
 
     // Mobile & Tablet responsiveness checks on Reports route
     console.log('\nChecking Mobile & Tablet responsive behavior...');

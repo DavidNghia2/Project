@@ -2,6 +2,7 @@ import React from 'react';
 import { RotateCcw, Search, UserCheck } from 'lucide-react';
 import { Button, Input, Select } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_WAREHOUSES } from '../../master-data/mockData';
 import { SIMULATED_ACTORS } from '../mockData';
 import type { OrderFilterState } from '../useStockOrders';
@@ -30,7 +31,7 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
   const { t, language } = useTranslation();
 
   const statusOptions = [
-    { value: 'ALL', label: language === 'vi' ? 'Tất cả trạng thái' : 'All Statuses' },
+    { value: 'ALL', label: t('stockOps.filters.allStatuses') },
     { value: 'DRAFT', label: t('status.draft') },
     { value: 'SUBMITTED', label: t('status.submitted') },
     { value: 'APPROVED', label: t('status.approved') },
@@ -39,10 +40,10 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
   ];
 
   const warehouseOptions = [
-    { value: 'ALL', label: language === 'vi' ? 'Tất cả kho hàng' : 'All Warehouses' },
+    { value: 'ALL', label: t('stockOps.filters.allWarehouses') },
     ...INITIAL_WAREHOUSES.filter((w) => w.status === 'active').map((w) => ({
       value: w.code,
-      label: `${w.code} — ${w.name}`,
+      label: `${w.code} — ${translateDomainLabel(language, 'warehouseNames', w.code, w.name)}`,
     })),
   ];
 
@@ -62,7 +63,7 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
         <div className="lg:col-span-4">
           <Input
             id="stock-order-search"
-            label={language === 'vi' ? 'Tìm kiếm phiếu / SKU' : 'Search Voucher / SKU'}
+            label={t('stockOps.filters.searchLabel')}
             placeholder={searchPlaceholder}
             value={filters.search}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -74,7 +75,7 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
         <div className="lg:col-span-2">
           <Select
             id="stock-order-filter-status"
-            label={language === 'vi' ? 'Trạng thái' : 'Status'}
+            label={t('stockOps.filters.statusLabel')}
             value={filters.status}
             onChange={(e) => onStatusChange(e.target.value)}
             options={statusOptions}
@@ -85,7 +86,7 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
         <div className="lg:col-span-3">
           <Select
             id="stock-order-filter-warehouse"
-            label={language === 'vi' ? 'Kho áp dụng' : 'Warehouse'}
+            label={t('stockOps.filters.warehouseLabel')}
             value={filters.warehouseCode}
             onChange={(e) => onWarehouseChange(e.target.value)}
             options={warehouseOptions}
@@ -100,7 +101,7 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
               label={
                 <span className="inline-flex items-center gap-1">
                   <UserCheck className="w-3.5 h-3.5 text-[#0284C7]" aria-hidden="true" />
-                  {language === 'vi' ? 'Người thao tác (Mô phỏng)' : 'Simulated Operator'}
+                  {t('stockOps.filters.operatorLabel')}
                 </span>
               }
               value={currentActor}
@@ -116,9 +117,9 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
               size="sm"
               onClick={onReset}
               iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
-              title={language === 'vi' ? 'Đặt lại bộ lọc' : 'Reset filters'}
+              title={t('stockOps.filters.resetTitle')}
             >
-              {language === 'vi' ? 'Xóa lọc' : 'Reset'}
+              {t('stockOps.filters.reset')}
             </Button>
           )}
         </div>

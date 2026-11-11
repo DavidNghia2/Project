@@ -24,7 +24,7 @@ export const UserFiltersBar: React.FC<UserFiltersBarProps> = ({
   onStatusFilterChange,
   onReset,
 }) => {
-  const { language } = useTranslation();
+  const { t } = useTranslation();
   const hasFilters = search.trim() !== '' || roleFilter !== 'ALL' || statusFilter !== 'ALL';
 
   return (
@@ -32,12 +32,8 @@ export const UserFiltersBar: React.FC<UserFiltersBarProps> = ({
       <div className="flex-1 min-w-0">
         <Input
           id="user-search-input"
-          label={language === 'vi' ? 'Tìm kiếm người dùng' : 'Search users'}
-          placeholder={
-            language === 'vi'
-              ? 'Tìm theo mã (USR-...), họ tên, email hoặc phòng ban...'
-              : 'Search by ID (USR-...), full name, email or department...'
-          }
+          label={t('usersRbac.filters.searchLabel')}
+          placeholder={t('usersRbac.filters.searchPlaceholder')}
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           prefix={<Search className="w-4 h-4" />}
@@ -48,18 +44,18 @@ export const UserFiltersBar: React.FC<UserFiltersBarProps> = ({
       <div className="w-full md:w-56">
         <Select
           id="user-role-filter"
-          label={language === 'vi' ? 'Vai trò' : 'Role'}
+          label={t('usersRbac.filters.roleLabel')}
           value={roleFilter}
           onChange={(e) => onRoleFilterChange(e.target.value as RoleCode | 'ALL')}
           size="sm"
           options={[
             {
               value: 'ALL',
-              label: language === 'vi' ? 'Tất cả vai trò' : 'All roles',
+              label: t('usersRbac.filters.allRoles'),
             },
             ...ROLE_ORDER.map((r) => ({
               value: r,
-              label: language === 'vi' ? ROLE_META[r].labelVi : ROLE_META[r].labelEn,
+              label: t(ROLE_META[r].labelKey),
             })),
           ]}
         />
@@ -68,22 +64,22 @@ export const UserFiltersBar: React.FC<UserFiltersBarProps> = ({
       <div className="w-full md:w-44">
         <Select
           id="user-status-filter"
-          label={language === 'vi' ? 'Trạng thái' : 'Status'}
+          label={t('usersRbac.filters.statusLabel')}
           value={statusFilter}
           onChange={(e) => onStatusFilterChange(e.target.value as UserStatus | 'ALL')}
           size="sm"
           options={[
             {
               value: 'ALL',
-              label: language === 'vi' ? 'Tất cả trạng thái' : 'All statuses',
+              label: t('usersRbac.filters.allStatuses'),
             },
             {
               value: 'active',
-              label: language === 'vi' ? 'Đang hoạt động' : 'Active',
+              label: t('usersRbac.filters.statusActive'),
             },
             {
               value: 'inactive',
-              label: language === 'vi' ? 'Ngừng hoạt động' : 'Inactive',
+              label: t('usersRbac.filters.statusInactive'),
             },
           ]}
         />
@@ -99,7 +95,7 @@ export const UserFiltersBar: React.FC<UserFiltersBarProps> = ({
           onClick={onReset}
           className="shrink-0"
         >
-          {language === 'vi' ? 'Đặt lại' : 'Reset'}
+          {t('usersRbac.filters.reset')}
         </Button>
       )}
     </div>

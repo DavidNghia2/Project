@@ -1,8 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
+import { translateKey } from '../../i18n/translate';
+import { useHookLanguage } from '../../i18n/useTranslation';
 import type { Product, ProductFormData, ProductFilterState, ValidationErrors } from './types';
 import { INITIAL_PRODUCTS, WAREHOUSES_LIST } from './mockData';
 
 export function useProducts(initialList: Product[] = INITIAL_PRODUCTS) {
+  const language = useHookLanguage('vi');
   const [products, setProducts] = useState<Product[]>(initialList);
   const [filters, setFilters] = useState<ProductFilterState>({
     search: '',
@@ -18,7 +21,6 @@ export function useProducts(initialList: Product[] = INITIAL_PRODUCTS) {
   // Filter & Search Logic
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      // 1. Search term match on Name or SKU
       if (filters.search.trim()) {
         const query = filters.search.trim().toLowerCase();
         const matchesName = p.name.toLowerCase().includes(query);
@@ -29,17 +31,14 @@ export function useProducts(initialList: Product[] = INITIAL_PRODUCTS) {
         }
       }
 
-      // 2. Category filter
       if (filters.category !== 'ALL' && p.category !== filters.category) {
         return false;
       }
 
-      // 3. Status filter
       if (filters.status !== 'ALL' && p.status !== filters.status) {
         return false;
       }
 
-      // 4. Warehouse filter
       if (filters.warehouse !== 'ALL') {
         const whStock = p.warehouses.find((w) => w.warehouseCode === filters.warehouse);
         if (!whStock || whStock.quantity <= 0) {
@@ -83,49 +82,50 @@ export function useProducts(initialList: Product[] = INITIAL_PRODUCTS) {
 
       const trimmedName = formData.name.trim();
       if (!trimmedName) {
-        errors.name = 'Tên sản phẩm không được để trống';
+        errors.name = translateKey(language, 'products.validation.nameRequired');
       } else if (trimmedName.length < 3) {
-        errors.name = 'Tên sản phẩm phải có ít nhất 3 ký tự';
+        errors.name = translateKey(language, 'products.validation.nameMin');
       }
 
       const trimmedSku = formData.sku.trim().toUpperCase();
       if (!trimmedSku) {
-        errors.sku = 'Mã SKU không được để trống';
+        errors.sku = translateKey(language, 'products.validation.skuRequired');
       } else if (trimmedSku.length < 3) {
-        errors.sku = 'Mã SKU phải có ít nhất 3 ký tự';
+        errors.sku = translateKey(language, 'products.validation.skuMin');
       } else {
-        // Check SKU uniqueness
         const duplicate = products.find(
           (p) => p.sku.toUpperCase() === trimmedSku && p.id !== currentId
         );
         if (duplicate) {
-          errors.sku = `Mã SKU "${trimmedSku}" đã tồn tại trong hệ thống. Vui lòng chọn mã khác.`;
+          errors.sku = translateKey(language, 'products.validation.skuDuplicate', {
+            sku: trimmedSku,
+          });
         }
       }
 
       if (!formData.category || formData.category === 'ALL') {
-        errors.category = 'Vui lòng chọn danh mục hợp lệ';
+        errors.category = translateKey(language, 'products.validation.categoryRequired');
       }
 
       if (!formData.unit) {
-        errors.unit = 'Vui lòng chọn đơn vị tính';
+        errors.unit = translateKey(language, 'products.validation.unitRequired');
       }
 
       if (formData.reorderLevel === undefined || formData.reorderLevel < 0 || isNaN(formData.reorderLevel)) {
-        errors.reorderLevel = 'Ngưỡng tồn tối thiểu phải là số lớn hơn hoặc bằng 0';
+        errors.reorderLevel = translateKey(language, 'products.validation.reorderInvalid');
       }
 
       if (formData.initialStock === undefined || formData.initialStock < 0 || isNaN(formData.initialStock)) {
-        errors.initialStock = 'Số lượng tồn ban đầu phải là số lớn hơn hoặc bằng 0';
+        errors.initialStock = translateKey(language, 'products.validation.initialStockInvalid');
       }
 
       if (!currentId && (!formData.primaryWarehouse || formData.primaryWarehouse === 'ALL')) {
-        errors.primaryWarehouse = 'Vui lòng chọn kho lưu trữ ban đầu';
+        errors.primaryWarehouse = translateKey(language, 'products.validation.warehouseRequired');
       }
 
       return errors;
     },
-    [products]
+    [products, language]
   );
 
   // CRUD: Add Product

@@ -132,8 +132,7 @@ export interface ComputedReportResult {
     | StockTransactionReportRow[]
     | StockMovementRow[]
     | LowStockRow[];
-  chartTitleVi: string;
-  chartTitleEn: string;
+  chartTitle: string;
   chartSeries: ReportChartSeriesItem[];
   totals: ReportTotalsSummary;
 }

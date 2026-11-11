@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../../i18n';
 
 export interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -15,10 +16,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   action,
   className = '',
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div
       role="region"
-      aria-label="Empty state notice"
+      aria-label={t('emptyState.noticeAria')}
       className={`flex flex-col items-center justify-center text-center p-8 md:p-12 font-sans ${className}`}
     >
       {icon ? (

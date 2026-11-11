@@ -21,8 +21,7 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
   report,
   validDateRange,
 }) => {
-  const { language } = useTranslation();
-  const isVi = language === 'vi';
+  const { t } = useTranslation();
 
   const qtyText = (n: number) => (validDateRange ? n.toLocaleString('en-US') : '—');
   const moneyText = (n: number) => (validDateRange ? formatCurrencyVND(n) : '—');
@@ -35,28 +34,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
         return [
           {
             id: 'kpi-rows',
-            label: isVi ? 'Số mặt hàng (SKU)' : 'Catalog SKUs',
+            label: t('reports.kpi.catalogSkus'),
             value: qtyText(report.totals.rowCount),
             icon: Layers,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },
           {
             id: 'kpi-primary-qty',
-            label: isVi ? 'Tổng số lượng tồn' : 'Total On-Hand Qty',
+            label: t('reports.kpi.totalOnHandQty'),
             value: qtyText(report.totals.totalPrimaryQty),
             icon: Boxes,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
           {
             id: 'kpi-primary-val',
-            label: isVi ? 'Tổng giá trị tồn kho' : 'Total Inventory Valuation',
+            label: t('reports.kpi.totalInventoryValuation'),
             value: moneyText(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#16A34A] bg-[#ECFDF5]',
           },
           {
             id: 'kpi-secondary',
-            label: isVi ? 'SKU chạm/dưới ngưỡng' : 'At/Below Safety Threshold',
+            label: t('reports.kpi.atBelowThreshold'),
             value: qtyText(lowCount),
             icon: AlertTriangle,
             tone: 'text-[#D97706] bg-[#FFFBEB]',
@@ -74,40 +73,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
         return [
           {
             id: 'kpi-rows',
-            label: isVi ? 'Số dòng giao dịch' : 'Ledger Lines',
+            label: t('reports.kpi.ledgerLines'),
             value: qtyText(report.totals.rowCount),
             icon: Layers,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },
           {
             id: 'kpi-primary-qty',
-            label: isIn
-              ? isVi
-                ? 'Tổng số lượng nhập'
-                : 'Total Inbound Qty'
-              : isVi
-                ? 'Tổng số lượng xuất'
-                : 'Total Outbound Qty',
+            label: isIn ? t('reports.kpi.totalInboundQty') : t('reports.kpi.totalOutboundQty'),
             value: qtyText(report.totals.totalPrimaryQty),
             icon: isIn ? ArrowDownToLine : ArrowUpFromLine,
             tone: isIn ? 'text-[#16A34A] bg-[#ECFDF5]' : 'text-[#D97706] bg-[#FFFBEB]',
           },
           {
             id: 'kpi-primary-val',
-            label: isIn
-              ? isVi
-                ? 'Tổng giá trị nhập kho'
-                : 'Total Inbound Value'
-              : isVi
-                ? 'Tổng giá trị xuất kho'
-                : 'Total Outbound Value',
+            label: isIn ? t('reports.kpi.totalInboundValue') : t('reports.kpi.totalOutboundValue'),
             value: moneyText(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
           {
             id: 'kpi-secondary',
-            label: isVi ? 'Giá trị TB / dòng hàng' : 'Avg Value / Line',
+            label: t('reports.kpi.avgValuePerLine'),
             value: moneyText(avgPerLine),
             icon: Boxes,
             tone: 'text-[#475569] bg-[#F8FAFC]',
@@ -119,28 +106,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
         return [
           {
             id: 'kpi-rows',
-            label: isVi ? 'Tổng nhập trong kỳ' : 'Period Inbound Qty',
+            label: t('reports.kpi.periodInboundQty'),
             value: qtyText(report.totals.totalPrimaryQty),
             icon: ArrowDownToLine,
             tone: 'text-[#16A34A] bg-[#ECFDF5]',
           },
           {
             id: 'kpi-primary-qty',
-            label: isVi ? 'Tổng xuất trong kỳ' : 'Period Outbound Qty',
+            label: t('reports.kpi.periodOutboundQty'),
             value: qtyText(report.totals.totalSecondaryQty ?? 0),
             icon: ArrowUpFromLine,
             tone: 'text-[#D97706] bg-[#FFFBEB]',
           },
           {
             id: 'kpi-primary-val',
-            label: isVi ? 'Tồn cuối kỳ (SL)' : 'Closing Balance Qty',
+            label: t('reports.kpi.closingBalanceQty'),
             value: qtyText(report.totals.totalClosingQty ?? 0),
             icon: Boxes,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },
           {
             id: 'kpi-secondary',
-            label: isVi ? 'Tổng giá trị nhập kỳ' : 'Period Inbound Value',
+            label: t('reports.kpi.periodInboundValue'),
             value: moneyText(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
@@ -151,28 +138,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
         return [
           {
             id: 'kpi-rows',
-            label: isVi ? 'SKU dưới ngưỡng' : 'Below-Threshold SKUs',
+            label: t('reports.kpi.belowThresholdSkus'),
             value: qtyText(report.totals.rowCount),
             icon: AlertTriangle,
             tone: 'text-[#DC2626] bg-[#FEF2F2]',
           },
           {
             id: 'kpi-primary-qty',
-            label: isVi ? 'Tổng tồn hiện có' : 'Total Remaining Stock',
+            label: t('reports.kpi.totalRemainingStock'),
             value: qtyText(report.totals.totalPrimaryQty),
             icon: Boxes,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
           {
             id: 'kpi-primary-val',
-            label: isVi ? 'Tổng SL cần bổ sung' : 'Total Deficit Units',
+            label: t('reports.kpi.totalDeficitUnits'),
             value: qtyText(report.totals.totalSecondaryQty ?? 0),
             icon: Layers,
             tone: 'text-[#D97706] bg-[#FFFBEB]',
           },
           {
             id: 'kpi-secondary',
-            label: isVi ? 'Dự trù chi phí nhập bù' : 'Est. Restock Budget',
+            label: t('reports.kpi.estRestockBudget'),
             value: moneyText(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',

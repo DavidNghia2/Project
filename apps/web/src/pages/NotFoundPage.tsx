@@ -15,7 +15,7 @@ export const NotFoundPage: React.FC = () => {
 
       <div className="space-y-2 max-w-md">
         <span className="font-mono text-sm font-bold text-blue-600 tracking-wider">
-          ERROR 404
+          {t('notFound.errorBadge')}
         </span>
         <h2 className="text-2xl font-bold text-[#0F172A] tracking-tight">
           {t('notFound.title')}

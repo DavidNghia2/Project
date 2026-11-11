@@ -56,9 +56,10 @@ export const ReportsPage: React.FC = () => {
     if (!dateValidation.valid || report.rows.length === 0) return;
     const result = triggerCsvDownload(report, filters, language);
     setExportNotice(
-      language === 'vi'
-        ? `Đã xuất file ${result.filename} (${result.rowCount} dòng dữ liệu + dòng tổng hợp).`
-        : `Exported ${result.filename} (${result.rowCount} rows + summary row).`
+      t('reports.page.exportNotice', {
+        filename: result.filename,
+        rows: result.rowCount,
+      })
     );
   };
 
@@ -77,7 +78,7 @@ export const ReportsPage: React.FC = () => {
               onClick={handleExportCsv}
               iconLeft={<Download className="w-4 h-4" />}
             >
-              {language === 'vi' ? 'Xuất báo cáo CSV' : 'Export Report CSV'}
+              {t('reports.page.exportButton')}
             </Button>
           ) : undefined
         }

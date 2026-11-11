@@ -8,6 +8,7 @@ import {
   getUnitReferences,
   getSupplierReferences,
 } from './mockData';
+import { useHookLanguage } from '../../i18n/useTranslation';
 import {
   validateWarehouse,
   validateCategory,
@@ -67,18 +68,17 @@ const updateWarehouseRecord = (e: Warehouse, f: WarehouseFormData, now: string):
   updatedAt: now,
 });
 
-const warehouseRefs = (w: Warehouse) => getWarehouseReferences(w.code);
-
 export function useWarehouses(initialItems: Warehouse[] = INITIAL_WAREHOUSES) {
+  const language = useHookLanguage('vi');
   return useMasterData<Warehouse, WarehouseFormData>({
     initialItems,
     idPrefix: 'wh',
-    validate: validateWarehouse,
+    validate: (form, existing, currentId) => validateWarehouse(form, existing, currentId, language),
     mapFormToCreate: createWarehouseRecord,
     mapFormToUpdate: updateWarehouseRecord,
     matchesSearch: matchWarehouseSearch,
     matchesSecondaryFilter: matchWarehouseSecondary,
-    getReferences: warehouseRefs,
+    getReferences: (w) => getWarehouseReferences(w.code, undefined, language),
   });
 }
 
@@ -112,18 +112,17 @@ const updateCategoryRecord = (e: Category, f: CategoryFormData, now: string): Ca
   updatedAt: now,
 });
 
-const categoryRefs = (c: Category) => getCategoryReferences(c.name);
-
 export function useCategories(initialItems: Category[] = INITIAL_CATEGORIES) {
+  const language = useHookLanguage('vi');
   return useMasterData<Category, CategoryFormData>({
     initialItems,
     idPrefix: 'cat',
-    validate: validateCategory,
+    validate: (form, existing, currentId) => validateCategory(form, existing, currentId, language),
     mapFormToCreate: createCategoryRecord,
     mapFormToUpdate: updateCategoryRecord,
     matchesSearch: matchCategorySearch,
     matchesSecondaryFilter: matchCategorySecondary,
-    getReferences: categoryRefs,
+    getReferences: (c) => getCategoryReferences(c.name, undefined, language),
   });
 }
 
@@ -161,18 +160,17 @@ const updateUnitRecord = (e: UnitOfMeasure, f: UnitFormData, now: string): UnitO
   updatedAt: now,
 });
 
-const unitRefs = (u: UnitOfMeasure) => getUnitReferences(u.name);
-
 export function useUnits(initialItems: UnitOfMeasure[] = INITIAL_UNITS) {
+  const language = useHookLanguage('vi');
   return useMasterData<UnitOfMeasure, UnitFormData>({
     initialItems,
     idPrefix: 'uom',
-    validate: validateUnit,
+    validate: (form, existing, currentId) => validateUnit(form, existing, currentId, language),
     mapFormToCreate: createUnitRecord,
     mapFormToUpdate: updateUnitRecord,
     matchesSearch: matchUnitSearch,
     matchesSecondaryFilter: matchUnitSecondary,
-    getReferences: unitRefs,
+    getReferences: (u) => getUnitReferences(u.name, undefined, language),
   });
 }
 
@@ -217,17 +215,16 @@ const updateSupplierRecord = (e: Supplier, f: SupplierFormData, now: string): Su
   updatedAt: now,
 });
 
-const supplierRefs = (s: Supplier) => getSupplierReferences(s.code);
-
 export function useSuppliers(initialItems: Supplier[] = INITIAL_SUPPLIERS) {
+  const language = useHookLanguage('vi');
   return useMasterData<Supplier, SupplierFormData>({
     initialItems,
     idPrefix: 'sup',
-    validate: validateSupplier,
+    validate: (form, existing, currentId) => validateSupplier(form, existing, currentId, language),
     mapFormToCreate: createSupplierRecord,
     mapFormToUpdate: updateSupplierRecord,
     matchesSearch: matchSupplierSearch,
     matchesSecondaryFilter: matchSupplierSecondary,
-    getReferences: supplierRefs,
+    getReferences: (s) => getSupplierReferences(s.code, undefined, language),
   });
 }

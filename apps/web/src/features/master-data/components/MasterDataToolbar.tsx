@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { Input, Select, Button } from '../../../design-system';
+import { useTranslation } from '../../../i18n';
 
 export interface FilterOption {
   value: string;
@@ -40,8 +41,11 @@ export const MasterDataToolbar: React.FC<MasterDataToolbarProps> = ({
   onReset,
   totalFiltered,
   totalItems,
-  itemUnitLabel = 'bản ghi',
+  itemUnitLabel,
 }) => {
+  const { t } = useTranslation();
+  const resolvedUnitLabel = itemUnitLabel ?? t('masterData.common.defaultUnitLabel');
+
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
@@ -49,7 +53,7 @@ export const MasterDataToolbar: React.FC<MasterDataToolbarProps> = ({
         <div className={secondaryOptions ? 'lg:col-span-2' : 'sm:col-span-1 lg:col-span-2'}>
           <Input
             id={searchInputId}
-            label="Tìm kiếm"
+            label={t('masterData.common.searchLabel')}
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -62,7 +66,7 @@ export const MasterDataToolbar: React.FC<MasterDataToolbarProps> = ({
         {secondaryOptions && onSecondaryFilterChange && (
           <div>
             <Select
-              label={secondaryLabel || 'Phân loại'}
+              label={secondaryLabel || t('masterData.common.defaultSecondaryLabel')}
               value={secondaryFilter || 'ALL'}
               onChange={(e) => onSecondaryFilterChange(e.target.value)}
               size="sm"
@@ -74,14 +78,14 @@ export const MasterDataToolbar: React.FC<MasterDataToolbarProps> = ({
         {/* Status Filter */}
         <div>
           <Select
-            label="Trạng thái"
+            label={t('masterData.common.statusLabel')}
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
             size="sm"
             options={[
-              { value: 'ALL', label: 'Tất cả trạng thái' },
-              { value: 'active', label: 'Đang hoạt động' },
-              { value: 'inactive', label: 'Ngừng hoạt động' },
+              { value: 'ALL', label: t('masterData.common.allStatuses') },
+              { value: 'active', label: t('masterData.common.statusActive') },
+              { value: 'inactive', label: t('masterData.common.statusInactive') },
             ]}
           />
         </div>
@@ -90,8 +94,9 @@ export const MasterDataToolbar: React.FC<MasterDataToolbarProps> = ({
       {/* Filter meta bar */}
       <div className="flex items-center justify-between text-xs text-[#475569]">
         <span>
-          Hiển thị <strong className="text-[#0F172A] font-semibold">{totalFiltered}</strong> /{' '}
-          <strong className="text-[#0F172A] font-semibold">{totalItems}</strong> {itemUnitLabel}
+          {t('masterData.common.showingPrefix')}{' '}
+          <strong className="text-[#0F172A] font-semibold">{totalFiltered}</strong> /{' '}
+          <strong className="text-[#0F172A] font-semibold">{totalItems}</strong> {resolvedUnitLabel}
         </span>
 
         {isFiltered && (
@@ -101,7 +106,7 @@ export const MasterDataToolbar: React.FC<MasterDataToolbarProps> = ({
             onClick={onReset}
             iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
           >
-            Xóa bộ lọc
+            {t('masterData.common.clearFilters')}
           </Button>
         )}
       </div>

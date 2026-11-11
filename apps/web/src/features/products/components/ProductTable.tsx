@@ -11,6 +11,8 @@ import {
   ArrowUp,
   ArrowDown,
 } from 'lucide-react';
+import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import type { Product } from '../types';
 import { Badge, Button } from '../../../design-system';
 
@@ -47,7 +49,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
   onDelete,
   canMutate = true,
 }) => {
-  // Image error state fallback
+  const { t, language } = useTranslation();
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   const handleImageError = (id: string) => {
@@ -73,11 +75,11 @@ export const ProductTable: React.FC<ProductTableProps> = ({
       {/* Table Container */}
       <div className="overflow-x-auto border border-[#E2E8F0] rounded-lg shadow-2xs bg-white">
         <table className="w-full text-left border-collapse text-xs sm:text-sm">
-          <caption className="sr-only">Danh sách quản lý sản phẩm kho</caption>
+          <caption className="sr-only">{t('products.table.caption')}</caption>
           <thead>
             <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">
               <th scope="col" className="py-3 px-4 w-14 text-center">
-                Ảnh
+                {t('products.table.colImage')}
               </th>
               <th scope="col" className="py-3 px-4">
                 <button
@@ -85,7 +87,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   onClick={() => onSort('sku')}
                   className="flex items-center gap-1.5 group font-semibold focus-visible:outline-none focus-visible:text-blue-600 text-left"
                 >
-                  <span>Mã SKU / Barcode</span>
+                  <span>{t('products.table.colSku')}</span>
                   {renderSortIcon('sku')}
                 </button>
               </th>
@@ -95,15 +97,15 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   onClick={() => onSort('name')}
                   className="flex items-center gap-1.5 group font-semibold focus-visible:outline-none focus-visible:text-blue-600 text-left"
                 >
-                  <span>Tên sản phẩm</span>
+                  <span>{t('products.table.colName')}</span>
                   {renderSortIcon('name')}
                 </button>
               </th>
               <th scope="col" className="py-3 px-4 hidden md:table-cell">
-                Danh mục
+                {t('products.table.colCategory')}
               </th>
               <th scope="col" className="py-3 px-4 hidden sm:table-cell">
-                Đơn vị
+                {t('products.table.colUnit')}
               </th>
               <th scope="col" className="py-3 px-4">
                 <button
@@ -111,18 +113,18 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   onClick={() => onSort('onHand')}
                   className="flex items-center gap-1.5 group font-semibold focus-visible:outline-none focus-visible:text-blue-600 text-left"
                 >
-                  <span>Tồn khả dụng</span>
+                  <span>{t('products.table.colOnHand')}</span>
                   {renderSortIcon('onHand')}
                 </button>
               </th>
               <th scope="col" className="py-3 px-4 hidden lg:table-cell text-center">
-                Mức an toàn
+                {t('products.table.colReorder')}
               </th>
               <th scope="col" className="py-3 px-4 text-center">
-                Trạng thái
+                {t('products.table.colStatus')}
               </th>
               <th scope="col" className="py-3 px-4 text-right">
-                Thao tác
+                {t('products.table.colActions')}
               </th>
             </tr>
           </thead>
@@ -133,8 +135,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                 <td colSpan={9} className="py-12 text-center text-slate-400">
                   <div className="flex flex-col items-center justify-center space-y-2">
                     <Package className="w-8 h-8 text-slate-300" />
-                    <p className="text-sm font-medium text-slate-600">Không tìm thấy sản phẩm phù hợp</p>
-                    <p className="text-xs text-slate-400">Hãy thử xóa bộ lọc hoặc tìm kiếm bằng từ khóa khác.</p>
+                    <p className="text-sm font-medium text-slate-600">{t('products.table.emptyTitle')}</p>
+                    <p className="text-xs text-slate-400">{t('products.table.emptyDesc')}</p>
                   </div>
                 </td>
               </tr>
@@ -142,6 +144,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({
               products.map((item) => {
                 const isOutOfStock = item.onHand === 0;
                 const isLowStock = item.onHand <= item.reorderLevel;
+                const displayCategory = translateDomainLabel(language, 'categories', item.category);
+                const displayUnit = translateDomainLabel(language, 'units', item.unit);
 
                 return (
                   <tr
@@ -188,18 +192,18 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                         {item.name}
                       </button>
                       <span className="text-[11px] text-[#64748B] block sm:hidden mt-0.5">
-                        {item.category} • {item.unit}
+                        {displayCategory} • {displayUnit}
                       </span>
                     </td>
 
                     {/* Category */}
                     <td className="py-2.5 px-4 hidden md:table-cell text-xs text-[#475569]">
-                      {item.category}
+                      {displayCategory}
                     </td>
 
                     {/* Unit */}
                     <td className="py-2.5 px-4 hidden sm:table-cell text-xs text-[#64748B]">
-                      {item.unit}
+                      {displayUnit}
                     </td>
 
                     {/* On-Hand Stock with warning badge */}
@@ -218,11 +222,11 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                         </span>
                         {isOutOfStock ? (
                           <Badge variant="error" size="sm">
-                            Hết hàng
+                            {t('products.table.badgeOutOfStock')}
                           </Badge>
                         ) : isLowStock ? (
                           <Badge variant="warning" size="sm">
-                            Tồn thấp
+                            {t('products.table.badgeLowStock')}
                           </Badge>
                         ) : null}
                       </div>
@@ -236,7 +240,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                     {/* Status */}
                     <td className="py-2.5 px-4 text-center">
                       <Badge variant={item.status === 'active' ? 'success' : 'neutral'} size="sm" dot>
-                        {item.status === 'active' ? 'Hoạt động' : 'Ngừng KD'}
+                        {item.status === 'active'
+                          ? t('products.table.statusActive')
+                          : t('products.table.statusInactive')}
                       </Badge>
                     </td>
 
@@ -247,8 +253,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                           type="button"
                           onClick={() => onView(item)}
                           className="p-1.5 text-[#64748B] hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 outline-none"
-                          title="Xem chi tiết sản phẩm"
-                          aria-label={`Xem chi tiết ${item.sku}`}
+                          title={t('products.table.viewTitle')}
+                          aria-label={t('products.table.viewAria', { sku: item.sku })}
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -258,8 +264,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                               type="button"
                               onClick={() => onEdit(item)}
                               className="p-1.5 text-[#64748B] hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 outline-none"
-                              title="Chỉnh sửa thông tin"
-                              aria-label={`Sửa ${item.sku}`}
+                              title={t('products.table.editTitle')}
+                              aria-label={t('products.table.editAria', { sku: item.sku })}
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
@@ -267,8 +273,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                               type="button"
                               onClick={() => onDelete(item)}
                               className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-red-600 outline-none"
-                              title="Xóa sản phẩm"
-                              aria-label={`Xóa ${item.sku}`}
+                              title={t('products.table.deleteTitle')}
+                              aria-label={t('products.table.deleteAria', { sku: item.sku })}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -288,13 +294,14 @@ export const ProductTable: React.FC<ProductTableProps> = ({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B] px-1">
         <div className="flex items-center gap-3">
           <span>
-            Hiển thị <strong>{startIndex}</strong> đến <strong>{endIndex}</strong> trong tổng số{' '}
-            <strong>{totalItems}</strong> sản phẩm
+            {t('products.table.showingPrefix')} <strong>{startIndex}</strong> {t('products.table.showingTo')}{' '}
+            <strong>{endIndex}</strong> {t('products.table.showingOf')}{' '}
+            <strong>{totalItems}</strong> {t('products.table.showingUnit')}
           </span>
 
           <div className="flex items-center gap-1.5">
             <label htmlFor="pageSizeSelect" className="text-[11px] text-[#94A3B8]">
-              Hiển thị:
+              {t('products.table.pageSizeLabel')}
             </label>
             <select
               id="pageSizeSelect"
@@ -302,9 +309,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               className="h-7 px-1.5 border border-[#CBD5E1] rounded bg-white text-xs text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-blue-600"
             >
-              <option value={5}>5 / trang</option>
-              <option value={10}>10 / trang</option>
-              <option value={20}>20 / trang</option>
+              <option value={5}>{t('products.table.perPageOption', { size: 5 })}</option>
+              <option value={10}>{t('products.table.perPageOption', { size: 10 })}</option>
+              <option value={20}>{t('products.table.perPageOption', { size: 20 })}</option>
             </select>
           </div>
         </div>
@@ -318,7 +325,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
             onClick={() => onPageChange(currentPage - 1)}
             iconLeft={<ChevronLeft className="w-3.5 h-3.5" />}
           >
-            Trước
+            {t('products.table.prevBtn')}
           </Button>
 
           <div className="flex items-center gap-1 px-1">
@@ -350,7 +357,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
             onClick={() => onPageChange(currentPage + 1)}
             iconRight={<ChevronRight className="w-3.5 h-3.5" />}
           >
-            Sau
+            {t('products.table.nextBtn')}
           </Button>
         </div>
       </div>

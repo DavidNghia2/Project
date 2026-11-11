@@ -1,4 +1,7 @@
 import { INITIAL_WAREHOUSES } from '../master-data/mockData';
+import { translateDomainLabel } from '../../i18n/domainTranslate';
+import { translateKey } from '../../i18n/translate';
+import type { Language } from '../../i18n/translations';
 import type { SystemUser } from './types';
 
 export interface WarehouseScopeOption {
@@ -86,18 +89,20 @@ export const INITIAL_SYSTEM_USERS: SystemUser[] = [
 
 export function formatWarehouseScopeLabel(
   assignedWarehouses: string[],
-  language: 'vi' | 'en'
+  language: Language
 ): string {
   if (assignedWarehouses.includes('ALL')) {
-    return language === 'vi' ? 'Toàn hệ thống (All)' : 'All Warehouses (System)';
+    return translateKey(language, 'usersRbac.warehouseScope.allWarehouses');
   }
   if (assignedWarehouses.length === 0) {
-    return language === 'vi' ? 'Chưa gán kho' : 'Unassigned';
+    return translateKey(language, 'usersRbac.warehouseScope.unassigned');
   }
   return assignedWarehouses
     .map((code) => {
       const match = AVAILABLE_WAREHOUSE_OPTIONS.find((w) => w.code === code);
-      return match ? `${match.name} (${match.code})` : code;
+      if (!match) return code;
+      const localizedName = translateDomainLabel(language, 'warehouseNames', match.code, match.name);
+      return `${localizedName} (${match.code})`;
     })
     .join(', ');
 }

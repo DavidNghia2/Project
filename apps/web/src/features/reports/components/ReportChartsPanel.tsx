@@ -19,27 +19,26 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
   report,
   validDateRange,
 }) => {
-  const { language } = useTranslation();
-  const isVi = language === 'vi';
+  const { t } = useTranslation();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   const series = validDateRange ? report.chartSeries : [];
   const hasSecondary =
     report.reportType === 'stock_movement' || report.reportType === 'low_stock';
 
-  const chartTitle = isVi ? report.chartTitleVi : report.chartTitleEn;
+  const chartTitle = report.chartTitle;
 
   const primaryLegend = (() => {
-    if (report.reportType === 'stock_in') return isVi ? 'SL Nhập' : 'Inbound Qty';
-    if (report.reportType === 'stock_out') return isVi ? 'SL Xuất' : 'Outbound Qty';
-    if (report.reportType === 'stock_movement') return isVi ? 'Nhập trong kỳ' : 'Inbound Qty';
-    if (report.reportType === 'low_stock') return isVi ? 'Tồn hiện tại' : 'On Hand Qty';
-    return isVi ? 'Số lượng tồn' : 'Stock Qty';
+    if (report.reportType === 'stock_in') return t('reports.charts.legends.inboundQty');
+    if (report.reportType === 'stock_out') return t('reports.charts.legends.outboundQty');
+    if (report.reportType === 'stock_movement') return t('reports.charts.legends.movementInbound');
+    if (report.reportType === 'low_stock') return t('reports.charts.legends.onHandQty');
+    return t('reports.charts.legends.stockQty');
   })();
 
   const secondaryLegend = (() => {
-    if (report.reportType === 'stock_movement') return isVi ? 'Xuất trong kỳ' : 'Outbound Qty';
-    if (report.reportType === 'low_stock') return isVi ? 'Ngưỡng tối thiểu' : 'Safety Level';
+    if (report.reportType === 'stock_movement') return t('reports.charts.legends.movementOutbound');
+    if (report.reportType === 'low_stock') return t('reports.charts.legends.safetyLevel');
     return '';
   })();
 
@@ -82,21 +81,13 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
     >
       {!validDateRange ? (
         <EmptyState
-          title={isVi ? 'Chưa thể dựng biểu đồ' : 'Chart Unavailable'}
-          description={
-            isVi
-              ? 'Vui lòng chọn khoảng ngày hợp lệ để xem phân tích trực quan.'
-              : 'Please select a valid date range to render visual analytics.'
-          }
+          title={t('reports.charts.unavailableTitle')}
+          description={t('reports.charts.unavailableDesc')}
         />
       ) : series.length === 0 ? (
         <EmptyState
-          title={isVi ? 'Không có dữ liệu trong phạm vi lọc' : 'No Chart Data in Scope'}
-          description={
-            isVi
-              ? 'Thử mở rộng ngày lọc, chọn tất cả kho hoặc chọn tất cả danh mục.'
-              : 'Try widening the date range, warehouse, or category filters.'
-          }
+          title={t('reports.charts.noDataTitle')}
+          description={t('reports.charts.noDataDesc')}
         />
       ) : (
         <div className="space-y-4">
@@ -122,7 +113,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                   </span>
                 )}
                 <span>
-                  {isVi ? 'Giá trị:' : 'Value:'}{' '}
+                  {t('reports.charts.valueLabel')}{' '}
                   <strong className="text-[#0F172A]">
                     {formatCurrencyVND(activePoint.primaryValue)}
                   </strong>
@@ -304,9 +295,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
             className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E2E8F0] text-xs text-[#64748B]"
           >
             <span>
-              {isVi
-                ? `Đối soát biểu đồ: ${series.length} nhóm dữ liệu (khớp 100% bảng bên dưới)`
-                : `Chart reconciliation: ${series.length} series points (100% synchronized with table)`}
+              {t('reports.charts.reconciliation', { count: series.length })}
             </span>
             <span className="font-mono tabular-nums text-[#0F172A]">
               {primaryLegend}: <strong>{chartQtySum.toLocaleString('en-US')}</strong> ·{' '}

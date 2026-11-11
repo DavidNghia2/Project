@@ -45,8 +45,7 @@ interface NavItem {
 }
 
 interface NavSection {
-  titleEn: string;
-  titleVi: string;
+  titleKey: string;
   items: NavItem[];
 }
 
@@ -55,13 +54,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
   onCloseMobile,
 }) => {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const { activeRole } = useRolePreview();
 
   const navSections: NavSection[] = [
     {
-      titleEn: 'OPERATIONS',
-      titleVi: 'VẬN HÀNH KHO',
+      titleKey: 'nav.sections.operations',
       items: [
         {
           key: 'dashboard',
@@ -91,8 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      titleEn: 'MASTER DATA',
-      titleVi: 'DANH MỤC HÀNG HÓA',
+      titleKey: 'nav.sections.masterData',
       items: [
         {
           key: 'products',
@@ -127,8 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      titleEn: 'INSIGHTS & MONITORING',
-      titleVi: 'BÁO CÁO & GIÁM SÁT',
+      titleKey: 'nav.sections.insights',
       items: [
         {
           key: 'alerts',
@@ -146,8 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      titleEn: 'ADMINISTRATION',
-      titleVi: 'HỆ THỐNG & CẤU HÌNH',
+      titleKey: 'nav.sections.admin',
       items: [
         {
           key: 'users',
@@ -189,10 +184,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             : 'h-16 px-4 flex items-center justify-between gap-2'
         }`}
       >
-        <NavLink
+          <NavLink
           to="/dashboard"
           onClick={onCloseMobile}
-          title={collapsed ? 'Smart Inventory' : undefined}
+          title={collapsed ? t('layout.brandName') : undefined}
           className={`flex items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md overflow-hidden ${
             collapsed ? 'justify-center shrink-0 p-0.5' : 'gap-3 min-w-0 flex-1'
           }`}
@@ -203,10 +198,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {!collapsed && (
             <div className="flex flex-col min-w-0 leading-tight overflow-hidden">
               <span className="font-semibold text-sm text-[#0F172A] tracking-tight truncate">
-                Smart Inventory
+                {t('layout.brandName')}
               </span>
               <span className="text-[11px] font-medium text-[#475569] uppercase tracking-wider truncate">
-                Enterprise v1.0
+                {t('layout.brandSub')}
               </span>
             </div>
           )}
@@ -244,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div key={idx} className="space-y-1">
             {!collapsed ? (
               <div className="px-2.5 py-1 text-[11px] font-semibold text-[#94A3B8] tracking-wider uppercase">
-                {language === 'vi' ? section.titleVi : section.titleEn}
+                {t(section.titleKey)}
               </div>
             ) : (
               <div className="h-2 border-t border-[#F1F5F9] my-1" />
@@ -320,12 +315,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center justify-between text-xs text-[#64748B]">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-medium text-[#334155]">System Online</span>
+              <span className="font-medium text-[#334155]">{t('nav.systemOnline')}</span>
             </div>
             <span className="text-[10px] text-[#94A3B8]">UTC+7</span>
           </div>
         ) : (
-          <div className="flex justify-center" title="System Online">
+          <div className="flex justify-center" title={t('nav.systemOnline')}>
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-100" />
           </div>
         )}

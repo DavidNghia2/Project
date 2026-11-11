@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FileEdit, Send } from 'lucide-react';
 import { Button, Input, Modal, Select } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
+import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_SUPPLIERS, INITIAL_WAREHOUSES } from '../../master-data/mockData';
 import { INITIAL_PRODUCTS } from '../../products/mockData';
 import type {
@@ -50,7 +51,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
   onClose,
   onSave,
 }) => {
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
 
   const [formData, setFormData] = useState<StockInFormData>(() => {
     if (mode === 'edit' && initialOrder) {
@@ -79,7 +80,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
 
   const warehouseOptions = INITIAL_WAREHOUSES.filter((w) => w.status === 'active').map((w) => ({
     value: w.code,
-    label: `${w.code} — ${w.name}`,
+    label: `${w.code} — ${translateDomainLabel(language, 'warehouseNames', w.code, w.name)}`,
   }));
 
   const supplierOptions = INITIAL_SUPPLIERS.filter((s) => s.status === 'active').map((s) => ({
@@ -166,7 +167,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           id="stock-in-warehouse"
-          label={language === 'vi' ? 'Kho tiếp nhận' : 'Receiving Warehouse'}
+          label={t('stockOps.form.in.receivingWarehouse')}
           required
           value={formData.warehouseCode}
           onChange={(e) => {
@@ -180,7 +181,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
 
         <Select
           id="stock-in-supplier"
-          label={language === 'vi' ? 'Nhà cung cấp' : 'Supplier'}
+          label={t('stockOps.form.in.supplier')}
           required
           value={formData.supplierCode}
           onChange={(e) => {
@@ -195,12 +196,8 @@ const StockInFormContent: React.FC<FormContentProps> = ({
 
       <Input
         id="stock-in-note"
-        label={language === 'vi' ? 'Chứng từ tham chiếu / Ghi chú' : 'Reference Note / PO'}
-        placeholder={
-          language === 'vi'
-            ? 'VD: PO-2026-450 · Nhập bổ sung hàng chuẩn bị chiến dịch cuối năm'
-            : 'e.g. PO-2026-450 · Q4 replenishment batch'
-        }
+        label={t('stockOps.form.in.referenceNote')}
+        placeholder={t('stockOps.form.in.referencePlaceholder')}
         value={formData.referenceNote}
         onChange={(e) => setFormData((prev) => ({ ...prev, referenceNote: e.target.value }))}
         size="sm"
@@ -219,7 +216,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
 
       <div className="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
         <Button type="button" variant="ghost" onClick={onClose}>
-          {language === 'vi' ? 'Hủy bỏ' : 'Cancel'}
+          {t('stockOps.form.cancel')}
         </Button>
         <Button
           id="btn-save-draft"
@@ -228,7 +225,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
           onClick={() => handleAction('DRAFT')}
           iconLeft={<FileEdit className="w-4 h-4" />}
         >
-          {language === 'vi' ? 'Lưu nháp' : 'Save Draft'}
+          {t('stockOps.form.saveDraft')}
         </Button>
         <Button
           id="btn-submit-order"
@@ -236,7 +233,7 @@ const StockInFormContent: React.FC<FormContentProps> = ({
           variant="primary"
           iconLeft={<Send className="w-4 h-4" />}
         >
-          {language === 'vi' ? 'Gửi chờ duyệt' : 'Submit for Approval'}
+          {t('stockOps.form.submitForApproval')}
         </Button>
       </div>
     </form>
@@ -250,21 +247,14 @@ export const StockInFormModal: React.FC<StockInFormModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const { language } = useTranslation();
+  const { t } = useTranslation();
 
   const title =
     mode === 'edit' && initialOrder
-      ? language === 'vi'
-        ? `Chỉnh sửa phiếu nhập ${initialOrder.code}`
-        : `Edit Stock-In Voucher ${initialOrder.code}`
-      : language === 'vi'
-        ? 'Tạo phiếu nhập kho mới'
-        : 'Create New Stock-In Voucher';
+      ? t('stockOps.form.in.editTitle', { code: initialOrder.code })
+      : t('stockOps.form.in.createTitle');
 
-  const description =
-    language === 'vi'
-      ? 'Chọn kho tiếp nhận, nhà cung cấp và danh sách sản phẩm nhập. Có thể lưu nháp hoặc gửi phê duyệt ngay.'
-      : 'Select warehouse, supplier, and product lines. Save as draft or submit directly for manager approval.';
+  const description = t('stockOps.form.in.description');
 
   return (
     <Modal open={open} onClose={onClose} title={title} description={description} size="xl">
