@@ -19,43 +19,6 @@ body {
   width: 100%;
 }
 
-.landing-skip-link {
-  position: fixed;
-  z-index: 60;
-  left: 1rem;
-  top: 1rem;
-  transform: translateY(-160%);
-  border-radius: var(--radius-md);
-  background: var(--landing-accent);
-  color: var(--color-text-inverse);
-  padding: var(--spacing-3) var(--spacing-4);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  transition: transform 150ms ease;
-}
-
-.landing-skip-link:focus {
-  transform: translateY(0);
-  outline: 2px solid white;
-  outline-offset: 2px;
-}
-
-.landing-hero-grid {
-  background-image:
-    linear-gradient(var(--landing-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--landing-grid-line) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, black, transparent 88%);
-}
-
-.landing-product-frame {
-  overflow: hidden;
-  border: 1px solid rgb(51 65 85 / 0.9);
-  border-radius: var(--radius-xl);
-  background: var(--landing-panel);
-  box-shadow: 0 28px 64px -32px rgb(0 0 0 / 0.78), 0 0 0 1px rgb(148 163 184 / 0.06);
-}
-
 /* Purposeful GPU-only background glow drift & live telemetry beacon pulse */
 @keyframes subtleGlowPulse {
   0%,

@@ -62,7 +62,7 @@ describe('Authentication UI & Route Guards', () => {
       expect(
         screen.getByRole('heading', {
           level: 1,
-          name: /every warehouse in sync|đồng bộ mọi kho hàng/i,
+          name: /warehouse inventory software|phần mềm quản lý kho/i,
         })
       ).toBeInTheDocument();
     });
@@ -158,7 +158,7 @@ describe('Authentication UI & Route Guards', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { level: 1, name: /every warehouse in sync/i })
+        screen.getByRole('heading', { level: 1, name: /warehouse inventory software/i })
       ).toBeInTheDocument();
     });
     expect(localStorage.getItem(AUTH_SESSION_STORAGE_KEY)).toBeNull();
@@ -183,9 +183,6 @@ describe('Authentication UI & Route Guards', () => {
     const viewerTab = await screen.findByRole('tab', { name: /viewer/i });
     await user.click(viewerTab);
     expect(viewerTab).toHaveAttribute('aria-selected', 'true');
-    expect(await screen.findByText(/read-only/i)).toBeInTheDocument();
-
-    await user.keyboard('{ArrowRight}');
-    expect(await screen.findByRole('tab', { name: /administrator/i })).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByText(/^Read-only$/i)).toBeInTheDocument();
   });
 });

@@ -48,12 +48,49 @@ async function runBrowserTest() {
     await page.waitForSelector('h1');
 
     const landingTitleEn = await page.textContent('h1');
-    if (!landingTitleEn?.includes('Every warehouse in sync')) {
+    if (!landingTitleEn?.includes('Warehouse inventory software')) {
       throw new Error(`Expected English Landing hero heading, got: ${landingTitleEn}`);
     }
 
+    // Wait for Hero entrance + metric counter animation (1,420) to complete
+    await page.waitForTimeout(1050);
+    const heroVisibleMetrics = await page.evaluate(() => {
+      const hero = document.querySelector('main section');
+      return Array.from(hero?.querySelectorAll('[aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (!heroVisibleMetrics.includes('1,420') || !heroVisibleMetrics.includes('5') || !heroVisibleMetrics.includes('3')) {
+      throw new Error(`Hero animated counters did not reach expected targets: ${JSON.stringify(heroVisibleMetrics)}`);
+    }
+
+    // Scroll to #features & #benefits and verify scroll reveals + animated counters settle
+    await page.locator('#features').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
+    await page.locator('#benefits').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1050);
+    const benefitsStatsEn = await page.evaluate(() => {
+      const section = document.querySelector('#benefits');
+      return Array.from(section?.querySelectorAll('dd [aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (!benefitsStatsEn.includes('4 Roles') || !benefitsStatsEn.includes('14 Modules')) {
+      throw new Error(`Benefits scroll counters did not reach targets in EN: ${JSON.stringify(benefitsStatsEn)}`);
+    }
+
+    await page.locator('#roles').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(550);
+    const rolesOpacity = await page.evaluate(() => {
+      const card = document.querySelector('#roles h2');
+      return card ? window.getComputedStyle(card).opacity : '0';
+    });
+    if (rolesOpacity !== '1') {
+      throw new Error(`Expected #roles heading opacity to settle to 1 after scroll, got ${rolesOpacity}`);
+    }
+
     const landingPreviewEn = await page.locator('#preview').textContent();
-    if (!landingPreviewEn?.includes('Warehouse Voucher Queue') || landingPreviewEn?.includes('stockOps.')) {
+    if (!landingPreviewEn?.includes('New Stock Voucher') || landingPreviewEn?.includes('stockOps.')) {
       throw new Error(`Landing preview missing expected English button text or leaked raw key: ${landingPreviewEn}`);
     }
 
@@ -62,7 +99,7 @@ async function runBrowserTest() {
     await page.locator('#preview [role="tab"]', { hasText: 'Viewer' }).click();
     await page.waitForTimeout(220);
     const viewerPreviewText = await page.locator('#preview').textContent();
-    if (!viewerPreviewText?.toLowerCase().includes('read-only') || viewerPreviewText?.includes('Approve / Reject')) {
+    if (!viewerPreviewText?.includes('Read-only') || viewerPreviewText?.includes('New Stock Voucher')) {
       throw new Error(`Landing preview did not switch to Viewer read-only state cleanly: ${viewerPreviewText}`);
     }
     await page.locator('#preview [role="tab"]', { hasText: 'Manager' }).click();
@@ -73,20 +110,34 @@ async function runBrowserTest() {
     await page.waitForTimeout(250);
     const landingTitleVi = await page.textContent('h1');
     const landingPreviewVi = await page.locator('#preview').textContent();
+    const benefitsStatsVi = await page.evaluate(() => {
+      const section = document.querySelector('#benefits');
+      return Array.from(section?.querySelectorAll('dd [aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
     if (
-      landingTitleVi === landingTitleEn ||
-      !landingPreviewVi?.includes('Hàng đợi phê duyệt phiếu kho')
+      !landingTitleVi?.includes('Phần mềm quản lý kho') ||
+      !landingPreviewVi?.includes('Tạo phiếu kho mới') ||
+      !benefitsStatsVi.includes('4 Vai trò') ||
+      !benefitsStatsVi.includes('14 Phân hệ')
     ) {
-      throw new Error(`Landing Page did not switch cleanly to Vietnamese: ${landingTitleVi}`);
+      throw new Error(`Landing Page did not switch cleanly to Vietnamese: ${landingTitleVi} / ${JSON.stringify(benefitsStatsVi)}`);
     }
     await page.click('#landing-lang-toggle');
     await page.waitForTimeout(200);
 
-    // Check prefers-reduced-motion: content remains available without entrance motion.
+    // Check prefers-reduced-motion: reduce renders immediate final counts cleanly
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.reload({ waitUntil: 'networkidle' });
-    if (!(await page.textContent('h1'))?.includes('Every warehouse in sync')) {
-      throw new Error('Reduced-motion mode hid the landing content');
+    const reducedMetrics = await page.evaluate(() => {
+      const hero = document.querySelector('main section');
+      return Array.from(hero?.querySelectorAll('[aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (!reducedMetrics.includes('1,420')) {
+      throw new Error(`Expected reduced-motion mode to render 1,420 immediately, got ${JSON.stringify(reducedMetrics)}`);
     }
     await page.emulateMedia({ reducedMotion: null });
 

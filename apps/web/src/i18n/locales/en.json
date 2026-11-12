@@ -1584,11 +1584,7 @@
   "landing": {
     "nav": {
       "ariaLabel": "Landing page navigation",
-      "skipToContent": "Skip to main content",
-      "productLabel": "Warehouse operations",
-      "closeMenu": "Close navigation menu",
-      "workflow": "Workflow",
-      "preview": "Role preview",
+      "preview": "Dashboard Preview",
       "features": "Features",
       "benefits": "Benefits",
       "roles": "Roles",
@@ -1596,34 +1592,10 @@
       "getStarted": "Get Started"
     },
     "hero": {
-      "redesignHeadline": "Every warehouse in sync. Every stock movement accounted for.",
-      "redesignSubCopy": "Bring multi-warehouse balances, inbound and outbound vouchers, and maker-checker reviews into one clear operational view.",
-      "redesignCtaPrimary": "Create a demo account",
-      "redesignCtaSecondary": "Explore the workflow",
-      "eyebrow": "Inventory operations, in one workspace",
-      "headline": "Every warehouse in sync. Every stock movement accounted for.",
-      "subCopy": "Bring multi-warehouse balances, inbound and outbound vouchers, and maker-checker reviews into one clear operational view.",
-      "ctaPrimary": "Create a demo account",
-      "ctaSecondary": "Explore the workflow",
-      "disclosure": "The product preview uses illustrative demo data.",
-      "illustrative": "Illustrative",
-      "facilityAria": "Illustrative facility selector",
-      "facilityValue": "All facilities",
-      "metricSkus": "SKUs tracked",
-      "metricAttention": "Need attention",
-      "metricPending": "Pending review",
-      "activityTitle": "Movement activity",
-      "activitySubtitle": "Illustrative warehouse activity",
-      "inboundTitle": "Inbound receipt recorded",
-      "outboundTitle": "Outbound voucher submitted",
-      "reviewTitle": "Approval review required",
-      "awaiting": "Review",
-      "approvalTitle": "Voucher review",
-      "approvalSubtitle": "A clear maker-checker handoff before approval.",
-      "approvalDraft": "Voucher created",
-      "approvalReview": "Manager review",
-      "approvalApproved": "Approval recorded",
-      "scopeLabel": "Facility scope",
+      "headline": "Warehouse inventory software for multi-location teams",
+      "subCopy": "Track stock balances across warehouses, process inbound and outbound vouchers with maker-checker approval, and keep audit ledgers accurate in English and Vietnamese.",
+      "ctaPrimary": "Get Started Free",
+      "ctaSecondary": "Sign In",
       "fact1Label": "Access Control",
       "fact1Value": "4 RBAC Roles",
       "fact2Label": "Warehouse Scope",
@@ -1638,9 +1610,8 @@
       "badgeAdjust": "ADJUST"
     },
     "preview": {
-      "eyebrow": "Role-aware by design",
-      "title": "Give every warehouse role a clear operating boundary",
-      "subtitle": "Inspect the implemented role matrix for Admin, Manager, Staff, and Viewer. This visual preview does not grant access.",
+      "title": "See how each warehouse role operates",
+      "subtitle": "Switch between Admin, Manager, Staff, and Viewer below to inspect how menus, permissions, and stock voucher approvals adapt automatically.",
       "roleSwitchLabel": "Inspect workspace capabilities by role:",
       "permissionsLabel": "Workspace Scope",
       "modulesUnit": "menus",
@@ -1651,9 +1622,7 @@
       "allowed": "Allowed",
       "restricted": "Restricted",
       "ledgerTitle": "Warehouse Voucher Queue",
-      "ledgerSub": "Illustrative maker-checker handoff for an assigned facility",
-      "illustrative": "Preview only",
-      "disclaimer": "This is a visual explanation of configured role capabilities, not an active permission session.",
+      "ledgerSub": "Live maker-checker workflow preview across assigned facilities",
       "colVoucher": "Voucher",
       "colWarehouse": "Facility",
       "colState": "Status",
@@ -1666,9 +1635,8 @@
       "createVoucherBtn": "New Stock Voucher"
     },
     "features": {
-      "eyebrow": "Operations that stay connected",
-      "title": "Built around the work your warehouse team already does",
-      "subtitle": "Catalog, alerts, stocktaking, reports, and language switching are available in the current application interface.",
+      "title": "Built for daily warehouse operations",
+      "subtitle": "Every core inventory module connected under unified audit logs and warehouse rules.",
       "pillar1Badge": "Maker-Checker Workflow",
       "pillar2Badge": "Scoped Storage",
       "f1Title": "Inbound & Outbound Voucher Control",
@@ -1700,30 +1668,6 @@
       "b4": "Keep procurement, stocktaking, and alerts aligned under one SKU catalog",
       "b5": "Toggle cleanly between English and Vietnamese across every table and voucher"
     },
-    "value": {
-      "eyebrow": "A calmer daily control room",
-      "title": "Make each stock decision easier to see and review",
-      "subtitle": "The product is organized around the questions teams need answered while inventory is moving.",
-      "visibilityTitle": "See stock across facilities",
-      "visibilityBody": "Keep warehouse context visible while teams work through inventory activity.",
-      "controlTitle": "Separate action from approval",
-      "controlBody": "Maker-checker states make the review step visible before a voucher is approved.",
-      "multiWarehouseTitle": "Operate by warehouse scope",
-      "multiWarehouseBody": "Roles and workspace navigation reflect the warehouse operations model.",
-      "traceabilityTitle": "Follow the operational record",
-      "traceabilityBody": "Use vouchers, stocktaking, reports, and alerts as connected operational touchpoints."
-    },
-    "workflow": {
-      "eyebrow": "A practical warehouse sequence",
-      "title": "From catalog setup to a reviewed stock record",
-      "subtitle": "A focused flow helps teams understand where work starts, where it is reviewed, and where balances are checked.",
-      "step1Title": "Manage catalog and warehouses",
-      "step1Body": "Maintain products, supporting master data, and warehouse locations before daily movements begin.",
-      "step2Title": "Create stock vouchers",
-      "step2Body": "Prepare inbound or outbound vouchers with the information needed for warehouse work.",
-      "step3Title": "Review and track balances",
-      "step3Body": "Use approval states, stocktaking, alerts, and reports to follow operational outcomes."
-    },
     "roles": {
       "kicker": "Role-Based Access Control",
       "title": "Clear boundaries for every team member",
@@ -1731,13 +1675,11 @@
       "tryAccount": "Sign in with demo role"
     },
     "cta": {
-      "eyebrow": "Explore the workspace",
       "title": "Ready to explore the warehouse workspace?",
       "subtitle": "Create a local demo account or sign in immediately with one of four preconfigured test roles.",
       "button": "Create Account"
     },
     "footer": {
-      "navAria": "Footer navigation",
       "tagline": "Smart Inventory Management System",
       "copyright": "© 2026 Smart Inventory. Frontend prototype with local mock authentication.",
       "links": {

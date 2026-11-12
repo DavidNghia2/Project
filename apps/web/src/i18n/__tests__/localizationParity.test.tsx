@@ -162,7 +162,7 @@ describe('Bilingual Localization Integrity & Parity (EN <-> VI)', () => {
       { path: '/settings', element: <SettingsPage />, enMatch: /System Settings/i, viMatch: /Cài Đặt Hệ Thống/i },
       { path: '/design-system', element: <DesignSystemDemo />, enMatch: /OPERATE MODE/i, viMatch: /CHẾ ĐỘ VẬN HÀNH/i },
       { path: '/unknown-route', element: <NotFoundPage />, enMatch: /Page Not Found/i, viMatch: /Không tìm thấy trang/i },
-      { path: '/', element: <LandingPage />, enMatch: /Every warehouse in sync/i, viMatch: /Đồng bộ mọi kho hàng/i },
+      { path: '/', element: <LandingPage />, enMatch: /Warehouse inventory software/i, viMatch: /Phần mềm quản lý kho/i },
       { path: '/login', element: <LoginPage />, enMatch: /Sign in to Smart Inventory/i, viMatch: /Đăng nhập Smart Inventory/i },
       { path: '/register', element: <RegisterPage />, enMatch: /Create your warehouse account/i, viMatch: /Tạo tài khoản làm việc mới/i },
     ];
