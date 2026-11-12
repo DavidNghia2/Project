@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { getRoleCapabilities } from './rbacMatrix';
-import { RolePreviewContext, DEFAULT_ROLE_PREVIEW_VALUE } from './rolePreviewContext';
+import { RolePreviewContext } from './rolePreviewContext';
 import type { RoleCode } from './types';
 
 export interface RolePreviewProviderProps {
@@ -8,7 +8,7 @@ export interface RolePreviewProviderProps {
   initialRole?: RoleCode;
 }
 
-const DevRolePreviewProvider: React.FC<RolePreviewProviderProps> = ({
+export const RolePreviewProvider: React.FC<RolePreviewProviderProps> = ({
   children,
   initialRole = 'ADMIN',
 }) => {
@@ -19,28 +19,11 @@ const DevRolePreviewProvider: React.FC<RolePreviewProviderProps> = ({
       activeRole,
       capabilities: getRoleCapabilities(activeRole),
       setActiveRole,
-      resetRole: () => setActiveRole('ADMIN'),
-      isSimulated: true,
+      resetRole: () => setActiveRole(initialRole),
+      isSimulated: Boolean(import.meta.env.DEV),
     }),
-    [activeRole]
+    [activeRole, initialRole]
   );
 
   return <RolePreviewContext.Provider value={value}>{children}</RolePreviewContext.Provider>;
-};
-
-export const RolePreviewProvider: React.FC<RolePreviewProviderProps> = ({
-  children,
-  initialRole = 'ADMIN',
-}) => {
-  if (!import.meta.env.DEV) {
-    return (
-      <RolePreviewContext.Provider value={DEFAULT_ROLE_PREVIEW_VALUE}>
-        {children}
-      </RolePreviewContext.Provider>
-    );
-  }
-
-  return (
-    <DevRolePreviewProvider initialRole={initialRole}>{children}</DevRolePreviewProvider>
-  );
 };

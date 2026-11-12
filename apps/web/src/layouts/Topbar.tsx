@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   Menu,
   Bell,
@@ -17,6 +17,7 @@ import {
 import { useTranslation } from '../i18n';
 import { Badge } from '../design-system';
 import { ROLE_META, useRolePreview, type RoleCode } from '../features/users-rbac';
+import { useAuth } from '../features/auth';
 
 const ROLE_AVATAR_META: Record<RoleCode, { initials: string; emailPrefix: string }> = {
   ADMIN: { initials: 'AD', emailPrefix: 'admin' },
@@ -46,9 +47,22 @@ export const Topbar: React.FC<TopbarProps> = ({
 }) => {
   const { t, language, toggleLanguage } = useTranslation();
   const { activeRole, capabilities } = useRolePreview();
+  const { user: authUser, signOut } = useAuth();
   const roleMeta = ROLE_META[activeRole];
   const avatarMeta = ROLE_AVATAR_META[activeRole];
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const displayInitials = authUser?.avatarInitials ?? avatarMeta.initials;
+  const displayName =
+    authUser?.fullName ?? (activeRole === 'ADMIN' ? t('topbar.adminUser') : t(roleMeta.labelKey));
+  const displayEmail = authUser?.email ?? `${avatarMeta.emailPrefix}@smartinventory.local`;
+
+  const handleLogout = async () => {
+    setIsUserMenuOpen(false);
+    await signOut();
+    navigate('/', { replace: true });
+  };
 
   // Dropdown states
   const [isWarehouseOpen, setIsWarehouseOpen] = useState(false);
@@ -353,11 +367,11 @@ export const Topbar: React.FC<TopbarProps> = ({
             aria-label={t('topbar.userMenuAria')}
           >
             <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-semibold text-xs flex items-center justify-center shrink-0 ring-2 ring-blue-100">
-              {avatarMeta.initials}
+              {displayInitials}
             </div>
             <div className="hidden md:flex flex-col text-left leading-tight">
               <span className="text-xs font-semibold text-[#0F172A] max-w-[120px] truncate">
-                {activeRole === 'ADMIN' ? t('topbar.adminUser') : t(roleMeta.labelKey)}
+                {displayName}
               </span>
               <span className="text-[10px] text-[#64748B]">{t(`topbar.roleShort.${activeRole}`)}</span>
             </div>
@@ -368,10 +382,10 @@ export const Topbar: React.FC<TopbarProps> = ({
             <div className="absolute right-0 mt-1 w-56 bg-white border border-[#CBD5E1] rounded-lg shadow-xl py-1 z-30 animate-in fade-in zoom-in-95 duration-100">
               <div className="px-4 py-2.5 border-b border-[#E2E8F0]">
                 <p className="text-xs font-semibold text-[#0F172A] truncate">
-                  {activeRole === 'ADMIN' ? t('topbar.adminUser') : t(roleMeta.labelKey)}
+                  {displayName}
                 </p>
                 <p className="text-[11px] text-[#64748B] truncate">
-                  {`${avatarMeta.emailPrefix}@smartinventory.local`}
+                  {displayEmail}
                 </p>
                 <Badge variant={roleMeta.badgeVariant} size="sm" className="mt-1.5 text-[10px]">
                   {activeRole === 'ADMIN' ? t('topbar.adminRole') : activeRole}
@@ -412,11 +426,9 @@ export const Topbar: React.FC<TopbarProps> = ({
               <div className="border-t border-[#E2E8F0] pt-1">
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsUserMenuOpen(false);
-                    alert(t('topbar.logoutMockAlert'));
-                  }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-red-600 hover:bg-red-50 transition-colors"
+                  id="btn-topbar-logout"
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-4 h-4 text-red-600" />
                   <span>{t('topbar.logout')}</span>

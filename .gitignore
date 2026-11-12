@@ -33,8 +33,9 @@ Thumbs.db
 *.sln
 *.sw?
 
-# AI Assistant Skills & Local Planning / QA Docs
+# AI Assistant Skills, Knowledge Graph & Local Planning / QA Docs
 .agents/
+graphify-out/
 skills-lock.json
 /*.md
 !/README.md

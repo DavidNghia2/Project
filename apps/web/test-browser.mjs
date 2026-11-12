@@ -29,15 +29,275 @@ async function runBrowserTest() {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const page = await context.newPage();
 
-    // 1. Routing & Dashboard smoke test
-    console.log('\n[1/7] Testing App Routing & Dashboard Landing...');
+    const consoleErrors = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+    page.on('pageerror', (err) => {
+      consoleErrors.push(err.message);
+    });
+
+    // =====================================================================
+    // AUTHENTICATION E2E SUITE (Landing, Protected Routes, Register, Login, Persist, Logout)
+    // =====================================================================
+    console.log('\n[Auth 1/8] Testing Unauthenticated Landing Page (/), Bilingual & Mobile Responsive...');
     await page.goto(`${baseUrl}/`);
+    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('h1');
+
+    const landingTitleEn = await page.textContent('h1');
+    if (!landingTitleEn?.includes('Warehouse inventory software')) {
+      throw new Error(`Expected English Landing hero heading, got: ${landingTitleEn}`);
+    }
+
+    // Wait for Hero entrance + metric counter animation (1,420) to complete
+    await page.waitForTimeout(1050);
+    const heroVisibleMetrics = await page.evaluate(() => {
+      const hero = document.querySelector('main section');
+      return Array.from(hero?.querySelectorAll('[aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (!heroVisibleMetrics.includes('1,420') || !heroVisibleMetrics.includes('5') || !heroVisibleMetrics.includes('3')) {
+      throw new Error(`Hero animated counters did not reach expected targets: ${JSON.stringify(heroVisibleMetrics)}`);
+    }
+
+    // Scroll to #features & #benefits and verify scroll reveals + animated counters settle
+    await page.locator('#features').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
+    await page.locator('#benefits').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1050);
+    const benefitsStatsEn = await page.evaluate(() => {
+      const section = document.querySelector('#benefits');
+      return Array.from(section?.querySelectorAll('dd [aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (!benefitsStatsEn.includes('4 Roles') || !benefitsStatsEn.includes('14 Modules')) {
+      throw new Error(`Benefits scroll counters did not reach targets in EN: ${JSON.stringify(benefitsStatsEn)}`);
+    }
+
+    await page.locator('#roles').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(550);
+    const rolesOpacity = await page.evaluate(() => {
+      const card = document.querySelector('#roles h2');
+      return card ? window.getComputedStyle(card).opacity : '0';
+    });
+    if (rolesOpacity !== '1') {
+      throw new Error(`Expected #roles heading opacity to settle to 1 after scroll, got ${rolesOpacity}`);
+    }
+
+    const landingPreviewEn = await page.locator('#preview').textContent();
+    if (!landingPreviewEn?.includes('New Stock Voucher') || landingPreviewEn?.includes('stockOps.')) {
+      throw new Error(`Landing preview missing expected English button text or leaked raw key: ${landingPreviewEn}`);
+    }
+
+    // Check interactive Preview role tab switch to Viewer and back to Manager
+    await page.locator('#preview').scrollIntoViewIfNeeded();
+    await page.locator('#preview [role="tab"]', { hasText: 'Viewer' }).click();
+    await page.waitForTimeout(220);
+    const viewerPreviewText = await page.locator('#preview').textContent();
+    if (!viewerPreviewText?.includes('Read-only') || viewerPreviewText?.includes('New Stock Voucher')) {
+      throw new Error(`Landing preview did not switch to Viewer read-only state cleanly: ${viewerPreviewText}`);
+    }
+    await page.locator('#preview [role="tab"]', { hasText: 'Manager' }).click();
+    await page.waitForTimeout(150);
+
+    // Bilingual check on Landing Page (EN -> VI -> EN) including localized counters
+    await page.click('#landing-lang-toggle');
+    await page.waitForTimeout(250);
+    const landingTitleVi = await page.textContent('h1');
+    const landingPreviewVi = await page.locator('#preview').textContent();
+    const benefitsStatsVi = await page.evaluate(() => {
+      const section = document.querySelector('#benefits');
+      return Array.from(section?.querySelectorAll('dd [aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (
+      !landingTitleVi?.includes('Phần mềm quản lý kho') ||
+      !landingPreviewVi?.includes('Tạo phiếu kho mới') ||
+      !benefitsStatsVi.includes('4 Vai trò') ||
+      !benefitsStatsVi.includes('14 Phân hệ')
+    ) {
+      throw new Error(`Landing Page did not switch cleanly to Vietnamese: ${landingTitleVi} / ${JSON.stringify(benefitsStatsVi)}`);
+    }
+    await page.click('#landing-lang-toggle');
+    await page.waitForTimeout(200);
+
+    // Check prefers-reduced-motion: reduce renders immediate final counts cleanly
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload({ waitUntil: 'networkidle' });
+    const reducedMetrics = await page.evaluate(() => {
+      const hero = document.querySelector('main section');
+      return Array.from(hero?.querySelectorAll('[aria-label] > span[aria-hidden="true"]:not(.invisible)') ?? []).map(
+        (el) => el.textContent?.trim()
+      );
+    });
+    if (!reducedMetrics.includes('1,420')) {
+      throw new Error(`Expected reduced-motion mode to render 1,420 immediately, got ${JSON.stringify(reducedMetrics)}`);
+    }
+    await page.emulateMedia({ reducedMotion: null });
+
+    // Check Landing Page mobile overflow (390x844), mobile drawer animation, and restore desktop
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(200);
+    await page.click('#landing-mobile-menu-btn');
+    await page.waitForTimeout(220);
+    await page.click('#landing-mobile-menu-btn');
+    await page.waitForTimeout(220);
+    const landingMobileOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    );
+    if (landingMobileOverflow) {
+      throw new Error('Landing page horizontal overflow detected at 390px');
+    }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.waitForTimeout(150);
+    console.log('   ✓ Landing page animations, counters, reduced-motion, EN/VI, and mobile/desktop layout verified');
+
+    console.log('\n[Auth 2/8] Testing Protected Routes Redirect when Unauthenticated...');
+    await page.goto(`${baseUrl}/dashboard`);
+    await page.waitForLoadState('networkidle');
+    if (new URL(page.url()).pathname !== '/') {
+      throw new Error(`Expected unauthenticated /dashboard to redirect to /, got ${page.url()}`);
+    }
+    await page.goto(`${baseUrl}/products`);
+    await page.waitForLoadState('networkidle');
+    if (new URL(page.url()).pathname !== '/') {
+      throw new Error(`Expected unauthenticated /products to redirect to /, got ${page.url()}`);
+    }
+    console.log('   ✓ Protected routes block unauthenticated access cleanly');
+
+    console.log('\n[Auth 3/8] Testing Account Registration Validation & Submission (/register)...');
+    await page.click('#landing-nav-register');
+    await page.waitForURL('**/register');
+
+    // Check Register Mobile 390px & Vietnamese toggle
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(150);
+    const regMobileOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    );
+    if (regMobileOverflow) {
+      throw new Error('Register page horizontal overflow detected at 390px');
+    }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.click('header button[title="Switch Language"]');
+    await page.waitForTimeout(150);
+    if (!(await page.textContent('body'))?.includes('Tạo tài khoản làm việc mới')) {
+      throw new Error('Register page did not translate to Vietnamese cleanly');
+    }
+    await page.click('header button[title="Đổi ngôn ngữ"]');
+    await page.waitForTimeout(150);
+
+    await page.fill('#register-input-fullname', 'Nguyen E2E Operator');
+    await page.fill('#register-input-email', 'e2e.operator@smartinventory.example');
+    await page.fill('#register-input-password', 'short');
+    await page.fill('#register-input-confirm-password', 'mismatch');
+    await page.click('#btn-register-submit');
+    await page.waitForTimeout(200);
+    const regBodyErr = await page.textContent('body');
+    if (!regBodyErr?.includes('at least 8 characters') || !regBodyErr?.includes('does not match')) {
+      throw new Error('Expected register form validation messages for weak/mismatched passwords');
+    }
+
+    await page.fill('#register-input-password', 'Operator2026');
+    await page.fill('#register-input-confirm-password', 'Operator2026');
+    await page.click('#btn-register-submit');
+    await page.waitForURL('**/login');
+    await page.waitForTimeout(200);
+
+    // Ensure plaintext password is NOT persisted in sim_users
+    const simUsersRaw = await page.evaluate(() => localStorage.getItem('sim_users') ?? '');
+    if (!simUsersRaw.includes('e2e.operator@smartinventory.example') || simUsersRaw.includes('Operator2026')) {
+      throw new Error('sim_users must store registered account without plaintext password');
+    }
+    console.log('   ✓ Registration validation, redirect to /login, and non-plaintext hash verified');
+
+    console.log('\n[Auth 4/8] Testing Login Failure (Invalid Credentials) + Bilingual & Mobile Check...');
+    await page.fill('#login-input-password', 'WrongPassword99');
+    await page.click('#btn-login-submit');
+    await page.waitForTimeout(200);
+    const loginErrText = await page.textContent('body');
+    if (!loginErrText?.includes('Invalid email or password')) {
+      throw new Error('Expected invalid credentials alert on failed login');
+    }
+    if (new URL(page.url()).pathname !== '/login') {
+      throw new Error('Failed login should remain on /login');
+    }
+
+    // Check Login page Vietnamese toggle + Mobile 390px overflow
+    await page.click('header button[title="Switch Language"]');
+    await page.waitForTimeout(150);
+    const loginViBody = await page.textContent('body');
+    if (!loginViBody?.includes('Đăng nhập Smart Inventory')) {
+      throw new Error('Login page did not translate to Vietnamese cleanly');
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(150);
+    const loginMobileOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+    );
+    if (loginMobileOverflow) {
+      throw new Error('Login page horizontal overflow detected at 390px');
+    }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.click('header button[title="Đổi ngôn ngữ"]');
+    await page.waitForTimeout(150);
+    console.log('   ✓ Login failure alert, VI switching, and Mobile 390px layout verified');
+
+    console.log('\n[Auth 5/8] Testing Login Success with Registered Account -> Dashboard...');
+    await page.fill('#login-input-password', 'Operator2026');
+    await page.click('#btn-login-submit');
+    await page.waitForURL('**/dashboard');
+    await page.waitForSelector('h1');
+    console.log('   ✓ Registered user signed in and landed on /dashboard');
+
+    console.log('\n[Auth 6/8] Testing Session Persistence across Browser Reload...');
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('h1');
+    if (!page.url().includes('/dashboard')) {
+      throw new Error(`Expected session to remain on /dashboard after reload, got ${page.url()}`);
+    }
+    console.log('   ✓ Session persisted cleanly across reload');
+
+    console.log('\n[Auth 7/8] Testing GuestRoute Redirect when Already Signed In...');
+    await page.goto(`${baseUrl}/login`);
+    await page.waitForLoadState('networkidle');
+    if (!page.url().includes('/dashboard')) {
+      throw new Error(`Expected authenticated /login to redirect to /dashboard, got ${page.url()}`);
+    }
+    console.log('   ✓ GuestRoute bounced signed-in user back to /dashboard');
+
+    console.log('\n[Auth 8/8] Testing Logout -> Landing Page & Subsequent Route Protection...');
+    await page.click('button[aria-label*="User account menu"]');
+    await page.click('#btn-topbar-logout');
+    await page.waitForURL(`${baseUrl}/`);
+    await page.goto(`${baseUrl}/dashboard`);
+    await page.waitForLoadState('networkidle');
+    if (new URL(page.url()).pathname !== '/') {
+      throw new Error(`Expected logged-out /dashboard visit to redirect to /, got ${page.url()}`);
+    }
+    console.log('   ✓ Logout cleared session, returned to Landing Page, and re-protected /dashboard');
+
+    // =====================================================================
+    // LOGIN AS ADMIN DEMO ACCOUNT FOR FULL APP REGRESSION TESTS
+    // =====================================================================
+    console.log('\n[1/7] Logging in via Admin Demo Account Card -> Testing App Routing & Dashboard...');
+    await page.click('#landing-nav-login');
+    await page.waitForURL('**/login');
+    await page.click('[data-testid="demo-account-ADMIN"]');
+    await page.click('#btn-login-submit');
+    await page.waitForURL('**/dashboard');
     await page.waitForLoadState('networkidle');
     const url = page.url();
     if (!url.includes('/dashboard')) {
       throw new Error(`Expected redirect to /dashboard, got ${url}`);
     }
-    console.log('   ✓ Redirect to /dashboard verified');
+    console.log('   ✓ Admin Demo login -> /dashboard verified');
 
     // Verify Sidebar Collapse / Expand geometry (no clipped logo or overlapping toggle button)
     await page.click('button[aria-label*="Collapse sidebar"]');
@@ -630,6 +890,11 @@ async function runBrowserTest() {
       throw new Error(`Mobile overflow detected: scrollWidth ${mobileScrollWidth} > clientWidth ${mobileClientWidth}`);
     }
     console.log('   ✓ Mobile layout has no horizontal overflow');
+
+    if (consoleErrors.length > 0) {
+      throw new Error(`Uncaught browser console/page errors detected:\n${consoleErrors.join('\n')}`);
+    }
+    console.log('   ✓ Zero browser console/page errors detected');
 
     console.log('\n======================================================');
     console.log('🎉 ALL PLAYWRIGHT BROWSER E2E TESTS PASSED WITH 100% SUCCESS!');

@@ -24,7 +24,9 @@ import {
   SettingsPage,
   NotFoundPage,
   DesignSystemDemo,
+  LandingPage,
 } from '../../pages';
+import { LoginPage, RegisterPage } from '../../features/auth';
 
 function flattenKeys(obj: Record<string, unknown>, prefix = ''): Record<string, unknown> {
   const out: Record<string, unknown> = {};
@@ -45,7 +47,7 @@ function extractPlaceholders(template: string): string[] {
 }
 
 const RAW_KEY_PATTERN =
-  /\b(?:common|status|table|validation|emptyState|alert|nav|topbar|notFound|pages|demo|layout|domain|dashboard|alerts|stocktaking|settings|products|masterData|stockOps|reports|usersRbac)\.[a-zA-Z0-9_]+/;
+  /(?<!@)\b(?:common|status|table|validation|emptyState|alert|nav|topbar|notFound|pages|demo|layout|domain|dashboard|alerts|stocktaking|settings|products|masterData|stockOps|reports|usersRbac|auth|landing)\.[a-zA-Z0-9_]+/;
 
 const LanguageProbe: React.FC = () => {
   const { language, toggleLanguage, t } = useTranslation();
@@ -160,6 +162,9 @@ describe('Bilingual Localization Integrity & Parity (EN <-> VI)', () => {
       { path: '/settings', element: <SettingsPage />, enMatch: /System Settings/i, viMatch: /Cài Đặt Hệ Thống/i },
       { path: '/design-system', element: <DesignSystemDemo />, enMatch: /OPERATE MODE/i, viMatch: /CHẾ ĐỘ VẬN HÀNH/i },
       { path: '/unknown-route', element: <NotFoundPage />, enMatch: /Page Not Found/i, viMatch: /Không tìm thấy trang/i },
+      { path: '/', element: <LandingPage />, enMatch: /Warehouse inventory software/i, viMatch: /Phần mềm quản lý kho/i },
+      { path: '/login', element: <LoginPage />, enMatch: /Sign in to Smart Inventory/i, viMatch: /Đăng nhập Smart Inventory/i },
+      { path: '/register', element: <RegisterPage />, enMatch: /Create your warehouse account/i, viMatch: /Tạo tài khoản làm việc mới/i },
     ];
 
     for (const lang of ['en', 'vi'] as const) {
