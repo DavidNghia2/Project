@@ -76,6 +76,14 @@
   /* Focus Ring */
   --focus-ring-color: #2563EB;
   --focus-ring-offset: 2px;
+
+  /* Marketing surfaces: shared by the public product pages. */
+  --landing-navy: #020617;
+  --landing-panel: #0F172A;
+  --landing-accent: #2563EB;
+  --landing-accent-hover: #1D4ED8;
+  --landing-grid-line: rgba(148, 163, 184, 0.14);
+  --landing-card-shadow: 0 16px 36px -24px rgba(15, 23, 42, 0.28);
 }
 
 @theme {

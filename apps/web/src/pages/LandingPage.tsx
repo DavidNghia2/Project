@@ -1,988 +1,198 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, m } from 'motion/react';
+import { m } from 'motion/react';
 import {
-  ArrowDownToLine,
   ArrowRight,
+  ArrowDownToLine,
   ArrowUpFromLine,
-  BarChart3,
   Bell,
   Boxes,
-  CheckCircle2,
+  Check,
+  ChevronDown,
   ClipboardCheck,
   Globe,
   Menu,
-  Package,
+  PackageCheck,
   ShieldCheck,
-  Users,
   Warehouse,
   X,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { Badge, Button } from '../design-system';
 import { RBAC_ROLE_MATRIX, ROLE_META, ROLE_ORDER } from '../features/users-rbac/rbacMatrix';
 import type { RoleCode } from '../features/users-rbac/types';
-import {
-  AnimatedStatCounter,
-  HeroAmbientDepth,
-  LandingMotionRoot,
-  MotionCtaWrapper,
-  ScrollRevealBlock,
-  StaggerGrid,
-  StaggerItem,
-} from './LandingMotion';
-import {
-  heroContainerVariants,
-  heroFrameVariants,
-  heroItemVariants,
-  LANDING_EASE_OUT,
-  LANDING_EASE_UI,
-  splitLeadingMetric,
-} from './landingMotionPrimitives';
+import { LandingMotionRoot } from './LandingMotion';
+
+type LandingIcon = typeof Warehouse;
+
+const sectionLinkClass =
+  'landing-nav-link rounded-md px-1 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400';
+
+const primaryLinkClass =
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm transition duration-150 hover:-translate-y-px hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 active:translate-y-0 active:scale-[0.985]';
 
 export const LandingPage: React.FC = () => {
   const { t, language, toggleLanguage } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [previewRole, setPreviewRole] = useState<RoleCode>('WAREHOUSE_MANAGER');
-
+  const tabListId = useId();
+  const previewPanelId = useId();
   const activeMatrix = RBAC_ROLE_MATRIX[previewRole];
 
-  const heroMovements = [
-    {
-      trx: 'TRX-9481',
-      sku: 'SKU-LOGI-M331',
-      wh: 'WH-01',
-      delta: '+150',
-      badge: t('landing.hero.badgeInbound'),
-      variant: 'success' as const,
-    },
-    {
-      trx: 'TRX-9480',
-      sku: 'SKU-DELL-P2419',
-      wh: 'WH-02',
-      delta: '-25',
-      badge: t('landing.hero.badgeDispatch'),
-      variant: 'info' as const,
-    },
-    {
-      trx: 'TRX-9478',
-      sku: 'SKU-SAMS-T7-1TB',
-      wh: 'WH-01',
-      delta: '+2',
-      badge: t('landing.hero.badgeAdjust'),
-      variant: 'warning' as const,
-    },
+  const valueCards: Array<{ icon: LandingIcon; title: string; body: string }> = [
+    { icon: Warehouse, title: t('landing.value.visibilityTitle'), body: t('landing.value.visibilityBody') },
+    { icon: ShieldCheck, title: t('landing.value.controlTitle'), body: t('landing.value.controlBody') },
+    { icon: Boxes, title: t('landing.value.multiWarehouseTitle'), body: t('landing.value.multiWarehouseBody') },
+    { icon: ClipboardCheck, title: t('landing.value.traceabilityTitle'), body: t('landing.value.traceabilityBody') },
   ];
 
-  const secondaryFeatures = [
-    {
-      icon: Package,
-      titleKey: 'landing.features.f3Title',
-      descKey: 'landing.features.f3Desc',
-      tint: 'bg-blue-50 text-[#2563EB]',
-    },
-    {
-      icon: Bell,
-      titleKey: 'landing.features.f4Title',
-      descKey: 'landing.features.f4Desc',
-      tint: 'bg-amber-50 text-[#D97706]',
-    },
-    {
-      icon: ClipboardCheck,
-      titleKey: 'landing.features.f5Title',
-      descKey: 'landing.features.f5Desc',
-      tint: 'bg-emerald-50 text-[#16A34A]',
-    },
-    {
-      icon: BarChart3,
-      titleKey: 'landing.features.f6Title',
-      descKey: 'landing.features.f6Desc',
-      tint: 'bg-slate-100 text-[#0F172A]',
-    },
+  const operationalFeatures: Array<{ icon: LandingIcon; title: string; body: string }> = [
+    { icon: PackageCheck, title: t('landing.features.f3Title'), body: t('landing.features.f3Desc') },
+    { icon: Bell, title: t('landing.features.f4Title'), body: t('landing.features.f4Desc') },
+    { icon: ClipboardCheck, title: t('landing.features.f5Title'), body: t('landing.features.f5Desc') },
+    { icon: Globe, title: t('landing.features.f6Title'), body: t('landing.features.f6Desc') },
   ];
 
-  const benefitPoints = [
-    'landing.benefits.b1',
-    'landing.benefits.b2',
-    'landing.benefits.b3',
-    'landing.benefits.b4',
-    'landing.benefits.b5',
-  ];
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+  const handleRoleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, role: RoleCode) => {
+    const currentIndex = ROLE_ORDER.indexOf(role);
+    const lastIndex = ROLE_ORDER.length - 1;
+    const nextIndex =
+      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+        ? currentIndex === lastIndex ? 0 : currentIndex + 1
+        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+          ? currentIndex === 0 ? lastIndex : currentIndex - 1
+          : event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? lastIndex
+              : null;
 
-  const stat1Raw = t('landing.benefits.stat1');
-  const stat2Raw = t('landing.benefits.stat2');
-  const stat1Parts = splitLeadingMetric(stat1Raw);
-  const stat2Parts = splitLeadingMetric(stat2Raw);
+    if (nextIndex === null) return;
+    event.preventDefault();
+    const nextRole = ROLE_ORDER[nextIndex];
+    setPreviewRole(nextRole);
+    requestAnimationFrame(() => document.getElementById(`role-tab-${nextRole}`)?.focus());
+  };
 
   return (
     <LandingMotionRoot>
-      <div id="top" className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A] font-sans antialiased">
-        {/* Sticky Top Header */}
-        <header className="sticky top-0 z-30 border-b border-slate-800/80 bg-[#0F172A]/95 backdrop-blur-sm text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-            <a
-              href="#top"
-              className="flex items-center gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-[#2563EB] text-white flex items-center justify-center shrink-0 transition-transform duration-150 group-hover:scale-105">
-                <Boxes className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col leading-tight min-w-0">
-                <span className="font-semibold text-sm text-white tracking-tight truncate">
-                  {t('layout.brandName')}
-                </span>
-                <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider truncate">
-                  {t('layout.brandSub')}
-                </span>
-              </div>
+      <div id="top" className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-950">
+        <a className="landing-skip-link" href="#main-content">
+          {t('landing.nav.skipToContent')}
+        </a>
+
+        <header className="sticky top-0 z-40 border-b border-slate-800/90 bg-slate-950/95 text-white backdrop-blur">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+            <a href="#top" className="flex min-w-0 items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 shadow-sm" aria-hidden="true">
+                <Boxes className="size-5" />
+              </span>
+              <span className="min-w-0 leading-tight">
+                <span className="block truncate text-sm font-semibold tracking-tight">{t('layout.brandName')}</span>
+                <span className="block truncate text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400">{t('landing.nav.productLabel')}</span>
+              </span>
             </a>
 
-            {/* Desktop Navigation */}
-            <nav
-              className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300"
-              aria-label={t('landing.nav.ariaLabel')}
-            >
-              <a href="#preview" className="landing-nav-link hover:text-white transition-colors duration-150 py-2">
-                {t('landing.nav.preview')}
-              </a>
-              <a href="#features" className="landing-nav-link hover:text-white transition-colors duration-150 py-2">
-                {t('landing.nav.features')}
-              </a>
-              <a href="#benefits" className="landing-nav-link hover:text-white transition-colors duration-150 py-2">
-                {t('landing.nav.benefits')}
-              </a>
-              <a href="#roles" className="landing-nav-link hover:text-white transition-colors duration-150 py-2">
-                {t('landing.nav.roles')}
-              </a>
+            <nav className="hidden items-center gap-6 md:flex" aria-label={t('landing.nav.ariaLabel')}>
+              <a href="#workflow" className={sectionLinkClass}>{t('landing.nav.workflow')}</a>
+              <a href="#preview" className={sectionLinkClass}>{t('landing.nav.preview')}</a>
+              <a href="#capabilities" className={sectionLinkClass}>{t('landing.nav.features')}</a>
             </nav>
 
-            {/* Header Actions */}
-            <div className="hidden md:flex items-center gap-2.5 shrink-0">
-              <button
-                type="button"
-                id="landing-lang-toggle"
-                onClick={toggleLanguage}
-                className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-md border border-slate-700 bg-slate-900/80 hover:bg-slate-800 active:scale-[0.985] text-xs font-semibold text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 transition-all duration-150 cursor-pointer"
-                title={t('demo.switch_lang')}
-                aria-label={t('demo.switch_lang')}
-              >
-                <Globe className="w-4 h-4 text-blue-400 shrink-0" />
+            <div className="hidden items-center gap-2 md:flex">
+              <button id="landing-lang-toggle" type="button" onClick={toggleLanguage} title={t('demo.switch_lang')} aria-label={t('demo.switch_lang')} className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-slate-700 bg-slate-900 px-3 text-xs font-semibold text-slate-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+                <Globe className="size-4 text-blue-400" aria-hidden="true" />
                 <span className="uppercase">{language}</span>
               </button>
-
-              <Link
-                id="landing-nav-login"
-                to="/login"
-                className="inline-flex items-center justify-center min-h-[40px] px-3.5 rounded-md text-sm font-medium text-slate-200 hover:text-white hover:bg-slate-800/80 active:scale-[0.985] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
-              >
+              <Link id="landing-nav-login" to="/login" className="inline-flex min-h-10 items-center rounded-md px-3 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                 {t('landing.nav.signIn')}
               </Link>
-
-              <Link
-                id="landing-nav-register"
-                to="/register"
-                className="inline-flex items-center justify-center min-h-[40px] px-4 rounded-md bg-[#2563EB] hover:bg-[#1D4ED8] hover:-translate-y-px active:translate-y-0 active:scale-[0.985] text-sm font-medium text-white transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 shadow-sm"
-              >
+              <Link id="landing-nav-register" to="/register" className="inline-flex min-h-10 items-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
                 {t('landing.nav.getStarted')}
               </Link>
             </div>
 
-            {/* Mobile Controls */}
-            <div className="flex md:hidden items-center gap-2 shrink-0">
-              <button
-                type="button"
-                id="landing-mobile-lang-toggle"
-                onClick={toggleLanguage}
-                className="inline-flex items-center justify-center gap-1 min-h-[44px] min-w-[44px] px-2.5 rounded-md border border-slate-700 bg-slate-900 text-xs font-semibold text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-                aria-label={t('demo.switch_lang')}
-              >
-                <Globe className="w-4 h-4 text-blue-400 shrink-0" />
-                <span className="uppercase">{language}</span>
+            <div className="flex items-center gap-2 md:hidden">
+              <button id="landing-mobile-lang-toggle" type="button" onClick={toggleLanguage} aria-label={t('demo.switch_lang')} className="inline-flex size-11 items-center justify-center rounded-md border border-slate-700 text-xs font-semibold text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+                <Globe className="size-4 text-blue-400" aria-hidden="true" />
+                <span className="ml-1 uppercase">{language}</span>
               </button>
-
-              <button
-                type="button"
-                id="landing-mobile-menu-btn"
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
-                aria-expanded={mobileMenuOpen}
-                aria-label={t('topbar.openMenuAria')}
-                className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-md border border-slate-700 text-slate-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <button id="landing-mobile-menu-btn" type="button" onClick={() => setMobileMenuOpen((open) => !open)} aria-expanded={mobileMenuOpen} aria-controls="landing-mobile-menu" aria-label={mobileMenuOpen ? t('landing.nav.closeMenu') : t('topbar.openMenuAria')} className="inline-flex size-11 items-center justify-center rounded-md border border-slate-700 text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+                {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
               </button>
             </div>
           </div>
 
-          {/* Mobile Drawer with smooth height/opacity entrance & exit */}
-          <AnimatePresence initial={false}>
-            {mobileMenuOpen && (
-              <m.div
-                key="landing-mobile-drawer"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18, ease: LANDING_EASE_UI }}
-                className="md:hidden border-t border-slate-800 bg-[#0F172A] px-4 py-4 space-y-2"
-              >
-                <nav className="flex flex-col space-y-1" aria-label={t('landing.nav.ariaLabel')}>
-                  <a
-                    href="#preview"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="min-h-[44px] flex items-center px-3 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800 transition-colors"
-                  >
-                    {t('landing.nav.preview')}
-                  </a>
-                  <a
-                    href="#features"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="min-h-[44px] flex items-center px-3 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800 transition-colors"
-                  >
-                    {t('landing.nav.features')}
-                  </a>
-                  <a
-                    href="#benefits"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="min-h-[44px] flex items-center px-3 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800 transition-colors"
-                  >
-                    {t('landing.nav.benefits')}
-                  </a>
-                  <a
-                    href="#roles"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="min-h-[44px] flex items-center px-3 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800 transition-colors"
-                  >
-                    {t('landing.nav.roles')}
-                  </a>
-                </nav>
-
-                <div className="pt-3 border-t border-slate-800 grid grid-cols-1 gap-2">
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="min-h-[44px] flex items-center justify-center rounded-md border border-slate-700 text-sm font-medium text-white hover:bg-slate-800 transition-colors"
-                  >
-                    {t('landing.nav.signIn')}
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="min-h-[44px] flex items-center justify-center rounded-md bg-[#2563EB] hover:bg-[#1D4ED8] text-sm font-medium text-white transition-colors"
-                  >
-                    {t('landing.nav.getStarted')}
-                  </Link>
+          {mobileMenuOpen && (
+            <nav id="landing-mobile-menu" className="border-t border-slate-800 bg-slate-950 px-4 py-4 md:hidden" aria-label={t('landing.nav.ariaLabel')}>
+              <div className="mx-auto grid max-w-7xl gap-1">
+                <a href="#workflow" onClick={closeMobileMenu} className="min-h-11 rounded-md px-3 py-3 text-sm font-medium text-slate-200 hover:bg-slate-800">{t('landing.nav.workflow')}</a>
+                <a href="#preview" onClick={closeMobileMenu} className="min-h-11 rounded-md px-3 py-3 text-sm font-medium text-slate-200 hover:bg-slate-800">{t('landing.nav.preview')}</a>
+                <a href="#capabilities" onClick={closeMobileMenu} className="min-h-11 rounded-md px-3 py-3 text-sm font-medium text-slate-200 hover:bg-slate-800">{t('landing.nav.features')}</a>
+                <div className="mt-2 grid gap-2 border-t border-slate-800 pt-3">
+                  <Link to="/login" onClick={closeMobileMenu} className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-700 text-sm font-semibold text-white">{t('landing.nav.signIn')}</Link>
+                  <Link to="/register" onClick={closeMobileMenu} className="inline-flex min-h-11 items-center justify-center rounded-md bg-blue-600 text-sm font-semibold text-white">{t('landing.nav.getStarted')}</Link>
                 </div>
-              </m.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </nav>
+          )}
         </header>
 
-        <main className="flex-1">
-          {/* SECTION 1: HERO (Software SaaS Dark Stage) */}
-          <section className="relative overflow-hidden bg-[#0F172A] text-white border-b border-slate-800">
-            {/* Atmospheric shader-inspired CSS radial glow */}
-            <div
-              className="pointer-events-none absolute inset-0 ambient-shader-glow"
-              aria-hidden="true"
-              style={{
-                background:
-                  'radial-gradient(60% 55% at 74% 28%, rgba(37, 99, 235, 0.24), transparent 72%), radial-gradient(40% 40% at 15% 85%, rgba(14, 165, 233, 0.13), transparent 70%)',
-              }}
-            />
+        <main id="main-content">
+          <section className="landing-hero relative isolate overflow-hidden bg-slate-950 text-white">
+            <div className="pointer-events-none absolute inset-0 landing-hero-grid opacity-50" aria-hidden="true" />
+            <div className="pointer-events-none absolute -right-28 top-8 size-[32rem] rounded-full bg-blue-600/20 blur-3xl" aria-hidden="true" />
+            <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-12 lg:px-8 lg:py-14">
+              <m.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: 'easeOut' }} className="lg:col-span-5">
+                <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/10 px-3 py-1.5 text-xs font-semibold text-blue-100"><span className="size-1.5 rounded-full bg-blue-300" aria-hidden="true" /> {t('landing.hero.eyebrow')}</p>
+                <h1 className="max-w-xl text-4xl font-semibold leading-[1.06] tracking-[-0.035em] sm:text-5xl lg:text-[3.45rem]">{t('landing.hero.redesignHeadline')}</h1>
+                <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">{t('landing.hero.redesignSubCopy')}</p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row"><Link id="landing-hero-register" to="/register" className={primaryLinkClass}>{t('landing.hero.redesignCtaPrimary')} <ArrowRight className="size-4" aria-hidden="true" /></Link><a href="#preview" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-600 bg-slate-900/70 px-5 text-sm font-semibold text-white transition hover:border-slate-400 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300">{t('landing.hero.redesignCtaSecondary')} <ArrowRight className="size-4" aria-hidden="true" /></a></div>
+                <p className="mt-5 text-sm text-slate-400">{t('landing.hero.disclosure')}</p>
+              </m.div>
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-                {/* Left Copy Column with purposeful staggered fade-in & slide-up */}
-                <m.div
-                  className="lg:col-span-6 space-y-6"
-                  variants={heroContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <m.h1
-                    variants={heroItemVariants}
-                    className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-[-0.03em] leading-[1.12]"
-                  >
-                    {t('landing.hero.headline')}
-                  </m.h1>
-
-                  <m.p
-                    variants={heroItemVariants}
-                    className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl"
-                  >
-                    {t('landing.hero.subCopy')}
-                  </m.p>
-
-                  <m.div
-                    variants={heroItemVariants}
-                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1"
-                  >
-                    <MotionCtaWrapper className="w-full sm:w-auto">
-                      <Link id="landing-hero-register" to="/register" className="block w-full sm:w-auto group">
-                        <Button
-                          variant="primary"
-                          size="lg"
-                          fullWidth
-                          iconRight={
-                            <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-0.5" />
-                          }
-                        >
-                          {t('landing.hero.ctaPrimary')}
-                        </Button>
-                      </Link>
-                    </MotionCtaWrapper>
-
-                    <MotionCtaWrapper className="w-full sm:w-auto">
-                      <Link id="landing-hero-login" to="/login" className="block w-full sm:w-auto">
-                        <button
-                          type="button"
-                          className="w-full sm:w-auto h-11 px-5 rounded-md border border-slate-600 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-500 text-sm sm:text-base font-medium text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-                        >
-                          {t('landing.hero.ctaSecondary')}
-                        </button>
-                      </Link>
-                    </MotionCtaWrapper>
-                  </m.div>
-
-                  {/* Hard Facts Bar */}
-                  <m.dl
-                    variants={heroItemVariants}
-                    className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800 max-w-lg"
-                  >
-                    <div>
-                      <dt className="text-xs text-slate-400">{t('landing.hero.fact1Label')}</dt>
-                      <dd className="text-sm sm:text-base font-semibold text-white mt-0.5 tabular-nums">
-                        {t('landing.hero.fact1Value')}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs text-slate-400">{t('landing.hero.fact2Label')}</dt>
-                      <dd className="text-sm sm:text-base font-semibold text-white mt-0.5 tabular-nums">
-                        {t('landing.hero.fact2Value')}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs text-slate-400">{t('landing.hero.fact3Label')}</dt>
-                      <dd className="text-sm sm:text-base font-semibold text-white mt-0.5 tabular-nums">
-                        {t('landing.hero.fact3Value')}
-                      </dd>
-                    </div>
-                  </m.dl>
-                </m.div>
-
-                {/* Right Live System Frame Column with subtle floating architectural depth */}
-                <div className="lg:col-span-6 relative">
-                  <HeroAmbientDepth />
-
-                  <m.div
-                    variants={heroFrameVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="relative z-10 rounded-xl border border-slate-700/90 bg-[#0B1220] shadow-2xl overflow-hidden"
-                  >
-                    {/* Window Header */}
-                    <div className="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="relative flex w-2.5 h-2.5 shrink-0 items-center justify-center">
-                          <span
-                            className="absolute inset-0 rounded-full bg-emerald-400/75 live-beacon-ring"
-                            aria-hidden="true"
-                          />
-                          <span className="relative w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                        </span>
-                        <span className="text-xs font-mono text-slate-300 truncate">
-                          {t('landing.hero.frameTitle')}
-                        </span>
-                      </div>
-                      <span className="text-[11px] font-mono text-blue-400 bg-blue-950/70 border border-blue-800/60 px-2 py-0.5 rounded shrink-0">
-                        WH-01 · WH-02 · WH-03
-                      </span>
-                    </div>
-
-                    {/* Frame Metrics Strip with smooth count-up */}
-                    <div className="grid grid-cols-3 divide-x divide-slate-800 border-b border-slate-800 bg-slate-900/50">
-                      <div className="p-3.5 sm:p-4">
-                        <p className="text-[11px] text-slate-400 truncate">
-                          {t('dashboard.kpi.totalSkusTitle')}
-                        </p>
-                        <p className="text-lg sm:text-xl font-bold text-white tabular-nums mt-1">
-                          <AnimatedStatCounter target={1420} trigger="mount" duration={0.95} />
-                        </p>
-                      </div>
-                      <div className="p-3.5 sm:p-4">
-                        <p className="text-[11px] text-slate-400 truncate">
-                          {t('dashboard.kpi.lowStockTitle')}
-                        </p>
-                        <p className="text-lg sm:text-xl font-bold text-amber-400 tabular-nums mt-1">
-                          <AnimatedStatCounter
-                            target={5}
-                            trigger="mount"
-                            duration={0.65}
-                            useLocaleGrouping={false}
-                          />
-                        </p>
-                      </div>
-                      <div className="p-3.5 sm:p-4">
-                        <p className="text-[11px] text-slate-400 truncate">
-                          {t('dashboard.kpi.pendingInTitle')}
-                        </p>
-                        <p className="text-lg sm:text-xl font-bold text-emerald-400 tabular-nums mt-1">
-                          <AnimatedStatCounter
-                            target={3}
-                            trigger="mount"
-                            duration={0.65}
-                            useLocaleGrouping={false}
-                          />
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Live Ledger Preview Rows */}
-                    <div className="p-4 space-y-2.5">
-                      <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-2">
-                        <span>{t('landing.hero.ledgerColTrx')}</span>
-                        <span>{t('landing.hero.ledgerColQty')}</span>
-                      </div>
-
-                      {heroMovements.map((row, idx) => (
-                        <m.div
-                          key={row.trx}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: 0.4,
-                            delay: 0.24 + idx * 0.08,
-                            ease: LANDING_EASE_OUT,
-                          }}
-                          className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg bg-slate-900/80 border border-slate-800/90 hover:border-slate-700 transition-colors duration-150"
-                        >
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-semibold text-white">
-                                {row.trx}
-                              </span>
-                              <Badge variant={row.variant} size="sm">
-                                {row.badge}
-                              </Badge>
-                            </div>
-                            <p className="text-xs font-mono text-slate-400 mt-0.5 truncate">
-                              {row.sku} · {row.wh}
-                            </p>
-                          </div>
-
-                          <span
-                            className={`font-mono text-sm font-semibold tabular-nums shrink-0 ${
-                              row.delta.startsWith('+') ? 'text-emerald-400' : 'text-blue-400'
-                            }`}
-                          >
-                            {row.delta}
-                          </span>
-                        </m.div>
-                      ))}
-                    </div>
-                  </m.div>
-                </div>
-              </div>
+              <m.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }} className="landing-product-frame lg:col-span-7">
+                <div className="flex items-center justify-between border-b border-slate-700/80 bg-slate-900 px-4 py-3"><div className="flex items-center gap-2"><span className="size-2 rounded-full bg-emerald-400" /><span className="text-xs font-semibold text-slate-100">{t('landing.hero.frameTitle')}</span><span className="hidden rounded border border-slate-700 px-1.5 py-0.5 text-[10px] text-slate-400 sm:inline">{t('landing.hero.illustrative')}</span></div><span className="inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] font-medium text-slate-200" aria-label={t('landing.hero.facilityAria')}>{t('landing.hero.facilityValue')} <ChevronDown className="size-3" aria-hidden="true" /></span></div>
+                <div className="grid gap-3 p-3 sm:grid-cols-[1.25fr_0.9fr] sm:p-4"><div className="space-y-3"><div className="grid grid-cols-3 gap-2"><Metric label={t('landing.hero.metricSkus')} value="1,420" /><Metric label={t('landing.hero.metricAttention')} value="05" tone="amber" /><Metric label={t('landing.hero.metricPending')} value="03" tone="blue" /></div><div className="rounded-lg border border-slate-700 bg-slate-900/80 p-3"><div className="mb-3 flex items-center justify-between"><div><p className="text-xs font-semibold text-white">{t('landing.hero.activityTitle')}</p><p className="mt-0.5 text-[11px] text-slate-400">{t('landing.hero.activitySubtitle')}</p></div><span className="rounded bg-blue-500/10 px-2 py-1 text-[10px] font-semibold text-blue-300">{t('landing.hero.illustrative')}</span></div><div className="space-y-2"><MovementRow icon={ArrowDownToLine} title={t('landing.hero.inboundTitle')} detail="WH-01 · SKU-LOGI-M331" value="+150" tone="green" /><MovementRow icon={ArrowUpFromLine} title={t('landing.hero.outboundTitle')} detail="WH-02 · SKU-DELL-P2419" value="−25" tone="blue" /><MovementRow icon={ClipboardCheck} title={t('landing.hero.reviewTitle')} detail="WH-01 · OUT-2408" value={t('landing.hero.awaiting')} tone="amber" /></div></div></div><div className="rounded-lg border border-slate-700 bg-slate-900/80 p-3"><p className="text-xs font-semibold text-white">{t('landing.hero.approvalTitle')}</p><p className="mt-0.5 text-[11px] leading-4 text-slate-400">{t('landing.hero.approvalSubtitle')}</p><div className="mt-4 space-y-3"><ApprovalState label={t('landing.hero.approvalDraft')} active /><ApprovalState label={t('landing.hero.approvalReview')} active /><ApprovalState label={t('landing.hero.approvalApproved')} /></div><div className="mt-5 rounded-md border border-slate-700 bg-slate-800/70 p-2.5"><p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{t('landing.hero.scopeLabel')}</p><p className="mt-1 text-xs font-medium text-white">WH-01 · WH-02 · WH-03</p></div></div></div>
+              </m.div>
             </div>
           </section>
 
-          {/* SECTION 2: INTERACTIVE APP-FRAME PREVIEW (Persuade: Show the real product) */}
-          <section id="preview" className="bg-white border-b border-[#E2E8F0] py-16 sm:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-              <ScrollRevealBlock className="max-w-2xl space-y-2.5">
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
-                  {t('landing.preview.title')}
-                </h2>
-                <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-                  {t('landing.preview.subtitle')}
-                </p>
-              </ScrollRevealBlock>
+          <section id="value" className="bg-white py-20 sm:py-24"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><SectionHeading eyebrow={t('landing.value.eyebrow')} title={t('landing.value.title')} body={t('landing.value.subtitle')} /><div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{valueCards.map(({ icon: Icon, title, body }) => <article key={title} className="landing-card-hover rounded-xl border border-slate-200 bg-white p-6"><span className="flex size-10 items-center justify-center rounded-lg bg-blue-50 text-blue-700"><Icon className="size-5" /></span><h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-950">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{body}</p></article>)}</div></div></section>
 
-              {/* Interactive Application Frame */}
-              <ScrollRevealBlock delay={0.06}>
-                <div className="rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] shadow-lg overflow-hidden">
-                  {/* Role Switcher Bar inside Preview with shared-element sliding indicator */}
-                  <div className="px-4 sm:px-6 py-3 bg-white border-b border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-[#2563EB] shrink-0" />
-                      <span className="text-xs font-semibold text-[#0F172A]">
-                        {t('landing.preview.roleSwitchLabel')}
-                      </span>
-                    </div>
+          <section id="workflow" className="border-y border-slate-200 bg-slate-50 py-20 sm:py-24"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><SectionHeading eyebrow={t('landing.workflow.eyebrow')} title={t('landing.workflow.title')} body={t('landing.workflow.subtitle')} /><ol className="mt-12 grid gap-4 lg:grid-cols-3">{[1, 2, 3].map((step) => <li key={step} className="relative rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><span className="text-sm font-semibold text-blue-700">0{step}</span><div className="mt-8 flex size-11 items-center justify-center rounded-lg bg-slate-950 text-white">{step === 1 ? <Boxes className="size-5" /> : step === 2 ? <ArrowDownToLine className="size-5" /> : <ClipboardCheck className="size-5" />}</div><h3 className="mt-5 text-xl font-semibold tracking-tight">{t(`landing.workflow.step${step}Title`)}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{t(`landing.workflow.step${step}Body`)}</p></li>)}</ol></div></section>
 
-                    <div
-                      className="inline-flex flex-wrap items-center gap-1 p-1 rounded-lg bg-[#F1F5F9] border border-[#E2E8F0]"
-                      role="tablist"
-                    >
-                      {ROLE_ORDER.map((roleCode) => {
-                        const isSelected = previewRole === roleCode;
-                        return (
-                          <button
-                            key={roleCode}
-                            type="button"
-                            role="tab"
-                            aria-selected={isSelected}
-                            onClick={() => setPreviewRole(roleCode)}
-                            className={`relative z-0 min-h-[34px] px-3 py-1 rounded-md text-xs font-semibold transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
-                              isSelected ? 'text-white' : 'text-[#475569] hover:text-[#0F172A]'
-                            }`}
-                          >
-                            {isSelected && (
-                              <m.span
-                                layoutId="landing-role-active-pill"
-                                className="absolute inset-0 rounded-md bg-[#2563EB] shadow-xs -z-10"
-                                transition={{ duration: 0.22, ease: LANDING_EASE_UI }}
-                              />
-                            )}
-                            <span className="relative z-10">{t(`topbar.roleShort.${roleCode}`)}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+          <section id="preview" className="bg-white py-20 sm:py-24"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><SectionHeading eyebrow={t('landing.preview.eyebrow')} title={t('landing.preview.title')} body={t('landing.preview.subtitle')} /><div className="mt-10 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-sm"><div className="border-b border-slate-200 bg-white px-4 py-3 sm:px-5"><div id={tabListId} role="tablist" aria-label={t('landing.preview.roleSwitchLabel')} className="flex gap-1 overflow-x-auto pb-1">{ROLE_ORDER.map((role) => { const selected = previewRole === role; return <button key={role} id={`role-tab-${role}`} type="button" role="tab" aria-selected={selected} aria-controls={previewPanelId} tabIndex={selected ? 0 : -1} onClick={() => setPreviewRole(role)} onKeyDown={(event) => handleRoleTabKeyDown(event, role)} className={`min-h-11 shrink-0 rounded-md px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${selected ? 'bg-slate-950 text-white' : 'text-slate-600 hover:bg-slate-100'}`}>{t(ROLE_META[role].labelKey)}</button>; })}</div></div><div id={previewPanelId} role="tabpanel" aria-labelledby={`role-tab-${previewRole}`} className="grid gap-5 p-5 lg:grid-cols-[0.8fr_1.2fr] lg:p-8"><div className="rounded-xl bg-slate-950 p-6 text-white"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-300">{t('landing.preview.permissionsLabel')}</p><h3 className="mt-3 text-2xl font-semibold tracking-tight">{t(ROLE_META[previewRole].labelKey)}</h3><p className="mt-3 text-sm leading-6 text-slate-300">{t(ROLE_META[previewRole].scopeNoteKey)}</p><div className="mt-6 border-t border-slate-700 pt-5"><p className="text-xs text-slate-400">{t('landing.preview.modulesUnit')}</p><p className="mt-1 text-3xl font-semibold">{activeMatrix.allowedNavKeys.length}</p></div><p className="mt-6 text-xs leading-5 text-slate-400">{t('landing.preview.disclaimer')}</p></div><div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 sm:p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-sm font-semibold text-slate-950">{t('landing.preview.ledgerTitle')}</p><p className="mt-1 text-sm text-slate-500">{t('landing.preview.ledgerSub')}</p></div><span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{t('landing.preview.illustrative')}</span></div><div className="mt-5 grid gap-3 sm:grid-cols-2"><PermissionLine label={t('landing.preview.capCreateStock')} allowed={activeMatrix.canCreateStockOrder} /><PermissionLine label={t('landing.preview.capApproveStock')} allowed={activeMatrix.canApproveStockOrder} /><PermissionLine label={t('landing.preview.capManageCatalog')} allowed={activeMatrix.canManageCatalog} /><PermissionLine label={t('landing.preview.capManageUsers')} allowed={activeMatrix.canManageUsers} /></div><div className="mt-5 border-t border-slate-100 pt-4"><div className="flex items-center justify-between text-sm"><span className="font-medium text-slate-700">OUT-2408 · WH-01</span>{activeMatrix.canApproveStockOrder ? <span className="rounded bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">{t('landing.preview.canApprove')}</span> : <span className="text-xs text-slate-500">{t('landing.preview.viewOnly')}</span>}</div></div></div></div></div></div></section>
 
-                  {/* Split Workspace Mock with crisp state transition */}
-                  <m.div
-                    key={previewRole}
-                    initial={{ opacity: 0.55, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.18, ease: LANDING_EASE_OUT }}
-                    className="grid grid-cols-1 lg:grid-cols-12"
-                  >
-                    {/* Simulated Sidebar Summary */}
-                    <div className="lg:col-span-4 bg-white border-b lg:border-b-0 lg:border-r border-[#E2E8F0] p-5 space-y-4">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
-                          {t('landing.preview.permissionsLabel')}
-                        </span>
-                        <Badge variant={ROLE_META[previewRole].badgeVariant} size="sm">
-                          {activeMatrix.allowedNavKeys.length} {t('landing.preview.modulesUnit')}
-                        </Badge>
-                      </div>
+          <section id="capabilities" className="border-y border-slate-200 bg-slate-50 py-20 sm:py-24"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><SectionHeading eyebrow={t('landing.features.eyebrow')} title={t('landing.features.title')} body={t('landing.features.subtitle')} /><div className="mt-12 grid gap-4 md:grid-cols-2">{operationalFeatures.map(({ icon: Icon, title, body }) => <article key={title} className="landing-card-hover flex gap-4 rounded-xl border border-slate-200 bg-white p-6"><span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700"><Icon className="size-5" /></span><div><h3 className="font-semibold text-slate-950">{title}</h3><p className="mt-1.5 text-sm leading-6 text-slate-600">{body}</p></div></article>)}</div></div></section>
 
-                      <p className="text-xs text-[#475569] leading-relaxed">
-                        {t(ROLE_META[previewRole].scopeNoteKey)}
-                      </p>
-
-                      <div className="space-y-2 pt-1">
-                        {[
-                          {
-                            label: t('landing.preview.capCreateStock'),
-                            allowed: activeMatrix.canCreateStockOrder,
-                          },
-                          {
-                            label: t('landing.preview.capApproveStock'),
-                            allowed: activeMatrix.canApproveStockOrder,
-                          },
-                          {
-                            label: t('landing.preview.capManageCatalog'),
-                            allowed: activeMatrix.canManageCatalog,
-                          },
-                          {
-                            label: t('landing.preview.capManageUsers'),
-                            allowed: activeMatrix.canManageUsers,
-                          },
-                        ].map((cap) => (
-                          <div
-                            key={cap.label}
-                            className="flex items-center justify-between gap-2 text-xs py-1.5 border-b border-[#F1F5F9] last:border-0"
-                          >
-                            <span className="text-[#334155] font-medium">{cap.label}</span>
-                            <Badge variant={cap.allowed ? 'success' : 'neutral'} size="sm">
-                              {cap.allowed
-                                ? t('landing.preview.allowed')
-                                : t('landing.preview.restricted')}
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Simulated Warehouse Voucher Ledger */}
-                    <div className="lg:col-span-8 p-5 sm:p-6 space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                          <h3 className="text-sm font-semibold text-[#0F172A]">
-                            {t('landing.preview.ledgerTitle')}
-                          </h3>
-                          <p className="text-xs text-[#64748B]">{t('landing.preview.ledgerSub')}</p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {activeMatrix.canCreateStockOrder && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#2563EB] text-white text-xs font-medium shadow-xs">
-                              <ArrowDownToLine className="w-3.5 h-3.5" />
-                              {t('landing.preview.createVoucherBtn')}
-                            </span>
-                          )}
-                          {activeMatrix.isReadOnly && (
-                            <Badge variant="neutral" size="sm">
-                              {t('common.readOnly')}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="overflow-x-auto rounded-lg border border-[#E2E8F0] bg-white">
-                        <table className="w-full text-left border-collapse text-xs">
-                          <thead>
-                            <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569] uppercase tracking-wider text-[11px]">
-                              <th className="py-2.5 px-3 font-semibold">{t('landing.preview.colVoucher')}</th>
-                              <th className="py-2.5 px-3 font-semibold">{t('landing.preview.colWarehouse')}</th>
-                              <th className="py-2.5 px-3 font-semibold">{t('landing.preview.colState')}</th>
-                              <th className="py-2.5 px-3 font-semibold text-right">
-                                {t('landing.preview.colAction')}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-[#F1F5F9]">
-                            <tr>
-                              <td className="py-3 px-3 font-mono font-semibold text-[#0F172A]">
-                                IN-2026-089
-                              </td>
-                              <td className="py-3 px-3 text-[#334155]">WH-01 · {t('landing.preview.wh1Name')}</td>
-                              <td className="py-3 px-3">
-                                <Badge variant="warning" size="sm">
-                                  {t('status.submitted')}
-                                </Badge>
-                              </td>
-                              <td className="py-3 px-3 text-right">
-                                {activeMatrix.canApproveStockOrder ? (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
-                                    {t('landing.preview.canApprove')}
-                                  </span>
-                                ) : (
-                                  <span className="text-[#64748B]">{t('landing.preview.viewOnly')}</span>
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="py-3 px-3 font-mono font-semibold text-[#0F172A]">
-                                OUT-2026-042
-                              </td>
-                              <td className="py-3 px-3 text-[#334155]">WH-02 · {t('landing.preview.wh2Name')}</td>
-                              <td className="py-3 px-3">
-                                <Badge variant="success" size="sm">
-                                  {t('status.approved')}
-                                </Badge>
-                              </td>
-                              <td className="py-3 px-3 text-right">
-                                <span className="text-[#64748B]">{t('landing.preview.viewOnly')}</span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="py-3 px-3 font-mono font-semibold text-[#0F172A]">
-                                STK-2026-Q4-01
-                              </td>
-                              <td className="py-3 px-3 text-[#334155]">WH-03 · {t('landing.preview.wh3Name')}</td>
-                              <td className="py-3 px-3">
-                                <Badge variant="info" size="sm">
-                                  {t('status.completed')}
-                                </Badge>
-                              </td>
-                              <td className="py-3 px-3 text-right">
-                                <span className="text-[#64748B]">{t('landing.preview.viewOnly')}</span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </m.div>
-                </div>
-              </ScrollRevealBlock>
-            </div>
-          </section>
-
-          {/* SECTION 3: CORE CAPABILITIES (Staggered Feature Cards) */}
-          <section id="features" className="bg-[#F8FAFC] border-b border-[#E2E8F0] py-16 sm:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-              <ScrollRevealBlock className="max-w-2xl space-y-2.5">
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
-                  {t('landing.features.title')}
-                </h2>
-                <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-                  {t('landing.features.subtitle')}
-                </p>
-              </ScrollRevealBlock>
-
-              {/* Row 1: Two primary workflow pillars */}
-              <StaggerGrid className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <StaggerItem className="bg-white border border-[#E2E8F0] rounded-xl p-6 sm:p-7 space-y-4 landing-card-hover group">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#2563EB] flex items-center justify-center transition-transform duration-150 group-hover:scale-105">
-                      <ArrowUpFromLine className="w-5 h-5" />
-                    </div>
-                    <Badge variant="info" size="sm">
-                      {t('landing.features.pillar1Badge')}
-                    </Badge>
-                  </div>
-                  <h3 className="text-lg font-semibold text-[#0F172A]">
-                    {t('landing.features.f1Title')}
-                  </h3>
-                  <p className="text-sm text-[#475569] leading-relaxed">
-                    {t('landing.features.f1Desc')}
-                  </p>
-                  <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono text-[#334155]">
-                    <span className="px-2.5 py-1 rounded bg-[#F1F5F9]">
-                      {t('landing.features.stepDraft')}
-                    </span>
-                    <span className="text-[#94A3B8]">-&gt;</span>
-                    <span className="px-2.5 py-1 rounded bg-amber-50 text-[#D97706]">
-                      {t('landing.features.stepSubmitted')}
-                    </span>
-                    <span className="text-[#94A3B8]">-&gt;</span>
-                    <span className="px-2.5 py-1 rounded bg-emerald-50 text-[#16A34A]">
-                      {t('landing.features.stepApproved')}
-                    </span>
-                  </div>
-                </StaggerItem>
-
-                <StaggerItem className="bg-white border border-[#E2E8F0] rounded-xl p-6 sm:p-7 space-y-4 landing-card-hover group">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-50 text-[#16A34A] flex items-center justify-center transition-transform duration-150 group-hover:scale-105">
-                      <Warehouse className="w-5 h-5" />
-                    </div>
-                    <Badge variant="success" size="sm">
-                      {t('landing.features.pillar2Badge')}
-                    </Badge>
-                  </div>
-                  <h3 className="text-lg font-semibold text-[#0F172A]">
-                    {t('landing.features.f2Title')}
-                  </h3>
-                  <p className="text-sm text-[#475569] leading-relaxed">
-                    {t('landing.features.f2Desc')}
-                  </p>
-                  <div className="pt-2 grid grid-cols-3 gap-2 text-xs">
-                    <div className="px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] font-mono">
-                      WH-01
-                    </div>
-                    <div className="px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] font-mono">
-                      WH-02
-                    </div>
-                    <div className="px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] font-mono">
-                      WH-03
-                    </div>
-                  </div>
-                </StaggerItem>
-              </StaggerGrid>
-
-              {/* Row 2: Four supporting operational modules staggered cleanly */}
-              <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {secondaryFeatures.map((item) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <StaggerItem
-                      key={item.titleKey}
-                      className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3 landing-card-hover group"
-                    >
-                      <div
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-150 group-hover:scale-105 ${item.tint}`}
-                      >
-                        <IconComponent className="w-4.5 h-4.5" />
-                      </div>
-                      <h3 className="text-base font-semibold text-[#0F172A]">{t(item.titleKey)}</h3>
-                      <p className="text-xs text-[#475569] leading-relaxed">{t(item.descKey)}</p>
-                    </StaggerItem>
-                  );
-                })}
-              </StaggerGrid>
-            </div>
-          </section>
-
-          {/* SECTION 4: OPERATIONAL BENEFITS with Animated Proof Counters */}
-          <section id="benefits" className="bg-white border-b border-[#E2E8F0] py-16 sm:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-                <ScrollRevealBlock className="lg:col-span-5 space-y-4">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
-                    {t('landing.benefits.title')}
-                  </h2>
-                  <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-                    {t('landing.benefits.subtitle')}
-                  </p>
-
-                  <dl className="grid grid-cols-2 gap-4 pt-4">
-                    <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                      <dt className="text-xs text-[#64748B]">{t('landing.benefits.stat1Label')}</dt>
-                      <dd className="text-xl font-bold text-[#0F172A] mt-1">
-                        {stat1Parts ? (
-                          <AnimatedStatCounter
-                            target={stat1Parts.target}
-                            suffix={stat1Parts.suffix}
-                            trigger="inView"
-                            useLocaleGrouping={false}
-                          />
-                        ) : (
-                          stat1Raw
-                        )}
-                      </dd>
-                    </div>
-                    <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                      <dt className="text-xs text-[#64748B]">{t('landing.benefits.stat2Label')}</dt>
-                      <dd className="text-xl font-bold text-[#0F172A] mt-1">
-                        {stat2Parts ? (
-                          <AnimatedStatCounter
-                            target={stat2Parts.target}
-                            suffix={stat2Parts.suffix}
-                            trigger="inView"
-                            useLocaleGrouping={false}
-                          />
-                        ) : (
-                          stat2Raw
-                        )}
-                      </dd>
-                    </div>
-                  </dl>
-                </ScrollRevealBlock>
-
-                <StaggerGrid className="lg:col-span-7 space-y-3">
-                  {benefitPoints.map((pointKey) => (
-                    <StaggerItem
-                      key={pointKey}
-                      className="flex items-start gap-3 p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] landing-card-hover"
-                    >
-                      <CheckCircle2 className="w-5 h-5 text-[#16A34A] shrink-0 mt-0.5" />
-                      <p className="text-sm text-[#0F172A] font-medium leading-relaxed">
-                        {t(pointKey)}
-                      </p>
-                    </StaggerItem>
-                  ))}
-                </StaggerGrid>
-              </div>
-            </div>
-          </section>
-
-          {/* SECTION 5: ROLE-BASED ACCESS CONTROL OVERVIEW */}
-          <section id="roles" className="bg-[#F8FAFC] border-b border-[#E2E8F0] py-16 sm:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-              <ScrollRevealBlock className="max-w-2xl space-y-2.5">
-                <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#2563EB]">
-                  <Users className="w-4 h-4" />
-                  <span>{t('landing.roles.kicker')}</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
-                  {t('landing.roles.title')}
-                </h2>
-                <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-                  {t('landing.roles.subtitle')}
-                </p>
-              </ScrollRevealBlock>
-
-              <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {ROLE_ORDER.map((roleCode) => {
-                  const roleMeta = ROLE_META[roleCode];
-                  const matrix = RBAC_ROLE_MATRIX[roleCode];
-                  return (
-                    <StaggerItem
-                      key={roleCode}
-                      className="bg-white border border-[#E2E8F0] rounded-xl p-5 flex flex-col justify-between gap-4 landing-card-hover group"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <Badge variant={roleMeta.badgeVariant} size="sm">
-                            {t(`topbar.roleShort.${roleCode}`)}
-                          </Badge>
-                          <span className="text-[11px] font-mono text-[#64748B] tabular-nums">
-                            {matrix.allowedNavKeys.length} {t('landing.preview.modulesUnit')}
-                          </span>
-                        </div>
-                        <h3 className="text-base font-semibold text-[#0F172A]">
-                          {t(roleMeta.labelKey)}
-                        </h3>
-                        <p className="text-xs text-[#475569] leading-relaxed">
-                          {t(roleMeta.scopeNoteKey)}
-                        </p>
-                      </div>
-
-                      <Link
-                        to="/login"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] pt-2 border-t border-[#F1F5F9] group/link"
-                      >
-                        <span className="landing-nav-link">{t('landing.roles.tryAccount')}</span>
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover/link:translate-x-0.5" />
-                      </Link>
-                    </StaggerItem>
-                  );
-                })}
-              </StaggerGrid>
-            </div>
-          </section>
-
-          {/* SECTION 6: CLOSING CALL TO ACTION */}
-          <section className="relative overflow-hidden bg-[#0F172A] text-white py-16 sm:py-20">
-            <div
-              className="pointer-events-none absolute inset-0"
-              aria-hidden="true"
-              style={{
-                background:
-                  'radial-gradient(50% 60% at 50% 0%, rgba(37, 99, 235, 0.16), transparent 72%)',
-              }}
-            />
-            <ScrollRevealBlock className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                {t('landing.cta.title')}
-              </h2>
-              <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-                {t('landing.cta.subtitle')}
-              </p>
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2">
-                <MotionCtaWrapper className="w-full sm:w-auto">
-                  <Link to="/register" className="block w-full sm:w-auto group">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      fullWidth
-                      iconRight={
-                        <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-0.5" />
-                      }
-                    >
-                      {t('landing.cta.button')}
-                    </Button>
-                  </Link>
-                </MotionCtaWrapper>
-                <MotionCtaWrapper className="w-full sm:w-auto">
-                  <Link to="/login" className="block w-full sm:w-auto">
-                    <button
-                      type="button"
-                      className="w-full sm:w-auto h-11 px-5 rounded-md border border-slate-600 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-500 text-sm sm:text-base font-medium text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-                    >
-                      {t('landing.nav.signIn')}
-                    </button>
-                  </Link>
-                </MotionCtaWrapper>
-              </div>
-            </ScrollRevealBlock>
-          </section>
+          <section className="bg-slate-950 py-20 text-white sm:py-24"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><div className="grid gap-8 rounded-2xl border border-slate-700 bg-slate-900/60 p-8 sm:p-12 lg:grid-cols-[1fr_auto] lg:items-end"><div><p className="text-sm font-semibold text-blue-300">{t('landing.cta.eyebrow')}</p><h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">{t('landing.cta.title')}</h2><p className="mt-4 max-w-xl text-base leading-7 text-slate-300">{t('landing.cta.subtitle')}</p></div><Link to="/register" className={primaryLinkClass}>{t('landing.cta.button')} <ArrowRight className="size-4" /></Link></div></div></section>
         </main>
 
-        {/* Footer */}
-        <footer className="bg-[#0B1120] text-slate-400 border-t border-slate-800 py-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2 text-white font-semibold text-sm">
-                <Boxes className="w-4 h-4 text-[#2563EB]" />
-                <span>{t('landing.footer.tagline')}</span>
-              </div>
-              <p className="text-xs text-slate-400">{t('landing.footer.copyright')}</p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-5 text-xs font-medium">
-              <a href="#preview" className="landing-nav-link hover:text-white transition-colors py-1">
-                {t('landing.nav.preview')}
-              </a>
-              <a href="#features" className="landing-nav-link hover:text-white transition-colors py-1">
-                {t('landing.footer.links.features')}
-              </a>
-              <Link to="/login" className="landing-nav-link hover:text-white transition-colors py-1">
-                {t('landing.footer.links.signIn')}
-              </Link>
-              <Link to="/register" className="landing-nav-link hover:text-white transition-colors py-1">
-                {t('landing.footer.links.register')}
-              </Link>
-            </div>
-          </div>
-        </footer>
+        <footer className="bg-slate-950 pb-8 text-slate-400"><div className="mx-auto flex max-w-7xl flex-col gap-6 border-t border-slate-800 px-4 pt-8 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8"><div><p className="text-sm font-semibold text-white">{t('landing.footer.tagline')}</p><p className="mt-1 text-xs">{t('landing.footer.copyright')}</p></div><nav className="flex flex-wrap gap-x-5 gap-y-3 text-sm" aria-label={t('landing.footer.navAria')}><a href="#workflow" className="landing-nav-link hover:text-white">{t('landing.nav.workflow')}</a><a href="#preview" className="landing-nav-link hover:text-white">{t('landing.nav.preview')}</a><Link to="/login" className="landing-nav-link hover:text-white">{t('landing.footer.links.signIn')}</Link><Link to="/register" className="landing-nav-link hover:text-white">{t('landing.footer.links.register')}</Link></nav></div></footer>
       </div>
     </LandingMotionRoot>
   );
 };
+
+function SectionHeading({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
+  return <div className="max-w-2xl"><p className="text-sm font-semibold text-blue-700">{eyebrow}</p><h2 className="mt-3 text-3xl font-semibold tracking-[-0.025em] text-slate-950 sm:text-4xl">{title}</h2><p className="mt-4 text-base leading-7 text-slate-600">{body}</p></div>;
+}
+
+function Metric({ label, value, tone = 'white' }: { label: string; value: string; tone?: 'white' | 'amber' | 'blue' }) {
+  const toneClass = tone === 'amber' ? 'text-amber-300' : tone === 'blue' ? 'text-blue-300' : 'text-white';
+  return <div className="rounded-md border border-slate-700 bg-slate-800/80 p-2.5"><p className="truncate text-[10px] font-medium text-slate-400">{label}</p><p className={`mt-1 text-lg font-semibold tabular-nums ${toneClass}`}>{value}</p></div>;
+}
+
+function MovementRow({ icon: Icon, title, detail, value, tone }: { icon: LandingIcon; title: string; detail: string; value: string; tone: 'green' | 'blue' | 'amber' }) {
+  const colors = { green: 'bg-emerald-500/15 text-emerald-300', blue: 'bg-blue-500/15 text-blue-300', amber: 'bg-amber-500/15 text-amber-300' };
+  return <div className="flex items-center gap-2 rounded-md bg-slate-800/65 p-2"><span className={`flex size-7 shrink-0 items-center justify-center rounded ${colors[tone]}`}><Icon className="size-3.5" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-medium text-slate-100">{title}</span><span className="block truncate text-[10px] text-slate-400">{detail}</span></span><span className={`text-xs font-semibold ${tone === 'green' ? 'text-emerald-300' : tone === 'blue' ? 'text-blue-300' : 'text-amber-300'}`}>{value}</span></div>;
+}
+
+function ApprovalState({ label, active = false }: { label: string; active?: boolean }) {
+  return <div className="flex items-center gap-2"><span className={`flex size-5 items-center justify-center rounded-full border ${active ? 'border-emerald-500 bg-emerald-500 text-slate-950' : 'border-slate-600 text-slate-500'}`}>{active && <Check className="size-3" />}</span><span className={active ? 'text-xs font-medium text-slate-200' : 'text-xs text-slate-500'}>{label}</span></div>;
+}
+
+function PermissionLine({ label, allowed }: { label: string; allowed: boolean }) {
+  return <div className="flex items-start justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50 p-3"><span className="text-sm leading-5 text-slate-700">{label}</span><span className={`shrink-0 rounded px-2 py-1 text-[11px] font-semibold ${allowed ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>{allowed ? '✓' : '—'}</span></div>;
+}

@@ -1583,6 +1583,10 @@
   },
   "landing": {
     "nav": {
+      "skipToContent": "Đi đến nội dung chính",
+      "productLabel": "Vận hành kho",
+      "closeMenu": "Đóng menu điều hướng",
+      "workflow": "Quy trình",
       "ariaLabel": "Điều hướng trang chủ",
       "preview": "Xem giao diện",
       "features": "Tính năng",
@@ -1592,6 +1596,30 @@
       "getStarted": "Bắt đầu ngay"
     },
     "hero": {
+      "redesignHeadline": "Đồng bộ mọi kho hàng. Kiểm soát từng biến động tồn kho.",
+      "redesignSubCopy": "Theo dõi tồn kho đa kho, phiếu nhập xuất và bước duyệt Maker-Checker trong một góc nhìn vận hành rõ ràng.",
+      "redesignCtaPrimary": "Tạo tài khoản mẫu",
+      "redesignCtaSecondary": "Xem quy trình",
+      "eyebrow": "Vận hành tồn kho trong một không gian làm việc",
+      "disclosure": "Giao diện minh hoạ sử dụng dữ liệu mẫu.",
+      "illustrative": "Minh hoạ",
+      "facilityAria": "Bộ chọn kho minh hoạ",
+      "facilityValue": "Tất cả kho",
+      "metricSkus": "SKU theo dõi",
+      "metricAttention": "Cần chú ý",
+      "metricPending": "Chờ duyệt",
+      "activityTitle": "Biến động kho",
+      "activitySubtitle": "Hoạt động kho minh hoạ",
+      "inboundTitle": "Đã ghi nhận phiếu nhập",
+      "outboundTitle": "Đã gửi phiếu xuất",
+      "reviewTitle": "Cần xem xét phê duyệt",
+      "awaiting": "Chờ duyệt",
+      "approvalTitle": "Duyệt phiếu kho",
+      "approvalSubtitle": "Bàn giao Maker-Checker rõ ràng trước khi phê duyệt.",
+      "approvalDraft": "Đã tạo phiếu",
+      "approvalReview": "Quản lý xem xét",
+      "approvalApproved": "Đã ghi nhận duyệt",
+      "scopeLabel": "Phạm vi kho",
       "headline": "Phần mềm quản lý kho cho đội ngũ vận hành đa chi nhánh",
       "subCopy": "Theo dõi tồn kho chính xác theo từng điểm kho, phê duyệt phiếu nhập xuất theo quy trình Maker-Checker và tra cứu báo cáo đối chiếu bằng tiếng Anh hoặc tiếng Việt.",
       "ctaPrimary": "Bắt đầu miễn phí",
@@ -1610,6 +1638,9 @@
       "badgeAdjust": "ĐIỀU CHỈNH"
     },
     "preview": {
+      "eyebrow": "Thiết kế theo vai trò",
+      "illustrative": "Chỉ minh hoạ",
+      "disclaimer": "Đây là diễn giải trực quan về quyền đã cấu hình, không phải phiên phân quyền đang hoạt động.",
       "title": "Trải nghiệm giao diện theo từng vai trò kho",
       "subtitle": "Chuyển đổi qua lại giữa Quản trị, Quản lý kho, Nhân viên và Người xem để quan sát menu và quyền phê duyệt thay đổi trực tiếp.",
       "roleSwitchLabel": "Xem phạm vi thao tác theo vai trò:",
@@ -1635,6 +1666,7 @@
       "createVoucherBtn": "Tạo phiếu kho mới"
     },
     "features": {
+      "eyebrow": "Nghiệp vụ luôn kết nối",
       "title": "Thiết kế cho nghiệp vụ kho hàng thực tế",
       "subtitle": "Kết nối đồng bộ từ danh mục hàng hóa, phiếu nhập xuất đến kiểm kê và sổ cái báo cáo.",
       "pillar1Badge": "Kiểm soát Maker-Checker",
@@ -1668,6 +1700,30 @@
       "b4": "Đồng bộ xuyên suốt giữa nhà cung cấp, phiếu nhập xuất, kiểm kê và cảnh báo",
       "b5": "Chuyển đổi tức thời tiếng Anh và tiếng Việt trên toàn bộ bảng biểu và chứng từ"
     },
+    "value": {
+      "eyebrow": "Một trung tâm điều hành bình tĩnh hơn",
+      "title": "Giúp từng quyết định tồn kho dễ thấy và dễ rà soát",
+      "subtitle": "Sản phẩm được tổ chức theo những câu hỏi đội ngũ cần trả lời khi hàng hoá đang luân chuyển.",
+      "visibilityTitle": "Theo dõi tồn kho giữa các kho",
+      "visibilityBody": "Giữ rõ bối cảnh kho khi đội ngũ xử lý hoạt động tồn kho.",
+      "controlTitle": "Tách thao tác và phê duyệt",
+      "controlBody": "Trạng thái Maker-Checker giúp nhìn rõ bước rà soát trước khi duyệt phiếu.",
+      "multiWarehouseTitle": "Vận hành theo phạm vi kho",
+      "multiWarehouseBody": "Vai trò và điều hướng không gian làm việc phản ánh mô hình vận hành kho.",
+      "traceabilityTitle": "Theo dõi dấu vết vận hành",
+      "traceabilityBody": "Dùng phiếu kho, kiểm kê, báo cáo và cảnh báo như các điểm chạm vận hành liên kết."
+    },
+    "workflow": {
+      "eyebrow": "Trình tự kho hàng thực tế",
+      "title": "Từ thiết lập danh mục đến bản ghi tồn kho đã được rà soát",
+      "subtitle": "Luồng xử lý tập trung giúp đội ngũ biết công việc bắt đầu ở đâu, được rà soát khi nào và kiểm tra tồn kho tại đâu.",
+      "step1Title": "Quản lý danh mục và kho",
+      "step1Body": "Duy trì hàng hoá, dữ liệu danh mục và địa điểm kho trước khi phát sinh biến động hằng ngày.",
+      "step2Title": "Tạo phiếu kho",
+      "step2Body": "Chuẩn bị phiếu nhập hoặc xuất với thông tin cần thiết cho vận hành kho.",
+      "step3Title": "Rà soát và theo dõi tồn kho",
+      "step3Body": "Dùng trạng thái duyệt, kiểm kê, cảnh báo và báo cáo để theo dõi kết quả vận hành."
+    },
     "roles": {
       "kicker": "Kiến trúc phân quyền RBAC",
       "title": "Rõ trách nhiệm cho từng vị trí vận hành",
@@ -1675,11 +1731,13 @@
       "tryAccount": "Đăng nhập bằng tài khoản mẫu"
     },
     "cta": {
+      "eyebrow": "Khám phá không gian làm việc",
       "title": "Sẵn sàng trải nghiệm hệ thống quản lý kho?",
       "subtitle": "Đăng ký tài khoản dùng thử cục bộ hoặc đăng nhập ngay bằng 1 trong 4 vai trò mẫu.",
       "button": "Tạo tài khoản ngay"
     },
     "footer": {
+      "navAria": "Điều hướng chân trang",
       "tagline": "Hệ Thống Quản Lý Kho Thông Minh",
       "copyright": "© 2026 Smart Inventory. Bản thử nghiệm giao diện với xác thực giả lập cục bộ.",
       "links": {

@@ -36,6 +36,7 @@ Thumbs.db
 # AI Assistant Skills, Knowledge Graph & Local Planning / QA Docs
 .agents/
 graphify-out/
+.taste-skill/
 skills-lock.json
 /*.md
 !/README.md
