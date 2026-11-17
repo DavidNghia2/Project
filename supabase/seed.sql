@@ -1,0 +1,3 @@
+-- Static role data is inserted by the foundation migration.
+-- Demo companies and users must be created through Auth and create_company()
+-- on a dedicated test database. No credentials or production data belong here.

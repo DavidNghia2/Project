@@ -38,5 +38,7 @@ Thumbs.db
 graphify-out/
 .taste-skill/
 skills-lock.json
+docs/
+.skill-audit-*/
 /*.md
 !/README.md
