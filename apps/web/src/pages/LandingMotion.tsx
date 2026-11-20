@@ -52,6 +52,7 @@ export const AnimatedStatCounter: React.FC<AnimatedStatCounterProps> = ({
   className = '',
 }) => {
   const ref = useRef<HTMLSpanElement>(null);
+  const prevTargetRef = useRef<number>(0);
   const shouldReduceMotion = useReducedMotion();
   const isInView = useInView(ref, { once: true, amount: 0.25 });
   const shouldStart = trigger === 'mount' || isInView;
@@ -61,16 +62,21 @@ export const AnimatedStatCounter: React.FC<AnimatedStatCounterProps> = ({
 
   useEffect(() => {
     if (shouldReduceMotion || !shouldStart) {
+      prevTargetRef.current = target;
       return;
     }
 
-    const controls = animate(0, target, {
-      duration,
+    const startValue = prevTargetRef.current;
+    const controls = animate(startValue, target, {
+      duration: startValue === 0 ? duration : Math.min(duration, 0.42),
       ease: LANDING_EASE_OUT,
       onUpdate: (latest) => {
-        setDisplayValue(Math.round(latest));
+        const rounded = Math.round(latest);
+        prevTargetRef.current = rounded;
+        setDisplayValue(rounded);
       },
       onComplete: () => {
+        prevTargetRef.current = target;
         setDisplayValue(target);
       },
     });

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Boxes, Globe } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { ArrowLeft, Boxes, CheckCircle2, Globe, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../../../i18n';
 import { Badge } from '../../../design-system';
 import { useAuth } from '../useAuth';
@@ -12,28 +12,30 @@ export interface AuthLayoutShellProps {
 export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) => {
   const { t, language, toggleLanguage } = useTranslation();
   const { isMockMode } = useAuth();
+  const { pathname } = useLocation();
+  const isRegister = pathname === '/register';
+
+  const showcasePoints = [
+    t('auth.showcasePoints.p1'),
+    t('auth.showcasePoints.p2'),
+    t('auth.showcasePoints.p3'),
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A] font-sans antialiased">
-      {/* Subtle architectural radial glow top wash */}
-      <div
-        className="pointer-events-none fixed inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_at_top,rgba(37,99,235,0.08),transparent_70%)]"
-        aria-hidden="true"
-      />
-
-      {/* Top Navigation Bar */}
-      <header className="relative z-10 w-full border-b border-[#E2E8F0] bg-white/90 backdrop-blur-xs">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <div className="min-h-screen flex flex-col bg-[#F6F8FB] text-[#0F172A] font-sans antialiased">
+      {/* Top Navigation Utility Bar */}
+      <header className="sticky top-0 z-20 w-full border-b border-slate-200/90 bg-white/95 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               to="/"
               className="inline-flex items-center gap-2.5 min-w-0 rounded-md py-1.5 pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] group"
             >
-              <div className="w-9 h-9 rounded-lg bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs transition-transform duration-150 group-hover:scale-105">
+              <div className="w-9 h-9 rounded-lg bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition-transform duration-150 group-hover:scale-105">
                 <Boxes className="w-5 h-5" />
               </div>
               <div className="flex flex-col leading-tight min-w-0">
-                <span className="font-semibold text-sm text-[#0F172A] tracking-tight truncate">
+                <span className="font-display font-bold text-sm text-[#0F172A] tracking-tight truncate">
                   {t('layout.brandName')}
                 </span>
                 <span className="text-[11px] font-medium text-[#475569] uppercase tracking-wider truncate">
@@ -55,7 +57,7 @@ export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) =>
             <button
               type="button"
               onClick={toggleLanguage}
-              className="inline-flex items-center justify-center gap-1.5 min-h-[40px] px-2.5 rounded-md border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#334155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 min-h-[40px] px-2.5 rounded-lg border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#334155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] transition-colors cursor-pointer"
               title={t('demo.switch_lang')}
               aria-label={t('demo.switch_lang')}
             >
@@ -66,7 +68,7 @@ export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) =>
             <Link
               to="/"
               aria-label={t('auth.backToHome')}
-              className="inline-flex items-center justify-center gap-1.5 min-h-[40px] min-w-[40px] px-2.5 sm:px-3 rounded-md text-xs font-medium text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 min-h-[40px] min-w-[40px] px-2.5 sm:px-3 rounded-lg text-xs font-medium text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] transition-colors"
             >
               <ArrowLeft className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" />
               <span className="hidden sm:inline">{t('auth.backToHome')}</span>
@@ -75,13 +77,124 @@ export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) =>
         </div>
       </header>
 
-      {/* Main Centered Container */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
-        <div className="w-full max-w-[440px] space-y-5">{children}</div>
+      {/* Split-Screen Main Workspace */}
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+        {/* Left Obsidian Brand Showcase Column (Desktop lg+) */}
+        <aside
+          aria-label={t('layout.brandName')}
+          className="hidden lg:flex lg:col-span-6 lg:sticky lg:top-16 lg:h-[calc(100svh-4rem)] relative overflow-hidden bg-[#060911] text-white flex-col justify-between px-10 py-8 xl:px-14 xl:py-10 border-r border-white/10"
+        >
+          {/* Coordinate Dot Grid & Atmospheric Ocean-Blue Glow */}
+          <div
+            className="pointer-events-none absolute inset-0 obsidian-dot-grid opacity-40"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+            style={{
+              background:
+                'radial-gradient(65% 50% at 25% 22%, rgba(37, 99, 235, 0.25), transparent 72%), radial-gradient(45% 45% at 85% 82%, rgba(14, 165, 233, 0.14), transparent 70%)',
+            }}
+          />
+
+          <div className="relative z-10 w-full max-w-[500px] mx-auto my-auto space-y-7 py-2">
+            <div className="space-y-3">
+              <h2 className="font-display text-3xl xl:text-[2.15rem] font-extrabold tracking-[-0.025em] leading-[1.16] text-white">
+                {t('auth.showcaseHeadline')}
+              </h2>
+              <p className="text-sm xl:text-base text-slate-300 leading-relaxed">
+                {t('auth.showcaseCopy')}
+              </p>
+            </div>
+
+            {/* Live Guard Pipeline Showcase Card */}
+            <div className="rounded-2xl border border-white/12 bg-[#0B1220]/90 p-5 space-y-4 shadow-[0_24px_56px_-18px_rgba(0,0,0,0.75)]">
+              <div className="flex items-center justify-between gap-2 pb-3 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="relative flex w-2.5 h-2.5 shrink-0 items-center justify-center">
+                    <span
+                      className="absolute inset-0 rounded-full bg-emerald-400/75 live-beacon-ring"
+                      aria-hidden="true"
+                    />
+                    <span className="relative w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  </span>
+                  <span className="text-[11px] font-mono font-semibold text-slate-300 tracking-wider uppercase truncate">
+                    {t('auth.showcaseLedgerLabel')}
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono text-sky-400 bg-sky-950/60 border border-sky-800/50 px-2 py-0.5 rounded shrink-0">
+                  WH-01 · WH-02 · WH-03
+                </span>
+              </div>
+
+              {/* Maker-Checker 3-Stage Track */}
+              <div className="grid grid-cols-3 gap-2 text-[11px] font-mono">
+                <div className="px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-slate-200 text-center font-medium">
+                  {t('landing.features.stepDraft')}
+                </div>
+                <div className="px-2.5 py-2 rounded-lg bg-amber-500/10 border border-amber-400/25 text-amber-300 text-center font-medium">
+                  {t('landing.features.stepSubmitted')}
+                </div>
+                <div className="px-2.5 py-2 rounded-lg bg-emerald-500/10 border border-emerald-400/25 text-emerald-300 text-center font-medium">
+                  {t('landing.features.stepApproved')}
+                </div>
+              </div>
+
+              <ul className="space-y-2.5 pt-1">
+                {showcasePoints.map((point) => (
+                  <li key={point} className="flex items-start gap-2.5 text-xs text-slate-300 leading-relaxed">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="relative z-10 w-full max-w-[500px] mx-auto pt-5 border-t border-white/10 flex items-center gap-2 text-xs text-slate-400">
+            <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0" />
+            <span>{t('auth.prototypeDisclaimer')}</span>
+          </div>
+        </aside>
+
+        {/* Right Form Workspace Column */}
+        <div className="lg:col-span-6 flex items-start justify-center px-4 py-7 sm:px-8 lg:pt-10 lg:pb-12">
+          <div className="w-full max-w-[490px] space-y-4">
+            {/* Compact Route Switcher Segmented Control */}
+            <nav
+              aria-label={t('auth.signIn')}
+              className="grid grid-cols-2 p-1 rounded-xl bg-slate-200/75 border border-slate-200/90"
+            >
+              <Link
+                to="/login"
+                className={`min-h-[38px] flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
+                  !isRegister
+                    ? 'bg-white text-[#0F172A] shadow-xs'
+                    : 'text-[#475569] hover:text-[#0F172A]'
+                }`}
+              >
+                {t('auth.signIn')}
+              </Link>
+              <Link
+                to="/register"
+                className={`min-h-[38px] flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
+                  isRegister
+                    ? 'bg-white text-[#0F172A] shadow-xs'
+                    : 'text-[#475569] hover:text-[#0F172A]'
+                }`}
+              >
+                {t('auth.signUp')}
+              </Link>
+            </nav>
+
+            {children}
+          </div>
+        </div>
       </main>
 
-      {/* Footer Note */}
-      <footer className="relative z-10 py-4 px-4 text-center text-xs text-[#64748B] border-t border-[#E2E8F0] bg-white/70">
+      {/* Mobile / Tablet Footer Note (hidden on desktop where left showcase shows it) */}
+      <footer className="lg:hidden relative z-10 py-4 px-4 text-center text-xs text-[#64748B] border-t border-[#E2E8F0] bg-white">
         <p>{t('auth.prototypeDisclaimer')}</p>
       </footer>
     </div>

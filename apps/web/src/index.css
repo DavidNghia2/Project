@@ -2,6 +2,10 @@
 @import "./design-system/tokens.css";
 
 /* Base reset & typography */
+html {
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   margin: 0;
@@ -17,6 +21,26 @@ body {
 #root {
   min-height: 100vh;
   width: 100%;
+}
+
+/* Branded text selection & monospace utility */
+::selection {
+  background-color: rgba(37, 99, 235, 0.22);
+  color: inherit;
+}
+
+.font-display {
+  font-family: var(--font-family-display);
+}
+
+.font-mono {
+  font-family: var(--font-family-mono);
+}
+
+/* Precision architectural dot matrix on dark showcase surfaces (12% opacity ink) */
+.obsidian-dot-grid {
+  background-image: radial-gradient(rgba(148, 163, 184, 0.2) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* Purposeful GPU-only background glow drift & live telemetry beacon pulse */

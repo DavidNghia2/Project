@@ -37,6 +37,16 @@ Thumbs.db
 .agents/
 graphify-out/
 .taste-skill/
+.skill-audit-*/
+docs/
 skills-lock.json
 /*.md
 !/README.md
+
+# Thesis Opening Defense & Presentation Files (Local only, do not commit)
+THUYET_TRINH_TOT_NGHIEP*
+thuyết trình tốt nghiệp/
+*thuyet*trinh*
+defense-presentation/
+*.pptx
+*.pdf

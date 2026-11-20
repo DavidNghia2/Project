@@ -1562,6 +1562,15 @@
     "registrationSuccessBanner": "Account created successfully. Sign in below to enter your workspace.",
     "forbiddenTitle": "Access Restricted",
     "forbiddenDesc": "Your current account role does not have permission to open this workspace route.",
+    "showcaseHeadline": "Deterministic stock control from intake to audit",
+    "showcaseCopy": "Unified warehouse operations with maker-checker approvals, real-time facility balances, and role-scoped visibility.",
+    "showcaseLedgerLabel": "LIVE GUARD PIPELINE",
+    "showcasePoints": {
+      "p1": "Maker-Checker Guard — blocks self-approval & negative stock",
+      "p2": "4 RBAC Roles — Admin, Manager, Staff & Auditor scopes",
+      "p3": "Multi-Warehouse — instant facility switching & CSV exports"
+    },
+    "roleSwitchLabel": "One-click role autofill",
     "passwordRules": {
       "minLength": "8+ characters",
       "uppercase": "1 uppercase letter",
@@ -1607,7 +1616,10 @@
       "ledgerColQty": "Balance Delta",
       "badgeInbound": "INBOUND",
       "badgeDispatch": "DISPATCH",
-      "badgeAdjust": "ADJUST"
+      "badgeAdjust": "ADJUST",
+      "allWarehouses": "ALL",
+      "throughputLabel": "7-Day Inbound / Dispatch Cadence",
+      "throughputMeta": "0 negative balances"
     },
     "preview": {
       "title": "See how each warehouse role operates",
@@ -1653,7 +1665,10 @@
       "f6Desc": "Review balance sheets, stock movement history, and export UTF-8 spreadsheet reports cleanly.",
       "stepDraft": "Draft",
       "stepSubmitted": "Submitted",
-      "stepApproved": "Manager Approved"
+      "stepApproved": "Manager Approved",
+      "guardRule1": "Creator != Approver enforced",
+      "guardRule2": "Real-time available stock check",
+      "whDistLabel": "FACILITY ALLOCATION"
     },
     "benefits": {
       "title": "Eliminate spreadsheet drift across teams",
@@ -1672,7 +1687,12 @@
       "kicker": "Role-Based Access Control",
       "title": "Clear boundaries for every team member",
       "subtitle": "Structured roles isolate administrative configuration, manager approvals, warehouse floor intake, and read-only auditing.",
-      "tryAccount": "Sign in with demo role"
+      "tryAccount": "Sign in with demo role",
+      "coverageLabel": "Module coverage",
+      "capCreate": "Create vouchers",
+      "capApprove": "Approve & reconcile",
+      "capCatalog": "Edit SKUs & partners",
+      "capAdmin": "Users & settings"
     },
     "cta": {
       "title": "Ready to explore the warehouse workspace?",

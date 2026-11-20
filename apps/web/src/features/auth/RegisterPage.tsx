@@ -85,9 +85,9 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <AuthLayoutShell>
-      <section className="bg-white border border-[#E2E8F0] rounded-xl shadow-md p-6 sm:p-8 space-y-6">
-        <div className="space-y-1.5">
-          <h1 className="text-2xl font-bold text-[#0F172A] tracking-tight">
+      <section className="bg-white border border-slate-200/90 rounded-2xl shadow-[0_16px_44px_-16px_rgba(15,23,42,0.1)] p-6 sm:p-7 space-y-5">
+        <div className="space-y-1">
+          <h1 className="font-display text-2xl font-bold text-[#0F172A] tracking-tight">
             {t('auth.registerTitle')}
           </h1>
           <p className="text-sm text-[#475569] leading-relaxed">

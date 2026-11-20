@@ -1562,6 +1562,15 @@
     "registrationSuccessBanner": "Đăng ký tài khoản thành công. Vui lòng đăng nhập bên dưới để vào bảng điều khiển.",
     "forbiddenTitle": "Giới hạn quyền truy cập",
     "forbiddenDesc": "Vai trò tài khoản hiện tại của bạn không có quyền mở phân hệ này.",
+    "showcaseHeadline": "Kiểm soát tồn kho chuẩn xác từ nhập kho đến đối chiếu",
+    "showcaseCopy": "Vận hành kho tập trung với quy trình duyệt hai lớp Maker-Checker, theo dõi tồn thực tế từng kho và phân quyền rõ ràng.",
+    "showcaseLedgerLabel": "LUỒNG KIỂM SOÁT CHỨNG TỪ",
+    "showcasePoints": {
+      "p1": "Kiểm soát Maker-Checker — chặn tự duyệt phiếu và âm tồn",
+      "p2": "4 vai trò RBAC — tách bạch Quản trị, Quản lý, Nhân viên & Xem",
+      "p3": "Đa điểm kho — chuyển nhanh từng kho và xuất báo cáo CSV"
+    },
+    "roleSwitchLabel": "Điền nhanh theo vai trò",
     "passwordRules": {
       "minLength": "Từ 8 ký tự",
       "uppercase": "1 chữ hoa",
@@ -1607,7 +1616,10 @@
       "ledgerColQty": "Chênh lệch tồn",
       "badgeInbound": "NHẬP KHO",
       "badgeDispatch": "XUẤT KHO",
-      "badgeAdjust": "ĐIỀU CHỈNH"
+      "badgeAdjust": "ĐIỀU CHỈNH",
+      "allWarehouses": "TẤT CẢ",
+      "throughputLabel": "Nhịp nhập / xuất kho 7 ngày",
+      "throughputMeta": "0 lỗi âm tồn"
     },
     "preview": {
       "title": "Trải nghiệm giao diện theo từng vai trò kho",
@@ -1653,7 +1665,10 @@
       "f6Desc": "Xem cân đối tồn kho, lịch sử xuất nhập theo ngày và tải xuống báo cáo CSV chuẩn UTF-8.",
       "stepDraft": "Nháp",
       "stepSubmitted": "Chờ duyệt",
-      "stepApproved": "Quản lý duyệt"
+      "stepApproved": "Quản lý duyệt",
+      "guardRule1": "Bắt buộc Người tạo != Người duyệt",
+      "guardRule2": "Kiểm tra tồn khả dụng tức thời",
+      "whDistLabel": "PHÂN BỔ TỒN THEO KHO"
     },
     "benefits": {
       "title": "Giảm sai lệch dữ liệu giữa các bộ phận",
@@ -1672,7 +1687,12 @@
       "kicker": "Kiến trúc phân quyền RBAC",
       "title": "Rõ trách nhiệm cho từng vị trí vận hành",
       "subtitle": "Phân tách minh bạch giữa cấu hình hệ thống, phê duyệt chứng từ, thao tác nhập xuất và tra cứu báo cáo.",
-      "tryAccount": "Đăng nhập bằng tài khoản mẫu"
+      "tryAccount": "Đăng nhập bằng tài khoản mẫu",
+      "coverageLabel": "Phạm vi phân hệ",
+      "capCreate": "Lập phiếu kho",
+      "capApprove": "Duyệt & kiểm kê",
+      "capCatalog": "Sửa SKU & đối tác",
+      "capAdmin": "Nhân sự & cấu hình"
     },
     "cta": {
       "title": "Sẵn sàng trải nghiệm hệ thống quản lý kho?",

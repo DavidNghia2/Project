@@ -180,6 +180,12 @@ describe('Authentication UI & Route Guards', () => {
     const user = userEvent.setup();
     renderAuthApp('/');
 
+    // Interactive Hero Warehouse Console switch (ALL -> WH-01)
+    const wh01Btn = await screen.findByRole('button', { name: 'WH-01' });
+    await user.click(wh01Btn);
+    expect(wh01Btn).toHaveAttribute('aria-pressed', 'true');
+    expect(await screen.findByLabelText('640')).toBeInTheDocument();
+
     const viewerTab = await screen.findByRole('tab', { name: /viewer/i });
     await user.click(viewerTab);
     expect(viewerTab).toHaveAttribute('aria-selected', 'true');
