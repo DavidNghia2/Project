@@ -38,7 +38,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && (!user?.role || !allowedRoles.includes(user.role))) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-[#F8FAFC] p-6">
         <div className="max-w-md w-full bg-white border border-[#E2E8F0] rounded-xl p-6 text-center space-y-4 shadow-sm">

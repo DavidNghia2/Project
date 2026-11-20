@@ -54,11 +54,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   useEffect(() => {
     if (isLoading) return;
-    const identityKey = session ? `${session.user.id}:${session.user.role}` : null;
+    const identityKey = session ? `${session.user.id}:${session.user.role ?? 'NO_ROLE'}` : null;
     if (identityKey === lastSyncedIdentityRef.current) return;
 
     lastSyncedIdentityRef.current = identityKey;
-    if (session) {
+    if (session?.user.role) {
       setActiveRole(session.user.role);
     } else {
       resetRole();
@@ -96,9 +96,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     resetRole();
   }, [service, resetRole]);
 
+  const refreshSession = useCallback(async (): Promise<void> => {
+    const nextSession = await service.getSession();
+    setSession(nextSession);
+  }, [service]);
+
   const hasRole = useCallback(
     (roles: RoleCode | readonly RoleCode[]): boolean => {
-      if (!session?.user) return false;
+      if (!session?.user?.role) return false;
       if (Array.isArray(roles)) {
         return roles.includes(session.user.role);
       }
@@ -117,9 +122,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       signIn,
       signUp,
       signOut,
+      refreshSession,
       hasRole,
     }),
-    [session, isLoading, service.isMockMode, signIn, signUp, signOut, hasRole]
+    [session, isLoading, service.isMockMode, signIn, signUp, signOut, refreshSession, hasRole]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

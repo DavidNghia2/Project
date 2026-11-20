@@ -13,7 +13,7 @@ export const GuestRoute: React.FC<GuestRouteProps> = ({
   children,
   redirectTo = '/dashboard',
 }) => {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated, user } = useAuth();
   const { t } = useTranslation();
 
   if (isLoading) {
@@ -30,7 +30,7 @@ export const GuestRoute: React.FC<GuestRouteProps> = ({
   }
 
   if (isAuthenticated) {
-    return <Navigate to={redirectTo} replace />;
+    return <Navigate to={user?.company ? redirectTo : '/onboarding'} replace />;
   }
 
   return <>{children ?? <Outlet />}</>;

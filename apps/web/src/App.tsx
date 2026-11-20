@@ -5,9 +5,11 @@ import {
   AuthProvider,
   GuestRoute,
   ProtectedRoute,
+  MemberRoute,
   LoginPage,
   RegisterPage,
 } from './features/auth';
+import { AcceptInvitationPage, OnboardingPage } from './features/onboarding';
 import {
   LandingPage,
   DashboardPage,
@@ -40,8 +42,15 @@ export function App() {
               <Route path="/register" element={<RegisterPage />} />
             </Route>
 
+            {/* Authenticated onboarding routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/accept-invitation" element={<AcceptInvitationPage />} />
+            </Route>
+
             {/* Protected Inventory Management routes */}
             <Route element={<ProtectedRoute />}>
+              <Route element={<MemberRoute />}>
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/products" element={<ProductsPage />} />
@@ -58,6 +67,7 @@ export function App() {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/design-system" element={<DesignSystemDemo />} />
                 <Route path="*" element={<NotFoundPage />} />
+              </Route>
               </Route>
             </Route>
           </Routes>

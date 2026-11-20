@@ -5,9 +5,11 @@ import { Topbar } from './Topbar';
 import { X } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { DevRolePreviewBar } from '../features/users-rbac/components/DevRolePreviewBar';
+import { useAuth } from '../features/auth';
 
 export const AppLayout: React.FC = () => {
   const { t } = useTranslation();
+  const { isMockMode } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeWarehouse, setActiveWarehouse] = useState('ALL');
@@ -60,7 +62,7 @@ export const AppLayout: React.FC = () => {
 
       {/* Main Content Viewport */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        {import.meta.env.DEV && <DevRolePreviewBar />}
+        {import.meta.env.DEV && isMockMode && <DevRolePreviewBar />}
         <Topbar
           onOpenMobileMenu={() => setMobileOpen(true)}
           activeWarehouse={activeWarehouse}

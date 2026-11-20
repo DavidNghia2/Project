@@ -17,6 +17,7 @@ export interface AuthContextValue {
   signIn: (credentials: SignInCredentials) => Promise<AuthError | null>;
   signUp: (credentials: SignUpCredentials) => Promise<{ user: AuthUser | null; error: AuthError | null }>;
   signOut: () => Promise<void>;
+  refreshSession: () => Promise<void>;
   hasRole: (roles: RoleCode | readonly RoleCode[]) => boolean;
 }
 
@@ -40,6 +41,7 @@ export const DEFAULT_AUTH_CONTEXT_VALUE: AuthContextValue = {
     },
   }),
   signOut: async () => {},
+  refreshSession: async () => {},
   hasRole: () => false,
 };
 

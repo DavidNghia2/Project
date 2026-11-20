@@ -3,6 +3,7 @@ export * from './useAuth';
 export * from './AuthProvider';
 export * from './ProtectedRoute';
 export * from './GuestRoute';
+export * from './MemberRoute';
 export * from './LoginPage';
 export * from './RegisterPage';
 export * from './validators';

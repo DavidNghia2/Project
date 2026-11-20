@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Pencil,
   Power,
@@ -9,7 +9,7 @@ import {
   Users as UsersIcon,
 } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Badge, Button, Card, Table, type Column } from '../design-system';
+import { Alert, Badge, Button, Card, Input, Select, Table, type Column } from '../design-system';
 import {
   ROLE_META,
   RoleMatrixSummaryCard,
@@ -21,11 +21,14 @@ import {
   useUsers,
   type SystemUser,
   type UserFormData,
+  type RoleCode,
 } from '../features/users-rbac';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
+import { useAuth } from '../features/auth';
+import { supabase } from '../lib/supabase';
 
-export const UsersPage: React.FC = () => {
+const MockUsersPage: React.FC = () => {
   const { t, language } = useTranslation();
   const { activeRole, capabilities } = useRolePreview();
   const {
@@ -373,4 +376,180 @@ export const UsersPage: React.FC = () => {
       <RoleMatrixSummaryCard highlightedRole={activeRole} />
     </div>
   );
+};
+
+type RemoteMember = {
+  user_id: string;
+  full_name: string;
+  email: string;
+  role_code: RoleCode;
+  membership_status: 'active' | 'inactive';
+  is_owner: boolean;
+  warehouse_ids: string[];
+  warehouse_codes: string[];
+};
+
+type RemoteWarehouse = { id: string; code: string; name: string };
+
+const roles: RoleCode[] = ['ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF', 'VIEWER'];
+
+const SupabaseUsersPage: React.FC = () => {
+  const { user } = useAuth();
+  const [members, setMembers] = useState<RemoteMember[]>([]);
+  const [memberWarehouseIds, setMemberWarehouseIds] = useState<Record<string, string[]>>({});
+  const [warehouses, setWarehouses] = useState<RemoteWarehouse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<RoleCode>('WAREHOUSE_STAFF');
+  const [inviteWarehouseIds, setInviteWarehouseIds] = useState<string[]>([]);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    setError(null);
+    const [memberResult, warehouseResult] = await Promise.all([
+      supabase.rpc('list_company_members'),
+      supabase.from('warehouses').select('id, code, name').eq('status', 'active').order('code'),
+    ]);
+    if (memberResult.error) setError(memberResult.error.message);
+    if (warehouseResult.error) setError(warehouseResult.error.message);
+    const nextMembers = (memberResult.data ?? []) as RemoteMember[];
+    setMembers(nextMembers);
+    setMemberWarehouseIds(Object.fromEntries(nextMembers.map((member) => [member.user_id, member.warehouse_ids])));
+    setWarehouses((warehouseResult.data ?? []) as RemoteWarehouse[]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const invokeAdminUsers = async (body: Record<string, unknown>): Promise<Record<string, unknown> | null> => {
+    setError(null);
+    setNotice(null);
+    const { data, error: invokeError } = await supabase.functions.invoke('admin-users', { body });
+    if (invokeError) {
+      setError(invokeError.message);
+      return null;
+    }
+    return data as Record<string, unknown>;
+  };
+
+  const sendInvitation = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const result = await invokeAdminUsers({
+      action: 'invite',
+      email: inviteEmail,
+      roleCode: inviteRole,
+      warehouseIds: inviteRole === 'ADMIN' ? [] : inviteWarehouseIds,
+    });
+    if (!result) return;
+    setInviteLink(typeof result.invitationUrl === 'string' ? result.invitationUrl : null);
+    setNotice(result.emailSent ? 'Lời mời đã được gửi qua email.' : 'Lời mời đã tạo. Sao chép liên kết bên dưới để gửi cho người nhận.');
+    setInviteEmail('');
+    setInviteWarehouseIds([]);
+  };
+
+  const updateMember = async (
+    member: RemoteMember,
+    roleCode: RoleCode,
+    status: 'active' | 'inactive',
+    warehouseIds = memberWarehouseIds[member.user_id] ?? member.warehouse_ids
+  ) => {
+    const result = await invokeAdminUsers({
+      action: 'update',
+      userId: member.user_id,
+      roleCode,
+      status,
+      warehouseIds: roleCode === 'ADMIN' ? [] : warehouseIds,
+    });
+    if (result) {
+      setNotice('Đã cập nhật thành viên.');
+      await load();
+    }
+  };
+
+  const transferOwner = async (member: RemoteMember) => {
+    const result = await invokeAdminUsers({ action: 'transfer-owner', userId: member.user_id });
+    if (result) {
+      setNotice(`Đã chuyển quyền sở hữu cho ${member.full_name || member.email}.`);
+      await load();
+    }
+  };
+
+  const toggleInviteWarehouse = (warehouseId: string) => {
+    setInviteWarehouseIds((current) => current.includes(warehouseId)
+      ? current.filter((id) => id !== warehouseId)
+      : [...current, warehouseId]);
+  };
+
+  const toggleMemberWarehouse = (memberId: string, warehouseId: string) => {
+    setMemberWarehouseIds((current) => {
+      const assigned = current[memberId] ?? [];
+      return {
+        ...current,
+        [memberId]: assigned.includes(warehouseId)
+          ? assigned.filter((id) => id !== warehouseId)
+          : [...assigned, warehouseId],
+      };
+    });
+  };
+
+  if (loading) return <div className="p-6 text-sm text-slate-600">Đang tải thành viên...</div>;
+
+  return (
+    <div className="space-y-6">
+      <PageHeader title="Thành viên và quyền" description={`Quản lý thành viên của ${user?.company?.name ?? 'công ty'}.`} />
+      {error && <Alert variant="error" message={error} dismissible onDismiss={() => setError(null)} />}
+      {notice && <Alert variant="success" message={notice} dismissible onDismiss={() => setNotice(null)} />}
+
+      <Card padding="md" className="space-y-4">
+        <div><h2 className="font-semibold text-slate-900">Mời thành viên</h2><p className="text-sm text-slate-600 mt-1">Người nhận đăng ký hoặc đăng nhập bằng đúng email rồi chấp nhận lời mời.</p></div>
+        <form onSubmit={sendInvitation} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+          <Input label="Email" type="email" value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} required placeholder="member@example.com" />
+          <Select label="Vai trò" value={inviteRole} onChange={(event) => setInviteRole(event.target.value as RoleCode)} options={roles.map((role) => ({ value: role, label: role }))} />
+          <Button type="submit">Tạo lời mời</Button>
+        </form>
+        {inviteRole !== 'ADMIN' && warehouses.length > 0 && (
+          <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-3">
+            {warehouses.map((warehouse) => <label key={warehouse.id} className="inline-flex gap-2 text-sm text-slate-700"><input type="checkbox" checked={inviteWarehouseIds.includes(warehouse.id)} onChange={() => toggleInviteWarehouse(warehouse.id)} />{warehouse.code}</label>)}
+          </div>
+        )}
+        {inviteLink && <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm"><p className="font-medium text-slate-800">Liên kết lời mời</p><a href={inviteLink} className="text-blue-700 break-all underline">{inviteLink}</a></div>}
+      </Card>
+
+      <Card padding="md" className="overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="border-b border-slate-200 text-left text-slate-500"><tr><th className="py-3 pr-4">Thành viên</th><th className="py-3 pr-4">Vai trò</th><th className="py-3 pr-4">Kho</th><th className="py-3 pr-4">Trạng thái</th><th className="py-3">Thao tác</th></tr></thead>
+          <tbody>
+            {members.map((member) => (
+              <tr key={member.user_id} className="border-b border-slate-100 align-top">
+                <td className="py-3 pr-4"><p className="font-medium text-slate-900">{member.full_name || 'Chưa đặt tên'} {member.is_owner && <span className="text-xs text-blue-700">Owner</span>}</p><p className="text-xs text-slate-500">{member.email}</p></td>
+                <td className="py-3 pr-4"><select aria-label={`Vai trò ${member.email}`} defaultValue={member.role_code} onChange={(event) => void updateMember(member, event.target.value as RoleCode, member.membership_status)} className="rounded border border-slate-300 px-2 py-1"><option value="ADMIN">ADMIN</option><option value="WAREHOUSE_MANAGER">WAREHOUSE_MANAGER</option><option value="WAREHOUSE_STAFF">WAREHOUSE_STAFF</option><option value="VIEWER">VIEWER</option></select></td>
+                <td className="py-3 pr-4 text-slate-600">
+                  {member.role_code === 'ADMIN' ? 'Tất cả kho' : (
+                    <div className="space-y-1.5 min-w-44">
+                      {warehouses.map((warehouse) => <label key={warehouse.id} className="flex items-center gap-2 text-xs"><input type="checkbox" checked={(memberWarehouseIds[member.user_id] ?? []).includes(warehouse.id)} onChange={() => toggleMemberWarehouse(member.user_id, warehouse.id)} />{warehouse.code}</label>)}
+                    </div>
+                  )}
+                </td>
+                <td className="py-3 pr-4"><Button size="sm" variant={member.membership_status === 'active' ? 'ghost' : 'secondary'} onClick={() => void updateMember(member, member.role_code, member.membership_status === 'active' ? 'inactive' : 'active')}>{member.membership_status === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt'}</Button></td>
+                <td className="py-3 space-y-2">
+                  {member.role_code !== 'ADMIN' && <Button size="sm" variant="secondary" onClick={() => void updateMember(member, member.role_code, member.membership_status)}>Lưu kho</Button>}
+                  {user?.isOwner && !member.is_owner && member.role_code === 'ADMIN' && member.membership_status === 'active' && <Button size="sm" variant="secondary" onClick={() => void transferOwner(member)}>Chuyển Owner</Button>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+};
+
+export const UsersPage: React.FC = () => {
+  const { isMockMode } = useAuth();
+  return isMockMode ? <MockUsersPage /> : <SupabaseUsersPage />;
 };

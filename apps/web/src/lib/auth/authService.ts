@@ -1,4 +1,4 @@
-import { MockAuthService } from './mockAuthService';
+import { SupabaseAuthService } from './supabaseAuthService';
 import type { IAuthService } from './types';
 
 let activeAuthService: IAuthService | null = null;
@@ -9,7 +9,7 @@ let activeAuthService: IAuthService | null = null;
  */
 export function getAuthService(): IAuthService {
   if (!activeAuthService) {
-    activeAuthService = new MockAuthService();
+    activeAuthService = new SupabaseAuthService();
   }
   return activeAuthService;
 }

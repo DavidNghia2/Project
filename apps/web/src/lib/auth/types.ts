@@ -2,13 +2,22 @@ import type { RoleCode } from '../../features/users-rbac/types';
 
 export type AuthProviderKind = 'mock' | 'supabase';
 
+export interface AuthCompany {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
   fullName: string;
-  role: RoleCode;
+  role: RoleCode | null;
   avatarInitials: string;
   assignedWarehouses: string[];
+  company: AuthCompany | null;
+  isOwner: boolean;
+  profileStatus: 'active' | 'inactive';
 }
 
 export interface AuthSession {

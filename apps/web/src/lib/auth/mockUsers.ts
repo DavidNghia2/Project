@@ -134,5 +134,8 @@ export function toPublicAuthUser(record: StoredMockUserRecord): AuthUser {
     role: record.role,
     avatarInitials: record.avatarInitials,
     assignedWarehouses: [...record.assignedWarehouses],
+    company: { id: 'mock-company', name: 'Demo Company', slug: 'demo-company' },
+    isOwner: record.role === 'ADMIN',
+    profileStatus: 'active',
   };
 }
