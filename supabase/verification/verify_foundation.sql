@@ -4,8 +4,9 @@ begin;
 
 do $$
 begin
-  if (select count(*) from public.roles) <> 5 then
-    raise exception 'expected five roles';
+  if (select count(*) from public.roles) <> 4
+    or exists (select 1 from public.roles where code = 'OWNER') then
+    raise exception 'expected four roles and no OWNER role';
   end if;
   if (select count(*) from pg_tables where schemaname = 'public' and tablename in
       ('profiles','companies','roles','memberships','invitations','audit_logs',
@@ -46,7 +47,9 @@ declare first_id uuid; retry_id uuid;
 begin
   first_id := public.create_company('Foundation A', 'foundation-a-verification');
   retry_id := public.create_company('Foundation A', 'foundation-a-verification');
-  if first_id <> retry_id or public.current_role() <> 'OWNER' then
+  if first_id <> retry_id or public.current_role() <> 'ADMIN'
+    or not exists (select 1 from public.memberships
+                   where user_id = auth.uid() and company_id = first_id and is_owner) then
     raise exception 'owner creation or retry failed';
   end if;
   begin

@@ -2,13 +2,14 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(21);
+select plan(22);
 select has_table('public', 'profiles', 'global user profiles exist');
 select has_table('public', 'memberships', 'membership table exists');
 select has_table('public', 'invitations', 'invitations table exists');
 select has_table('public', 'warehouses', 'warehouse table exists');
 select has_function('public', 'create_company', array['text','text','text','text','text'], 'company RPC exists');
-select is((select count(*)::integer from public.roles), 5, 'five roles including OWNER');
+select is((select count(*)::integer from public.roles), 4, 'four application roles');
+select is((select count(*)::integer from public.roles where code = 'OWNER'), 0, 'ownership is not a role');
 select is((select relrowsecurity from pg_class where oid = 'public.memberships'::regclass), true, 'memberships RLS enabled');
 select is((select relrowsecurity from pg_class where oid = 'public.invitations'::regclass), true, 'invitations RLS enabled');
 select is((select relrowsecurity from pg_class where oid = 'public.warehouses'::regclass), true, 'warehouses RLS enabled');
@@ -29,7 +30,7 @@ select is((select count(*)::integer from public.memberships), 0, 'signup creates
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', true);
 select lives_ok($$select public.create_company('Foundation A', 'foundation-a-test')$$, 'first user can create company A');
-select is((select public.current_role()), 'OWNER', 'creator is owner');
+select is((select public.current_role()), 'ADMIN', 'creator has Admin role');
 reset role;
 
 set local role authenticated;
@@ -37,7 +38,7 @@ select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000002
 select lives_ok($$select public.create_company('Foundation B', 'foundation-b-test')$$, 'second user can create separate company B');
 reset role;
 
-select is((select count(*)::integer from public.memberships where user_id = '00000000-0000-4000-8000-000000000001'), 1, 'one membership per owner');
+select is((select count(*)::integer from public.memberships where user_id = '00000000-0000-4000-8000-000000000001' and role_code = 'ADMIN' and is_owner), 1, 'creator has one owner membership');
 
 -- A Viewer in company A sees its assigned warehouse, not A's other warehouse or B's.
 insert into public.memberships (user_id, company_id, role_code)
