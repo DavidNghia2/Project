@@ -45,16 +45,17 @@ describe('Topbar Component', () => {
     expect(handleSelectWh).toHaveBeenCalledWith('WH-02');
   });
 
-  it('toggles language switcher when clicked', async () => {
+  it('selects and persists each supported language', async () => {
     const user = userEvent.setup();
     renderTopbar();
 
-    const langBtn = screen.getByTitle(/switch language|đổi ngôn ngữ/i);
-    expect(langBtn).toBeInTheDocument();
-
-    await user.click(langBtn);
-    // Language should toggle between en and vi
-    expect(langBtn).toBeInTheDocument();
+    const selector = screen.getByRole('combobox', { name: /switch language/i });
+    expect(selector).toHaveValue('en');
+    await user.selectOptions(selector, 'zh-CN');
+    expect(selector).toHaveValue('zh-CN');
+    expect(localStorage.getItem('smart_inventory_language')).toBe('zh-CN');
+    await user.selectOptions(selector, 'vi');
+    expect(selector).toHaveValue('vi');
   });
 
   it('opens notifications dropdown and displays unread alerts', async () => {

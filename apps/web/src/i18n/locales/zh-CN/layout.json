@@ -1,0 +1,9 @@
+{
+  "brandName": "Smart Inventory",
+  "brandSub": "库存管理",
+  "mobileDrawerAria": "移动端导航菜单",
+  "closeNavAria": "关闭导航",
+  "copyright": "保留所有权利。",
+  "whScope": "仓库范围",
+  "version": "v1.0.0-rc"
+}

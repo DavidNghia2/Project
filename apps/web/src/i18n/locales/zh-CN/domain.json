@@ -1,0 +1,64 @@
+{
+  "warehouses": {
+    "WH-01": "河内中心仓（WH-01）",
+    "WH-02": "岘港物流仓（WH-02）",
+    "WH-03": "胡志明市配送中心（WH-03）",
+    "WH-04": "海防储备仓（WH-04）"
+  },
+  "warehouseNames": {
+    "WH-01": "河内中心仓",
+    "WH-02": "岘港物流仓",
+    "WH-03": "胡志明市配送中心",
+    "WH-04": "海防储备仓"
+  },
+  "regions": {
+    "Miền Bắc": "北部地区",
+    "Miền Trung": "中部地区",
+    "Miền Nam": "南部地区"
+  },
+  "parentGroups": {
+    "Phần cứng & Thiết bị CNTT": "IT 硬件与设备",
+    "Mạng & Hạ tầng": "网络与基础设施",
+    "Vật tư & Phụ kiện": "耗材与配件",
+    "Thiết bị Văn phòng": "办公设备"
+  },
+  "paymentTerms": {
+    "Thanh toán ngay (COD / Prepay)": "货到付款 / 预付（COD）",
+    "Công nợ 15 ngày (Net 15)": "15 天账期",
+    "Công nợ 30 ngày (Net 30)": "30 天账期",
+    "Công nợ 45 ngày (Net 45)": "45 天账期"
+  },
+  "categories": {
+    "Phụ kiện máy tính": "电脑配件",
+    "Màn hình hiển thị": "显示器",
+    "Laptop & Máy tính": "笔记本电脑与台式机",
+    "Dây cáp & Cáp nguồn": "线缆与电源线",
+    "Vật tư tiêu hao": "耗材",
+    "Thiết bị mạng": "网络设备",
+    "Lưu trữ & Thẻ nhớ": "存储设备与内存",
+    "Linh kiện máy tính": "电脑零部件"
+  },
+  "units": {
+    "Cái (Piece)": "个",
+    "Chiếc (Unit)": "件",
+    "Máy (Unit)": "台",
+    "Sợi (Piece)": "根",
+    "Hộp (Box)": "盒",
+    "Thùng (Box)": "箱",
+    "Bộ (Set)": "套",
+    "Thanh (Piece)": "条",
+    "Cuộn (Roll)": "卷"
+  },
+  "departments": {
+    "Ban Điều hành CNTT (IT Operations)": "IT 运营部",
+    "IT Operations Directorate": "IT 运营部",
+    "Vận hành Kho Miền Bắc": "北部仓库运营部",
+    "Northern Warehouse Operations": "北部仓库运营部",
+    "Vận hành Kho Miền Trung": "中部仓库运营部",
+    "Central Warehouse Operations": "中部仓库运营部",
+    "Vận hành Kho Miền Nam": "南部仓库运营部",
+    "Southern Warehouse Operations": "南部仓库运营部",
+    "Tài chính & Kiểm toán Nội bộ": "财务与内部审计部",
+    "Finance & Internal Audit": "财务与内部审计部"
+  }
+}

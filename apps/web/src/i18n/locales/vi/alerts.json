@@ -1,0 +1,22 @@
+{
+  "rescanBtn": "Quét lại ngưỡng tồn",
+  "warningTitle": "Phát hiện {count} mặt hàng dưới ngưỡng an toàn",
+  "warningMessage": "Hệ thống tự động phát hiện số tồn khả dụng thấp hơn ngưỡng định mức đã cài đặt. Vui lòng kiểm tra và lên kế hoạch nhập bổ sung.",
+  "colSku": "SKU / Mã vạch",
+  "colItem": "Tên hàng hóa",
+  "colWarehouse": "Phạm vi kho",
+  "colStockThreshold": "Tồn / Ngưỡng",
+  "colUrgency": "Mức độ",
+  "colStatus": "Trạng thái",
+  "colAction": "Thao tác",
+  "thresholdUnit": "/ ngưỡng {threshold}",
+  "severity": {
+    "critical": "KHẨN CẤP",
+    "high": "CAO",
+    "medium": "TRUNG BÌNH"
+  },
+  "statusActive": "Chưa xử lý",
+  "statusAck": "Đã ghi nhận",
+  "actionAck": "Xác nhận xử lý",
+  "actionReorder": "Tạo PO bổ sung"
+}

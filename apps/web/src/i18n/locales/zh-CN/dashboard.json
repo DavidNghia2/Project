@@ -1,0 +1,39 @@
+{
+  "kpi": {
+    "totalSkusTitle": "目录 SKU 总数",
+    "totalSkusChange": "本周新增 12 个",
+    "lowStockTitle": "库存不足提醒",
+    "lowStockChange": "需要补货",
+    "pendingInTitle": "待处理入库单",
+    "pendingInChange": "2 单等待经理审批",
+    "activeOutTitle": "进行中的出库单",
+    "activeOutChange": "均在分配库存"
+  },
+  "colTrx": "交易编号",
+  "colProduct": "商品 / SKU",
+  "colType": "类型",
+  "colQty": "数量",
+  "colWarehouse": "仓库",
+  "colTime": "时间",
+  "yesterday": "昨天",
+  "recentTitle": "近期库存变动",
+  "recentDesc": "展示已完成出入库单和已批准调整的实时台账记录。",
+  "txTypes": {
+    "IN": "入库",
+    "OUT": "出库",
+    "ADJ_IN": "调增"
+  },
+  "flowTitle": "标准仓库流程",
+  "flowDesc": "通过制单与审核分离保障交易完整性。",
+  "flowStep1Title": "入库",
+  "flowStep1Desc": "创建草稿 → 提交 → 经理审批 → 增加库存。",
+  "flowStep2Title": "出库",
+  "flowStep2Desc": "校验现有库存 → 预留库存 → 完成出库 → 扣减库存。",
+  "flowStep3Title": "库存盘点",
+  "flowStep3Desc": "记录库存快照 → 清点实物 → 计算差异 → 批准调整。",
+  "flowStep4Title": "库存不足提醒",
+  "flowStep4Desc": "现有库存小于或等于补货阈值时自动提醒。",
+  "scopeTitle": "按仓库限定访问范围",
+  "scopeAdminDesc": "管理员可查看所有仓库。通过顶部的仓库选择器筛选数据。",
+  "scopeRolePreview": "正在预览 {role} 的权限范围。{note}。"
+}

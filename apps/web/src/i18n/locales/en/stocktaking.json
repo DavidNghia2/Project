@@ -1,0 +1,17 @@
+{
+  "newSession": "New Stocktake Session",
+  "colCode": "Session Code",
+  "colWarehouse": "Warehouse Scope",
+  "colCounted": "Counted SKUs",
+  "colVariance": "Discrepancy",
+  "colDate": "Execution Date",
+  "colStatus": "Status",
+  "colAction": "Action",
+  "countedUnit": "{count} items",
+  "varianceCount": "{count} items variance",
+  "matched100": "100% Matched",
+  "statusCompleted": "Adjustment Approved",
+  "statusPending": "Pending Manager Approval",
+  "viewReconciliation": "View Reconciliation",
+  "internalTeam": "Internal Audit Team"
+}

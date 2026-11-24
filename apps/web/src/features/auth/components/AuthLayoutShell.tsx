@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, Boxes, CheckCircle2, Globe, ShieldCheck } from 'lucide-react';
-import { useTranslation } from '../../../i18n';
+import { ArrowLeft, Boxes, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { LanguageSelect, useTranslation } from '../../../i18n';
 import { Badge } from '../../../design-system';
 import { useAuth } from '../useAuth';
 
@@ -10,7 +10,7 @@ export interface AuthLayoutShellProps {
 }
 
 export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) => {
-  const { t, language, toggleLanguage } = useTranslation();
+  const { t } = useTranslation();
   const { isMockMode } = useAuth();
   const { pathname } = useLocation();
   const isRegister = pathname === '/register';
@@ -54,16 +54,7 @@ export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) =>
               </span>
             )}
 
-            <button
-              type="button"
-              onClick={toggleLanguage}
-              className="inline-flex items-center justify-center gap-1.5 min-h-[40px] px-2.5 rounded-lg border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#334155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] transition-colors cursor-pointer"
-              title={t('demo.switch_lang')}
-              aria-label={t('demo.switch_lang')}
-            >
-              <Globe className="w-4 h-4 text-[#2563EB] shrink-0" />
-              <span className="uppercase">{language}</span>
-            </button>
+            <LanguageSelect id="auth-language" />
 
             <Link
               to="/"

@@ -1,0 +1,9 @@
+{
+  "no_items_title": "No inventory items found",
+  "no_items_desc": "Your inventory list is currently empty. Add your first item to start tracking warehouse stock levels, locations, and movements.",
+  "add_item": "Add First Item",
+  "no_results_title": "No search results found",
+  "no_results_desc": "We could not find any items matching your search criteria. Try adjusting keywords or clearing active filters.",
+  "clear_filters": "Clear Filters",
+  "noticeAria": "Empty state notice"
+}

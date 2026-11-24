@@ -3,6 +3,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import { Spinner } from '../../design-system';
 import { useTranslation } from '../../i18n';
+import { useSearchParams } from 'react-router-dom';
+import { invitationDestination } from './invitationRedirect';
 
 export interface GuestRouteProps {
   children?: React.ReactNode;
@@ -13,8 +15,9 @@ export const GuestRoute: React.FC<GuestRouteProps> = ({
   children,
   redirectTo = '/dashboard',
 }) => {
-  const { isLoading, isAuthenticated, user } = useAuth();
+  const { isLoading, isAuthenticated, user, isMockMode } = useAuth();
   const { t } = useTranslation();
+  const [params] = useSearchParams();
 
   if (isLoading) {
     return (
@@ -30,7 +33,8 @@ export const GuestRoute: React.FC<GuestRouteProps> = ({
   }
 
   if (isAuthenticated) {
-    return <Navigate to={user?.company ? redirectTo : '/onboarding'} replace />;
+    const invitation = invitationDestination(params.get('next'));
+    return <Navigate to={invitation ?? (isMockMode || user?.company ? redirectTo : '/account')} replace />;
   }
 
   return <>{children ?? <Outlet />}</>;

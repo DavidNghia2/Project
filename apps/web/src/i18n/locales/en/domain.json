@@ -1,0 +1,64 @@
+{
+  "warehouses": {
+    "WH-01": "Hanoi Main Hub (WH-01)",
+    "WH-02": "Danang Logistics (WH-02)",
+    "WH-03": "HCM Distribution Center (WH-03)",
+    "WH-04": "Haiphong Reserve Hub (WH-04)"
+  },
+  "warehouseNames": {
+    "WH-01": "Hanoi Main Hub",
+    "WH-02": "Danang Logistics",
+    "WH-03": "HCM Distribution Center",
+    "WH-04": "Haiphong Reserve Hub"
+  },
+  "regions": {
+    "Miền Bắc": "Northern Region",
+    "Miền Trung": "Central Region",
+    "Miền Nam": "Southern Region"
+  },
+  "parentGroups": {
+    "Phần cứng & Thiết bị CNTT": "IT Hardware & Devices",
+    "Mạng & Hạ tầng": "Networking & Infrastructure",
+    "Vật tư & Phụ kiện": "Supplies & Accessories",
+    "Thiết bị Văn phòng": "Office Equipment"
+  },
+  "paymentTerms": {
+    "Thanh toán ngay (COD / Prepay)": "Cash on Delivery / Prepay (COD)",
+    "Công nợ 15 ngày (Net 15)": "Net 15 Days",
+    "Công nợ 30 ngày (Net 30)": "Net 30 Days",
+    "Công nợ 45 ngày (Net 45)": "Net 45 Days"
+  },
+  "categories": {
+    "Phụ kiện máy tính": "Computer Accessories",
+    "Màn hình hiển thị": "Display Monitors",
+    "Laptop & Máy tính": "Laptops & Computers",
+    "Dây cáp & Cáp nguồn": "Cables & Power Cords",
+    "Vật tư tiêu hao": "Consumables",
+    "Thiết bị mạng": "Network Equipment",
+    "Lưu trữ & Thẻ nhớ": "Storage & Memory",
+    "Linh kiện máy tính": "PC Components"
+  },
+  "units": {
+    "Cái (Piece)": "Piece",
+    "Chiếc (Unit)": "Unit",
+    "Máy (Unit)": "Machine (Unit)",
+    "Sợi (Piece)": "Strand / Cable (Piece)",
+    "Hộp (Box)": "Box",
+    "Thùng (Box)": "Carton (Box)",
+    "Bộ (Set)": "Set",
+    "Thanh (Piece)": "Stick / Module (Piece)",
+    "Cuộn (Roll)": "Roll"
+  },
+  "departments": {
+    "Ban Điều hành CNTT (IT Operations)": "IT Operations Directorate",
+    "IT Operations Directorate": "IT Operations Directorate",
+    "Vận hành Kho Miền Bắc": "Northern Warehouse Operations",
+    "Northern Warehouse Operations": "Northern Warehouse Operations",
+    "Vận hành Kho Miền Trung": "Central Warehouse Operations",
+    "Central Warehouse Operations": "Central Warehouse Operations",
+    "Vận hành Kho Miền Nam": "Southern Warehouse Operations",
+    "Southern Warehouse Operations": "Southern Warehouse Operations",
+    "Tài chính & Kiểm toán Nội bộ": "Finance & Internal Audit",
+    "Finance & Internal Audit": "Finance & Internal Audit"
+  }
+}

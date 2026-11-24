@@ -2,7 +2,7 @@ import React from 'react';
 import { Barcode, Package, Warehouse, Calendar, Pencil } from 'lucide-react';
 import type { Product } from '../types';
 import { Modal, Button, Badge } from '../../../design-system';
-import { useTranslation } from '../../../i18n';
+import { getIntlLocale, useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
 export interface ProductDetailModalProps {
@@ -195,10 +195,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="flex items-center justify-between text-[11px] text-[#94A3B8] pt-2 border-t border-[#F1F5F9]">
           <span className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5" />
-            {t('products.detail.createdLabel')} {new Date(product.createdAt).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US')}
+            {t('products.detail.createdLabel')} {new Date(product.createdAt).toLocaleDateString(getIntlLocale(language))}
           </span>
           <span>
-            {t('products.detail.updatedLabel')} {new Date(product.updatedAt).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US')}
+            {t('products.detail.updatedLabel')} {new Date(product.updatedAt).toLocaleDateString(getIntlLocale(language))}
           </span>
         </div>
       </div>

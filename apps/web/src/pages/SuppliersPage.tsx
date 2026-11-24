@@ -167,7 +167,7 @@ export const SuppliersPage: React.FC = () => {
       label: t('masterData.suppliers.colStatus'),
       align: 'center',
       render: (_val, row) => (
-        <Badge variant={row.status === 'active' ? 'success' : 'neutral'} size="sm" dot>
+        <Badge variant={row.status === 'active' ? 'success' : 'neutral'} size="sm" className="whitespace-nowrap" dot>
           {row.status === 'active' ? t('status.active') : t('status.inactive')}
         </Badge>
       ),

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BarChart3 } from 'lucide-react';
 import { Card, EmptyState } from '../../../design-system';
-import { useTranslation } from '../../../i18n';
+import { getIntlLocale, useTranslation } from '../../../i18n';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type { ComputedReportResult } from '../types';
 
@@ -19,7 +19,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
   report,
   validDateRange,
 }) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   const series = validDateRange ? report.chartSeries : [];
@@ -101,14 +101,14 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                 <span>
                   {primaryLegend}:{' '}
                   <strong className="text-[#0284C7]">
-                    {activePoint.primaryQty.toLocaleString('en-US')}
+                    {activePoint.primaryQty.toLocaleString(getIntlLocale(language))}
                   </strong>
                 </span>
                 {hasSecondary && activePoint.secondaryQty !== undefined && (
                   <span>
                     {secondaryLegend}:{' '}
                     <strong className="text-[#D97706]">
-                      {activePoint.secondaryQty.toLocaleString('en-US')}
+                      {activePoint.secondaryQty.toLocaleString(getIntlLocale(language))}
                     </strong>
                   </span>
                 )}
@@ -298,7 +298,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
               {t('reports.charts.reconciliation', { count: series.length })}
             </span>
             <span className="font-mono tabular-nums text-[#0F172A]">
-              {primaryLegend}: <strong>{chartQtySum.toLocaleString('en-US')}</strong> ·{' '}
+              {primaryLegend}: <strong>{chartQtySum.toLocaleString(getIntlLocale(language))}</strong> ·{' '}
               {formatCurrencyVND(chartValueSum)}
             </span>
           </div>

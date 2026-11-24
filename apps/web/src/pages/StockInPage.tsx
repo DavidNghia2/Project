@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Button, Card, Modal, Table, type Column } from '../design-system';
-import { useTranslation } from '../i18n';
+import { useTranslation, type TranslationKey } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import {
   OrderFiltersBar,
@@ -113,7 +113,7 @@ export const StockInPage: React.FC = () => {
         'success',
         t('stockOps.shared.transitionedToast', {
           code: res.order.code,
-          status: t(`status.${nextStatus.toLowerCase()}`),
+          status: t(`status.${nextStatus.toLowerCase()}` as TranslationKey),
         })
       );
     }

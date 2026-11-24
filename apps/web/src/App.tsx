@@ -10,6 +10,7 @@ import {
   RegisterPage,
 } from './features/auth';
 import { AcceptInvitationPage, OnboardingPage } from './features/onboarding';
+import { AccountPage } from './features/onboarding/AccountPage';
 import {
   LandingPage,
   DashboardPage,
@@ -44,7 +45,9 @@ export function App() {
 
             {/* Authenticated onboarding routes */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/onboarding" element={<AccountPage firstVisit />} />
+              <Route path="/account" element={<AccountPage />} />
+              <Route path="/onboarding/create-company" element={<OnboardingPage />} />
               <Route path="/accept-invitation" element={<AcceptInvitationPage />} />
             </Route>
 

@@ -67,12 +67,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   const signIn = useCallback(
     async (credentials: SignInCredentials): Promise<AuthError | null> => {
-      const result = await service.signIn(credentials);
-      if (result.error) {
-        return result.error;
+      try {
+        const result = await service.signIn(credentials);
+        if (result.error) return result.error;
+        setSession(result.session);
+        return null;
+      } catch {
+        return { code: 'NETWORK_ERROR', messageKey: 'auth.errors.networkError', message: 'Unable to load your account. Please retry.' };
       }
-      setSession(result.session);
-      return null;
     },
     [service]
   );
@@ -80,12 +82,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const signUp = useCallback(
     async (
       credentials: SignUpCredentials
-    ): Promise<{ user: AuthUser | null; error: AuthError | null }> => {
-      const result = await service.signUp(credentials);
-      if (result.error) {
-        return { user: null, error: result.error };
+    ): Promise<{ user: AuthUser | null; session: AuthSession | null; error: AuthError | null }> => {
+      try {
+        const result = await service.signUp(credentials);
+        if (result.error) return { user: null, session: null, error: result.error };
+        if (result.session) setSession(result.session);
+        return { user: result.user, session: result.session, error: null };
+      } catch {
+        return { user: null, session: null, error: { code: 'NETWORK_ERROR', messageKey: 'auth.errors.networkError', message: 'Unable to load your account. Please retry.' } };
       }
-      return { user: result.user, error: null };
     },
     [service]
   );

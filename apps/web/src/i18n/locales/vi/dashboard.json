@@ -1,0 +1,39 @@
+{
+  "kpi": {
+    "totalSkusTitle": "Tổng số mặt hàng (SKU)",
+    "totalSkusChange": "+12 tuần này",
+    "lowStockTitle": "Cảnh báo tồn kho thấp",
+    "lowStockChange": "Cần bổ sung hàng",
+    "pendingInTitle": "Phiếu nhập chờ duyệt",
+    "pendingInChange": "2 phiếu chờ quản lý duyệt",
+    "activeOutTitle": "Phiếu xuất đang xử lý",
+    "activeOutChange": "Đủ tồn khả dụng"
+  },
+  "colTrx": "Mã GD",
+  "colProduct": "Sản phẩm / SKU",
+  "colType": "Loại",
+  "colQty": "SL",
+  "colWarehouse": "Kho hàng",
+  "colTime": "Thời gian",
+  "yesterday": "Hôm qua",
+  "recentTitle": "Biến động tồn kho gần đây",
+  "recentDesc": "Nhật ký các giao dịch nhập xuất và điều chỉnh vừa được cập nhật sổ cái.",
+  "txTypes": {
+    "IN": "NHẬP",
+    "OUT": "XUẤT",
+    "ADJ_IN": "Đ.CHỈNH+"
+  },
+  "flowTitle": "Quy trình kho chuẩn",
+  "flowDesc": "Các bước thực thi theo nguyên tắc Maker-Checker.",
+  "flowStep1Title": "Nhập kho (Stock Inward)",
+  "flowStep1Desc": "Tạo DRAFT -> Gửi SUBMITTED -> Quản lý duyệt APPROVED -> Tăng tồn.",
+  "flowStep2Title": "Xuất kho (Stock Outward)",
+  "flowStep2Desc": "Kiểm tra tồn khả dụng -> Khóa hàng -> Hoàn tất -> Giảm tồn.",
+  "flowStep3Title": "Kiểm kê (Stocktaking)",
+  "flowStep3Desc": "Chụp snapshot -> Đếm thực tế -> Tính variance -> Duyệt điều chỉnh.",
+  "flowStep4Title": "Cảnh báo tồn thấp",
+  "flowStep4Desc": "Tự động kích hoạt khi on_hand <= reorder_level.",
+  "scopeTitle": "Phân quyền theo kho (Multi-warehouse Scope)",
+  "scopeAdminDesc": "Bạn đang quản trị với quyền Admin toàn hệ thống. Hãy dùng bộ chuyển kho ở góc trên để lọc dữ liệu theo từng chi nhánh kho.",
+  "scopeRolePreview": "Đang hiển thị giao diện theo vai trò {role}. {note}."
+}

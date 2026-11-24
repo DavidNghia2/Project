@@ -1,0 +1,213 @@
+{
+  "page": {
+    "exportButton": "Export Report CSV",
+    "exportNotice": "Exported {filename} ({rows} rows + summary row)."
+  },
+  "tabs": {
+    "tablistAria": "Select inventory report",
+    "current_stock": {
+      "label": "Current Stock",
+      "sub": "Inventory Balance Sheet"
+    },
+    "stock_in": {
+      "label": "Inbound Receipts",
+      "sub": "Inbound ledger"
+    },
+    "stock_out": {
+      "label": "Outbound Dispatches",
+      "sub": "Outbound ledger"
+    },
+    "stock_movement": {
+      "label": "Stock Movement",
+      "sub": "In / Out / Closing"
+    },
+    "low_stock": {
+      "label": "Below Threshold",
+      "sub": "Safety stock alerts"
+    }
+  },
+  "filters": {
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "warehouse": "Warehouse",
+    "allWarehouses": "All Warehouses",
+    "category": "Product Category",
+    "allCategories": "All Categories",
+    "reset": "Reset",
+    "presetsLabel": "Presets:",
+    "presets": {
+      "7d": "Last 7 Days (Nov 05–11)",
+      "nov": "Nov 2026",
+      "oct": "Oct 2026",
+      "q4": "Full Q4 Range"
+    },
+    "snapshotNote": "Current stock & low-stock views reflect present warehouse balances.",
+    "invalidRangeTitle": "Invalid Date Range"
+  },
+  "validation": {
+    "missingDates": "Please specify both start date and end date.",
+    "invalidFormat": "Invalid date format (expected YYYY-MM-DD).",
+    "startAfterEnd": "Invalid date range: Start date cannot be later than end date."
+  },
+  "warehouseScope": {
+    "all": "All Warehouses ({count})"
+  },
+  "kpi": {
+    "catalogSkus": "Catalog SKUs",
+    "totalOnHandQty": "Total On-Hand Qty",
+    "totalInventoryValuation": "Total Inventory Valuation",
+    "atBelowThreshold": "At/Below Safety Threshold",
+    "ledgerLines": "Ledger Lines",
+    "totalInboundQty": "Total Inbound Qty",
+    "totalOutboundQty": "Total Outbound Qty",
+    "totalInboundValue": "Total Inbound Value",
+    "totalOutboundValue": "Total Outbound Value",
+    "avgValuePerLine": "Avg Value / Line",
+    "periodInboundQty": "Period Inbound Qty",
+    "periodOutboundQty": "Period Outbound Qty",
+    "closingBalanceQty": "Closing Balance Qty",
+    "periodInboundValue": "Period Inbound Value",
+    "belowThresholdSkus": "Below-Threshold SKUs",
+    "totalRemainingStock": "Total Remaining Stock",
+    "totalDeficitUnits": "Total Deficit Units",
+    "estRestockBudget": "Est. Restock Budget"
+  },
+  "charts": {
+    "titles": {
+      "currentAll": "Current Inventory Valuation & Qty by Category",
+      "currentCategory": "Stock & Valuation by SKU ({category})",
+      "stockInDate": "Inbound Volume & Value by Date",
+      "stockOutDate": "Outbound Volume & Value by Date",
+      "movementAll": "Inbound vs Outbound Movement by Category",
+      "movementCategory": "Inbound vs Outbound Movement by SKU ({category})",
+      "lowStock": "Current Stock vs Safety Threshold (Below-Reorder Items)"
+    },
+    "legends": {
+      "stockQty": "Stock Qty",
+      "inboundQty": "Inbound Qty",
+      "outboundQty": "Outbound Qty",
+      "movementInbound": "Inbound Qty",
+      "movementOutbound": "Outbound Qty",
+      "onHandQty": "On Hand Qty",
+      "safetyLevel": "Safety Level"
+    },
+    "valueLabel": "Value:",
+    "unavailableTitle": "Chart Unavailable",
+    "unavailableDesc": "Please select a valid date range to render visual analytics.",
+    "noDataTitle": "No Chart Data in Scope",
+    "noDataDesc": "Try widening the date range, warehouse, or category filters.",
+    "reconciliation": "Chart reconciliation: {count} series points (100% synchronized with table)"
+  },
+  "table": {
+    "titles": {
+      "current_stock": "Current Stock Valuation Table",
+      "stock_in": "Inbound Stock Receipts Detail",
+      "stock_out": "Outbound Stock Dispatches Detail",
+      "stock_movement": "Stock Movement Summary (Opening – In – Out – Closing)",
+      "low_stock": "Below-Threshold Low Stock Products"
+    },
+    "captions": {
+      "current_stock": "Detailed stock rows"
+    },
+    "descValid": "Showing {count} deduplicated records from mock dataset",
+    "descInvalid": "Resolve the invalid date range to load report rows.",
+    "exportCsv": "Export Report CSV",
+    "invalidRangeTitle": "Invalid Date Range Selected",
+    "invalidRangeDesc": "Start date must be on or before end date before compiling report data.",
+    "restoreDates": "Restore Default Dates",
+    "cols": {
+      "sku": "SKU",
+      "product": "Product",
+      "warehouseScope": "Warehouse Scope",
+      "onHand": "On Hand",
+      "minLevel": "Min Level",
+      "unitCost": "Unit Cost",
+      "stockValuation": "Stock Valuation",
+      "status": "Status",
+      "date": "Date",
+      "voucher": "Voucher",
+      "warehouse": "Warehouse",
+      "supplier": "Supplier",
+      "destination": "Destination",
+      "skuProduct": "SKU & Product",
+      "qty": "Qty",
+      "lineTotal": "Line Total",
+      "productCategory": "Product & Category",
+      "opening": "Opening",
+      "inboundPlus": "Inbound (+)",
+      "outboundMinus": "Outbound (-)",
+      "closing": "Closing",
+      "closingValue": "Closing Value",
+      "deficit": "Deficit",
+      "estRestockCost": "Est. Restock Cost",
+      "severity": "Severity"
+    },
+    "severity": {
+      "out": "Out of Stock",
+      "critical": "Critical",
+      "low": "Low Stock"
+    },
+    "empty": {
+      "currentTitle": "No matching inventory items",
+      "currentDesc": "No products match the active warehouse or category filter.",
+      "txTitle": "No matching transactions",
+      "txDesc": "No completed transactions fall within the selected date range, warehouse, and category.",
+      "movementTitle": "No movement records",
+      "movementDesc": "Select another category or warehouse filter to inspect stock movements.",
+      "lowTitle": "No Below-Threshold SKUs",
+      "lowDesc": "All inventory items in the active scope meet minimum safety levels.",
+      "resetFilters": "Reset Filters"
+    },
+    "footer": {
+      "summaryTitle": "Report Totals Summary",
+      "rowsUnit": "rows",
+      "totalIn": "Total In:",
+      "totalOut": "Total Out:",
+      "closing": "Closing:",
+      "inValue": "In Value:",
+      "currentQty": "Current Qty:",
+      "deficitQty": "Deficit Qty:",
+      "estRestock": "Est. Restock:",
+      "totalQty": "Total Quantity:",
+      "totalValue": "Total Value:"
+    }
+  },
+  "csv": {
+    "totalLabel": "TOTAL",
+    "skuCount": "{count} SKU",
+    "linesCount": "{count} lines",
+    "cols": {
+      "sku": "SKU",
+      "productName": "Product Name",
+      "category": "Category",
+      "unit": "Unit",
+      "warehouse": "Warehouse",
+      "onHandQty": "On Hand Qty",
+      "reorderLevel": "Reorder Level",
+      "unitCostVnd": "Unit Cost (VND)",
+      "stockValueVnd": "Stock Value (VND)",
+      "status": "Status",
+      "date": "Date",
+      "voucherCode": "Voucher Code",
+      "direction": "Direction",
+      "warehouseCode": "Warehouse Code",
+      "warehouseName": "Warehouse Name",
+      "partnerDest": "Partner / Destination",
+      "quantity": "Quantity",
+      "lineTotalVnd": "Line Total (VND)",
+      "operator": "Operator",
+      "openingQty": "Opening Qty",
+      "inboundQty": "Inbound Qty",
+      "outboundQty": "Outbound Qty",
+      "closingQty": "Closing Qty",
+      "inboundValueVnd": "Inbound Value (VND)",
+      "outboundValueVnd": "Outbound Value (VND)",
+      "closingValueVnd": "Closing Value (VND)",
+      "currentQty": "Current Qty",
+      "deficitQty": "Deficit Qty",
+      "estUnitCostVnd": "Unit Cost (VND)",
+      "estRestockValueVnd": "Est. Restock Value (VND)",
+      "severity": "Severity"
+    }
+  }
+}

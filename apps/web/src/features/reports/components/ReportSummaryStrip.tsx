@@ -8,7 +8,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { Card } from '../../../design-system';
-import { useTranslation } from '../../../i18n';
+import { getIntlLocale, useTranslation } from '../../../i18n';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type { ComputedReportResult, CurrentStockRow } from '../types';
 
@@ -21,9 +21,9 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
   report,
   validDateRange,
 }) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
-  const qtyText = (n: number) => (validDateRange ? n.toLocaleString('en-US') : '—');
+  const qtyText = (n: number) => (validDateRange ? n.toLocaleString(getIntlLocale(language)) : '—');
   const moneyText = (n: number) => (validDateRange ? formatCurrencyVND(n) : '—');
 
   const cards = (() => {

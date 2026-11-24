@@ -1,0 +1,13 @@
+{
+  "makerCheckerTitle": "Maker-Checker Approval Rules",
+  "makerCheckerDesc": "Enforce strict maker-checker segregation of duties for inventory transactions.",
+  "ruleOwnOrderLabel": "Disallow managers approving their own stock orders",
+  "ruleOwnOrderHint": "Enforced per data integrity baseline in graduation thesis specifications.",
+  "ruleNegativeStockLabel": "Enforce zero-negative stock threshold on dispatch",
+  "ruleNegativeStockHint": "Automatic database transaction rollback when available on-hand is insufficient.",
+  "prefixesTitle": "Sequence & Numbering Prefixes",
+  "prefixesDesc": "Document number prefixes for inventory tracking.",
+  "prefixIn": "Stock-In Prefix",
+  "prefixOut": "Stock-Out Prefix",
+  "prefixStk": "Stocktaking Prefix"
+}

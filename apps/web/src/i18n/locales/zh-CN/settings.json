@@ -1,0 +1,13 @@
+{
+  "makerCheckerTitle": "制单与审核规则",
+  "makerCheckerDesc": "对库存交易执行制单与审核职责分离。",
+  "ruleOwnOrderLabel": "禁止经理审批自己创建的出入库单",
+  "ruleOwnOrderHint": "按照毕业论文规范的数据完整性要求执行。",
+  "ruleNegativeStockLabel": "出库时禁止出现负库存",
+  "ruleNegativeStockHint": "可用库存不足时自动回滚数据库事务。",
+  "prefixesTitle": "单据编号前缀",
+  "prefixesDesc": "设置库存跟踪所用的单据编号前缀。",
+  "prefixIn": "入库单前缀",
+  "prefixOut": "出库单前缀",
+  "prefixStk": "盘点单前缀"
+}

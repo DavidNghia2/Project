@@ -1,0 +1,33 @@
+{
+  "errors": {
+    "invitationEmail": "登录邮箱与受邀邮箱不一致。",
+    "alreadyMember": "此账户已加入一家公司。",
+    "acceptFailed": "无法接受邀请。请重试。",
+    "createFailed": "无法创建公司。请检查信息后重试。",
+    "slugTaken": "该公司代码已被使用。请选择其他代码。"
+  },
+  "account": {
+    "unavailable": "账户无法访问", "nextStep": "接下来想做什么？", "title": "您的账户",
+    "suspended": "您的公司已被暂停使用。", "inactive": "您的账户或成员资格已停用。",
+    "contactAdmin": "请联系管理员。", "noCompany": "您的账户尚未加入公司。您可以稍后再决定。",
+    "createCompany": "创建公司", "joinTitle": "通过邀请加入公司",
+    "joinDesc": "请使用此账户打开邮件中的邀请链接。如果邀请发送到了其他邮箱，请先退出并使用该邮箱登录。",
+    "decideLater": "稍后决定", "refresh": "刷新状态"
+  },
+  "create": {
+    "inactiveTitle": "账户已停用", "inactiveDesc": "您的账户已停用。请联系公司管理员。",
+    "invalidName": "公司名称和代码至少需要 2 个字符。",
+    "refreshError": "公司已创建，但无法加载新权限。请刷新页面。",
+    "greeting": "您好，{name}", "title": "创建您的公司", "ownerNotice": "您将成为该公司的管理员和所有者。",
+    "name": "公司名称", "namePlaceholder": "例如：安发公司", "slug": "公司代码",
+    "slugHint": "用于内部地址，只能包含小写字母、数字和连字符。", "industry": "行业",
+    "industries": { "general": "综合经营", "retail": "零售", "manufacturing": "制造业", "food": "食品与饮料" },
+    "submit": "创建公司", "inviteNote": "已收到邀请？请使用受邀邮箱登录，然后打开邮件中的链接。",
+    "back": "返回账户"
+  },
+  "invitation": {
+    "invalidLink": "邀请链接无效。", "refreshError": "邀请已接受，但无法加载新权限。请刷新页面。",
+    "title": "加入公司", "description": "确认加入通过邮件邀请您的公司。",
+    "accept": "接受邀请", "signedInAs": "当前登录邮箱：{email}", "switchAccount": "切换账户"
+  }
+}

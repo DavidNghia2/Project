@@ -1,0 +1,17 @@
+{
+  "newSession": "新建盘点",
+  "colCode": "盘点编号",
+  "colWarehouse": "仓库范围",
+  "colCounted": "已盘点 SKU",
+  "colVariance": "差异",
+  "colDate": "执行日期",
+  "colStatus": "状态",
+  "colAction": "操作",
+  "countedUnit": "{count} 项",
+  "varianceCount": "{count} 项存在差异",
+  "matched100": "全部相符",
+  "statusCompleted": "调整已批准",
+  "statusPending": "等待经理审批",
+  "viewReconciliation": "查看盘点对账",
+  "internalTeam": "内部审计团队"
+}

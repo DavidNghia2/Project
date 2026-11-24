@@ -1,0 +1,17 @@
+{
+  "newSession": "Khởi tạo đợt kiểm kê",
+  "colCode": "Mã phiên kiểm kê",
+  "colWarehouse": "Phạm vi kho",
+  "colCounted": "SKU đã kiểm đếm",
+  "colVariance": "Chênh lệch",
+  "colDate": "Ngày thực hiện",
+  "colStatus": "Trạng thái",
+  "colAction": "Thao tác",
+  "countedUnit": "{count} mặt hàng",
+  "varianceCount": "{count} mặt hàng lệch",
+  "matched100": "Khớp 100%",
+  "statusCompleted": "Đã duyệt điều chỉnh",
+  "statusPending": "Chờ Manager duyệt",
+  "viewReconciliation": "Xem đối soát",
+  "internalTeam": "Ban Kiểm Kê Nội Bộ"
+}

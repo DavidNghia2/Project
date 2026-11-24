@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { authenticationUrl, invitationDestination } from './invitationRedirect';
 import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react';
 import { useAuth } from './useAuth';
 import { validateLoginFields, type LoginFormErrors } from './validators';
@@ -18,6 +19,8 @@ export const LoginPage: React.FC = () => {
   const { signIn, isMockMode } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [params] = useSearchParams();
+  const invitation = invitationDestination(params.get('next'));
   const state = (location.state as LoginLocationState | null) ?? null;
 
   const [email, setEmail] = useState(state?.registeredEmail ?? '');
@@ -50,7 +53,7 @@ export const LoginPage: React.FC = () => {
         setServerErrorFallback(error.message);
         return;
       }
-      navigate('/dashboard', { replace: true });
+      navigate(invitation ?? (isMockMode ? '/dashboard' : '/account'), { replace: true });
     } finally {
       setSubmitting(false);
     }
@@ -166,7 +169,7 @@ export const LoginPage: React.FC = () => {
         <div className="pt-4 border-t border-[#E2E8F0] text-center text-sm text-[#475569]">
           <span>{t('auth.noAccount')} </span>
           <Link
-            to="/register"
+            to={invitation ? authenticationUrl('/register', invitation) : '/register'}
             className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded px-1 py-1 inline-block"
           >
             {t('auth.createOne')}

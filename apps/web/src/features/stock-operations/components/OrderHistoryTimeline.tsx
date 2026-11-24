@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock, ArrowRight } from 'lucide-react';
-import { useTranslation } from '../../../i18n';
+import { getIntlLocale, useTranslation, type Language } from '../../../i18n';
 import type { StatusHistoryEntry } from '../types';
 import { OrderStatusBadge } from './OrderStatusBadge';
 
@@ -8,10 +8,10 @@ export interface OrderHistoryTimelineProps {
   history: ReadonlyArray<StatusHistoryEntry>;
 }
 
-function formatTimestamp(iso: string, language: 'en' | 'vi'): string {
+function formatTimestamp(iso: string, language: Language): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleString(language === 'vi' ? 'vi-VN' : 'en-US', {
+  return date.toLocaleString(getIntlLocale(language), {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

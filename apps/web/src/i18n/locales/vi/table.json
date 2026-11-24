@@ -1,0 +1,14 @@
+{
+  "no_data": "Không có dữ liệu trong bảng",
+  "showing_entries": "Hiển thị {from} đến {to} trong tổng số {total} mục",
+  "previous": "Trước",
+  "next": "Sau",
+  "rows_per_page": "Số dòng mỗi trang",
+  "select_all": "Chọn tất cả các dòng",
+  "select_row": "Chọn dòng",
+  "selected_count": "Đã chọn {count}",
+  "loadingAria": "Đang tải dữ liệu bảng",
+  "noDataTitle": "Không có dữ liệu",
+  "noDataDesc": "Hiện chưa có bản ghi nào để hiển thị.",
+  "selectRowAria": "Chọn dòng {index}"
+}

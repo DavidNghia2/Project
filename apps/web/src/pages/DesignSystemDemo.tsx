@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from '../i18n';
+import { LanguageSelect, useTranslation, type TranslationKey } from '../i18n';
 import {
   Button,
   Input,
@@ -18,7 +18,7 @@ import {
 } from '../design-system';
 
 export const DesignSystemDemo: React.FC = () => {
-  const { t, language, toggleLanguage } = useTranslation();
+  const { t } = useTranslation();
 
   // State for interactive controls
   const [btnLoading, setBtnLoading] = useState(false);
@@ -136,18 +136,7 @@ export const DesignSystemDemo: React.FC = () => {
             </Badge>
 
             {/* Language Switcher */}
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={toggleLanguage}
-              iconLeft={
-                <svg className="w-3.5 h-3.5 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                </svg>
-              }
-            >
-              {language === 'en' ? t('demo.togglePillVi') : t('demo.togglePillEn')}
-            </Button>
+            <LanguageSelect id="demo-language" />
           </div>
         </div>
       </header>
@@ -623,7 +612,7 @@ export const DesignSystemDemo: React.FC = () => {
                   };
                   return (
                     <Badge variant={variantMap[s] || 'neutral'} dot size="sm">
-                      {t(`status.${s}`)}
+                      {t(`status.${s}` as TranslationKey)}
                     </Badge>
                   );
                 },

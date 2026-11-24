@@ -1,0 +1,213 @@
+{
+  "page": {
+    "exportButton": "导出 CSV 报表",
+    "exportNotice": "已导出 {filename}（{rows} 条记录及汇总行）。"
+  },
+  "tabs": {
+    "tablistAria": "选择库存报表",
+    "current_stock": {
+      "label": "当前库存",
+      "sub": "库存结余表"
+    },
+    "stock_in": {
+      "label": "入库记录",
+      "sub": "入库台账"
+    },
+    "stock_out": {
+      "label": "出库记录",
+      "sub": "出库台账"
+    },
+    "stock_movement": {
+      "label": "库存变动",
+      "sub": "入库 / 出库 / 期末"
+    },
+    "low_stock": {
+      "label": "低于阈值",
+      "sub": "安全库存提醒"
+    }
+  },
+  "filters": {
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "warehouse": "仓库",
+    "allWarehouses": "所有仓库",
+    "category": "商品分类",
+    "allCategories": "所有分类",
+    "reset": "重置",
+    "presetsLabel": "预设范围：",
+    "presets": {
+      "7d": "最近 7 天（11 月 5 日至 11 日）",
+      "nov": "2026 年 11 月",
+      "oct": "2026 年 10 月",
+      "q4": "整个第四季度"
+    },
+    "snapshotNote": "当前库存和低库存视图显示现有库存结余。",
+    "invalidRangeTitle": "日期范围无效"
+  },
+  "validation": {
+    "missingDates": "请同时填写开始日期和结束日期。",
+    "invalidFormat": "日期格式无效（应为 YYYY-MM-DD）。",
+    "startAfterEnd": "开始日期不得晚于结束日期。"
+  },
+  "warehouseScope": {
+    "all": "所有仓库（{count}）"
+  },
+  "kpi": {
+    "catalogSkus": "目录 SKU 数量",
+    "totalOnHandQty": "现有库存总量",
+    "totalInventoryValuation": "库存总价值",
+    "atBelowThreshold": "等于或低于安全阈值",
+    "ledgerLines": "台账记录数",
+    "totalInboundQty": "入库总量",
+    "totalOutboundQty": "出库总量",
+    "totalInboundValue": "入库总金额",
+    "totalOutboundValue": "出库总金额",
+    "avgValuePerLine": "每条记录平均金额",
+    "periodInboundQty": "期间入库量",
+    "periodOutboundQty": "期间出库量",
+    "closingBalanceQty": "期末库存量",
+    "periodInboundValue": "期间入库金额",
+    "belowThresholdSkus": "低于阈值的 SKU",
+    "totalRemainingStock": "剩余库存总量",
+    "totalDeficitUnits": "缺口总量",
+    "estRestockBudget": "预计补货预算"
+  },
+  "charts": {
+    "titles": {
+      "currentAll": "按分类查看当前库存数量与价值",
+      "currentCategory": "按 SKU 查看库存数量与价值（{category}）",
+      "stockInDate": "按日期查看入库量与金额",
+      "stockOutDate": "按日期查看出库量与金额",
+      "movementAll": "按分类比较入库和出库量",
+      "movementCategory": "按 SKU 比较入库和出库量（{category}）",
+      "lowStock": "当前库存与安全阈值对比（低库存商品）"
+    },
+    "legends": {
+      "stockQty": "库存量",
+      "inboundQty": "入库量",
+      "outboundQty": "出库量",
+      "movementInbound": "入库量",
+      "movementOutbound": "出库量",
+      "onHandQty": "现有库存量",
+      "safetyLevel": "安全库存水平"
+    },
+    "valueLabel": "金额：",
+    "unavailableTitle": "图表不可用",
+    "unavailableDesc": "请选择有效日期范围以查看图表。",
+    "noDataTitle": "当前范围内暂无图表数据",
+    "noDataDesc": "请扩大日期、仓库或分类筛选范围。",
+    "reconciliation": "图表核对：{count} 个数据点（与表格完全一致）"
+  },
+  "table": {
+    "titles": {
+      "current_stock": "当前库存估值表",
+      "stock_in": "入库明细",
+      "stock_out": "出库明细",
+      "stock_movement": "库存变动汇总（期初、入库、出库、期末）",
+      "low_stock": "低于阈值的商品"
+    },
+    "captions": {
+      "current_stock": "库存明细"
+    },
+    "descValid": "显示模拟数据中去重后的 {count} 条记录",
+    "descInvalid": "请修正日期范围后查看报表。",
+    "exportCsv": "导出 CSV 报表",
+    "invalidRangeTitle": "所选日期范围无效",
+    "invalidRangeDesc": "开始日期须早于或等于结束日期，才能生成报表。",
+    "restoreDates": "恢复默认日期",
+    "cols": {
+      "sku": "SKU",
+      "product": "商品",
+      "warehouseScope": "仓库范围",
+      "onHand": "现有库存",
+      "minLevel": "最低库存",
+      "unitCost": "单位成本",
+      "stockValuation": "库存估值",
+      "status": "状态",
+      "date": "日期",
+      "voucher": "单据",
+      "warehouse": "仓库",
+      "supplier": "供应商",
+      "destination": "目的地",
+      "skuProduct": "SKU 与商品",
+      "qty": "数量",
+      "lineTotal": "行金额",
+      "productCategory": "商品与分类",
+      "opening": "期初",
+      "inboundPlus": "入库（+）",
+      "outboundMinus": "出库（−）",
+      "closing": "期末",
+      "closingValue": "期末金额",
+      "deficit": "缺口",
+      "estRestockCost": "预计补货成本",
+      "severity": "严重程度"
+    },
+    "severity": {
+      "out": "缺货",
+      "critical": "严重",
+      "low": "库存不足"
+    },
+    "empty": {
+      "currentTitle": "找不到匹配的库存商品",
+      "currentDesc": "没有商品符合所选仓库或分类。",
+      "txTitle": "找不到匹配的交易",
+      "txDesc": "所选日期、仓库及分类范围内没有已完成的交易。",
+      "movementTitle": "没有库存变动记录",
+      "movementDesc": "请选择其他分类或仓库以查看库存变动。",
+      "lowTitle": "没有低于阈值的 SKU",
+      "lowDesc": "当前范围内的商品均达到最低安全库存水平。",
+      "resetFilters": "重置筛选"
+    },
+    "footer": {
+      "summaryTitle": "报表汇总",
+      "rowsUnit": "条记录",
+      "totalIn": "入库合计：",
+      "totalOut": "出库合计：",
+      "closing": "期末：",
+      "inValue": "入库金额：",
+      "currentQty": "当前数量：",
+      "deficitQty": "缺口数量：",
+      "estRestock": "预计补货成本：",
+      "totalQty": "总数量：",
+      "totalValue": "总金额："
+    }
+  },
+  "csv": {
+    "totalLabel": "合计",
+    "skuCount": "{count} 个 SKU",
+    "linesCount": "{count} 条记录",
+    "cols": {
+      "sku": "SKU",
+      "productName": "商品名称",
+      "category": "分类",
+      "unit": "单位",
+      "warehouse": "仓库",
+      "onHandQty": "现有库存量",
+      "reorderLevel": "补货阈值",
+      "unitCostVnd": "单位成本（VND）",
+      "stockValueVnd": "库存价值（VND）",
+      "status": "状态",
+      "date": "日期",
+      "voucherCode": "单据编号",
+      "direction": "方向",
+      "warehouseCode": "仓库编码",
+      "warehouseName": "仓库名称",
+      "partnerDest": "合作伙伴 / 目的地",
+      "quantity": "数量",
+      "lineTotalVnd": "行金额（VND）",
+      "operator": "操作员",
+      "openingQty": "期初数量",
+      "inboundQty": "入库数量",
+      "outboundQty": "出库数量",
+      "closingQty": "期末数量",
+      "inboundValueVnd": "入库金额（VND）",
+      "outboundValueVnd": "出库金额（VND）",
+      "closingValueVnd": "期末金额（VND）",
+      "currentQty": "当前数量",
+      "deficitQty": "缺口数量",
+      "estUnitCostVnd": "单位成本（VND）",
+      "estRestockValueVnd": "预计补货金额（VND）",
+      "severity": "严重程度"
+    }
+  }
+}

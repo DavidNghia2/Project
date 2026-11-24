@@ -1,0 +1,11 @@
+{
+  "dismiss": "Đóng thông báo",
+  "success_title": "Thao tác thành công",
+  "success_msg": "Dữ liệu điều chỉnh tồn kho đã được cập nhật thành công vào sổ cái kho hàng.",
+  "warning_title": "Cảnh báo tồn kho thấp",
+  "warning_msg": "Có 5 mã hàng hiện đang dưới ngưỡng an toàn tối thiểu. Khuyến nghị tạo đơn đặt hàng bổ sung.",
+  "error_title": "Đồng bộ dữ liệu thất bại",
+  "error_msg": "Không thể kết nối đến hệ thống ERP kho trung tâm. Vui lòng kiểm tra lại đường truyền mạng và thử lại.",
+  "info_title": "Lịch bảo trì định kỳ",
+  "info_msg": "Hệ thống sẽ bảo trì định kỳ vào 02:00 sáng Chủ Nhật. Các phiếu nhập kho sẽ được xếp hàng chờ xử lý."
+}

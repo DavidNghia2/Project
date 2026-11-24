@@ -1,0 +1,151 @@
+{
+  "mockLastActive": "刚创建（模拟）",
+  "roles": {
+    "ADMIN": {
+      "label": "管理员",
+      "scopeNote": "可管理用户和设置，并访问所有仓库",
+      "short": "管理员"
+    },
+    "WAREHOUSE_MANAGER": {
+      "label": "仓库经理",
+      "scopeNote": "管理分配仓库的目录、审批和库存阈值",
+      "short": "经理"
+    },
+    "WAREHOUSE_STAFF": {
+      "label": "仓库员工",
+      "scopeNote": "创建出入库单和盘点记录，商品目录仅供查看",
+      "short": "员工"
+    },
+    "VIEWER": {
+      "label": "查看者",
+      "scopeNote": "在权限范围内只读查看库存、预警和报表",
+      "short": "查看者"
+    }
+  },
+  "previewBar": {
+    "ariaLabel": "开发用角色预览栏",
+    "badge": "开发角色预览",
+    "roleGroupAriaLabel": "选择模拟角色",
+    "activeMenusSummary": "{role} · {count} 个菜单",
+    "readOnlySuffix": "（只读）",
+    "resetAriaLabel": "将预览角色重置为管理员",
+    "resetBtn": "管理员",
+    "notice": "此栏仅模拟界面权限，后端会独立检查访问权限。"
+  },
+  "scopeNotice": {
+    "restrictedTitle": "当前角色访问受限",
+    "restrictedDesc": "当前角色（{role}）无权访问此管理模块。",
+    "readOnlyViewerDesc": "查看者仅有只读权限，创建、编辑、删除及审批按钮已隐藏。",
+    "readOnlyStaffDesc": "员工仅可查看商品目录，管理员或仓库经理可新增、编辑或删除记录。"
+  },
+  "matrix": {
+    "title": "四种角色的权限矩阵",
+    "subtitle": "查看各角色可见的模块与可执行的操作。",
+    "moduleHeader": "模块 / 权限",
+    "levels": {
+      "FULL": "完整",
+      "SCOPED": "按分配范围",
+      "CREATE": "创建 / 提交",
+      "READ": "只读",
+      "LIMITED": "受限",
+      "NONE": "隐藏"
+    },
+    "modules": {
+      "users": "用户与角色管理",
+      "settings": "系统设置与规则",
+      "warehouses": "仓库管理",
+      "catalog": "商品、分类、单位和供应商",
+      "stock-create": "创建与提交出入库单",
+      "stock-approve": "审批或驳回单据和调整",
+      "stocktaking": "录入实物盘点",
+      "alerts": "低库存预警与阈值",
+      "reports": "库存报表与分析"
+    }
+  },
+  "validation": {
+    "fullNameRequired": "请输入姓名。",
+    "fullNameMin": "姓名至少需要 2 个字符。",
+    "emailRequired": "请输入邮箱。",
+    "emailInvalid": "邮箱格式无效（例如 name@smartinventory.local）。",
+    "emailDuplicate": "此邮箱已被使用。",
+    "departmentRequired": "请填写部门。",
+    "warehousesRequired": "请为非管理员角色至少分配一个仓库。"
+  },
+  "errors": {
+    "userNotFound": "未找到用户。",
+    "missingUserId": "缺少用户 ID。",
+    "lastAdminDeactivate": "无法停用最后一个启用的管理员账户。"
+  },
+  "filters": {
+    "searchLabel": "搜索用户",
+    "searchPlaceholder": "按用户 ID（USR-…）、姓名、邮箱或部门搜索…",
+    "roleLabel": "角色",
+    "allRoles": "所有角色",
+    "statusLabel": "状态",
+    "allStatuses": "所有状态",
+    "statusActive": "启用",
+    "statusInactive": "停用",
+    "reset": "重置"
+  },
+  "form": {
+    "mockAlert": "模拟账户不会存储密码或真实登录凭据。",
+    "fullNameLabel": "姓名",
+    "fullNamePlaceholder": "例如 Nguyen Minh Anh",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "staff.name@smartinventory.local",
+    "departmentLabel": "部门",
+    "departmentPlaceholder": "例如北部仓库运营部",
+    "statusLabel": "账户状态",
+    "statusActiveOption": "启用",
+    "statusInactiveOption": "停用",
+    "roleSectionTitle": "角色分配",
+    "roleLabel": "系统角色",
+    "warehouseSectionTitle": "分配仓库",
+    "allWarehousesBadge": "所有仓库",
+    "adminAllWarehousesNote": "系统管理员可访问所有仓库。",
+    "reserveTag": "储备仓",
+    "cancel": "取消",
+    "submitCreate": "创建模拟用户",
+    "submitEdit": "保存更改",
+    "createTitle": "创建模拟用户",
+    "editTitle": "编辑用户和角色权限：{id}",
+    "createDescription": "填写用户资料、系统角色和仓库权限范围。",
+    "editDescription": "更新用户信息、系统角色或仓库权限范围。"
+  },
+  "warehouseScope": {
+    "allWarehouses": "所有仓库（系统）",
+    "unassigned": "未分配"
+  },
+  "page": {
+    "description": "管理模拟用户、角色及仓库权限。原型模式不使用真实登录凭据。",
+    "createBtn": "创建模拟用户",
+    "toastCreated": "已创建模拟用户 {id}（{fullName}），角色为 {role}。",
+    "toastUpdated": "已更新 {id} 的资料及仓库分配（{role}）。",
+    "toastStatusChanged": "账户 {id}（{fullName}）的状态已变更为{statusLabel}。",
+    "statusActiveText": "启用",
+    "statusInactiveText": "停用",
+    "kpiTotal": "模拟用户总数",
+    "kpiActive": "启用账户",
+    "kpiInactive": "停用账户",
+    "kpiAdmins": "启用的管理员",
+    "tableCaption": "用户账户与仓库权限表",
+    "emptyTitle": "找不到匹配的用户",
+    "emptyDescription": "请调整搜索词、角色或状态筛选条件。",
+    "emptyReset": "重置筛选",
+    "columns": {
+      "id": "用户 ID",
+      "fullName": "姓名 / 部门",
+      "role": "角色",
+      "assignedWarehouses": "分配的仓库",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "statusBadgeActive": "启用",
+    "statusBadgeInactive": "停用",
+    "editBtn": "编辑 / 分配",
+    "disableBtn": "停用",
+    "enableBtn": "启用",
+    "deactivateAria": "停用 {id}",
+    "activateAria": "启用 {id}"
+  }
+}

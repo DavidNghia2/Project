@@ -1,0 +1,22 @@
+{
+  "rescanBtn": "Re-scan Thresholds",
+  "warningTitle": "Detected {count} items below safety stock threshold",
+  "warningMessage": "System automatically detected available stock below the configured minimum reorder threshold. Please review and schedule replenishment.",
+  "colSku": "SKU / Barcode",
+  "colItem": "Item Name",
+  "colWarehouse": "Warehouse Scope",
+  "colStockThreshold": "On-Hand / Threshold",
+  "colUrgency": "Urgency",
+  "colStatus": "Status",
+  "colAction": "Action",
+  "thresholdUnit": "/ min {threshold}",
+  "severity": {
+    "critical": "CRITICAL",
+    "high": "HIGH",
+    "medium": "MEDIUM"
+  },
+  "statusActive": "Unresolved",
+  "statusAck": "Acknowledged",
+  "actionAck": "Acknowledge",
+  "actionReorder": "Create Reorder PO"
+}

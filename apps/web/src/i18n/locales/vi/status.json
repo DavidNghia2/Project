@@ -1,0 +1,10 @@
+{
+  "active": "Đang hoạt động",
+  "inactive": "Không hoạt động",
+  "draft": "Bản nháp",
+  "pending": "Đang chờ duyệt",
+  "submitted": "Chờ duyệt",
+  "approved": "Đã phê duyệt",
+  "rejected": "Bị từ chối",
+  "completed": "Đã hoàn thành"
+}

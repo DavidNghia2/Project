@@ -9,7 +9,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { Alert, Button, Select } from '../../../design-system';
-import { useTranslation } from '../../../i18n';
+import { useTranslation, type TranslationKey } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_WAREHOUSES } from '../../master-data/mockData';
 import { CATEGORIES_LIST } from '../../products/mockData';
@@ -238,7 +238,7 @@ export const ReportFiltersBar: React.FC<ReportFiltersBarProps> = ({
                     : 'border-[#E2E8F0] bg-[#F8FAFC] text-[#475569] hover:border-[#CBD5E1] hover:text-[#0F172A]'
                 }`}
               >
-                {t(`reports.filters.presets.${preset.id}`)}
+                {t(`reports.filters.presets.${preset.id}` as TranslationKey)}
               </button>
             );
           })}

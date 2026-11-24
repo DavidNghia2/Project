@@ -1,0 +1,36 @@
+{
+  "warehouse": "当前仓库",
+  "allWarehouses": "所有仓库",
+  "warehouseHanoi": "河内总仓 (WH-01)",
+  "warehouseDanang": "岘港物流仓 (WH-02)",
+  "warehouseSaigon": "胡志明配送中心 (WH-03)",
+  "notifications": "通知",
+  "notificationsCount": "{count} 条未读通知",
+  "markAllRead": "全部标为已读",
+  "noNotifications": "暂无未读通知",
+  "profile": "用户资料",
+  "accountSettings": "账户设置",
+  "systemAudit": "安全与审计",
+  "logout": "退出登录",
+  "adminUser": "管理员",
+  "adminRole": "系统管理员",
+  "searchPlaceholder": "搜索 SKU、收货单、订单...",
+  "openMenuAria": "打开导航菜单",
+  "breadcrumbAria": "面包屑导航",
+  "userMenuAria": "用户菜单",
+  "logoutMockAlert": "已触发退出登录（原型模拟）",
+  "roleShort": {
+    "ADMIN": "管理员",
+    "WAREHOUSE_MANAGER": "仓库经理",
+    "WAREHOUSE_STAFF": "仓库员工",
+    "VIEWER": "查看者"
+  },
+  "mockNotifs": {
+    "n1Title": "河内中心仓有 5 个 SKU 低于安全补货阈值",
+    "n1Time": "12 分钟前",
+    "n2Title": "入库单 PO-2026-089 已提交，等待经理审批",
+    "n2Time": "45 分钟前",
+    "n3Title": "月度盘点批次 #STK-04 已完成对账",
+    "n3Time": "2 小时前"
+  }
+}

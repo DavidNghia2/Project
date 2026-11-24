@@ -1,0 +1,14 @@
+{
+  "no_data": "No data available in table",
+  "showing_entries": "Showing {from} to {to} of {total} entries",
+  "previous": "Previous",
+  "next": "Next",
+  "rows_per_page": "Rows per page",
+  "select_all": "Select all rows",
+  "select_row": "Select row",
+  "selected_count": "{count} selected",
+  "loadingAria": "Loading table data",
+  "noDataTitle": "No data available",
+  "noDataDesc": "There are no records to display at this time.",
+  "selectRowAria": "Select row {index}"
+}

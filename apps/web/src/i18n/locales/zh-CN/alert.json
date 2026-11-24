@@ -1,0 +1,11 @@
+{
+  "dismiss": "关闭提示",
+  "success_title": "操作完成",
+  "success_msg": "库存调整已成功记录到仓库台账。",
+  "warning_title": "库存不足提醒",
+  "warning_msg": "目前有 5 个 SKU 低于最低安全库存阈值，建议补货。",
+  "error_title": "同步失败",
+  "error_msg": "无法与 ERP 服务同步库存数据。请检查网络连接后重试。",
+  "info_title": "计划维护",
+  "info_msg": "系统计划于周日 UTC 时间 02:00 进行维护。入库操作将排队处理。"
+}

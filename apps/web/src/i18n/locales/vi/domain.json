@@ -1,0 +1,64 @@
+{
+  "warehouses": {
+    "WH-01": "Kho Tổng Hà Nội (WH-01)",
+    "WH-02": "Kho Đà Nẵng (WH-02)",
+    "WH-03": "Kho Trung Chuyển HCM (WH-03)",
+    "WH-04": "Kho Dự Phòng Hải Phòng (WH-04)"
+  },
+  "warehouseNames": {
+    "WH-01": "Kho Tổng Hà Nội",
+    "WH-02": "Kho Đà Nẵng",
+    "WH-03": "Kho Trung Chuyển HCM",
+    "WH-04": "Kho Dự Phòng Hải Phòng"
+  },
+  "regions": {
+    "Miền Bắc": "Miền Bắc",
+    "Miền Trung": "Miền Trung",
+    "Miền Nam": "Miền Nam"
+  },
+  "parentGroups": {
+    "Phần cứng & Thiết bị CNTT": "Phần cứng & Thiết bị CNTT",
+    "Mạng & Hạ tầng": "Mạng & Hạ tầng",
+    "Vật tư & Phụ kiện": "Vật tư & Phụ kiện",
+    "Thiết bị Văn phòng": "Thiết bị Văn phòng"
+  },
+  "paymentTerms": {
+    "Thanh toán ngay (COD / Prepay)": "Thanh toán ngay (COD / Prepay)",
+    "Công nợ 15 ngày (Net 15)": "Công nợ 15 ngày (Net 15)",
+    "Công nợ 30 ngày (Net 30)": "Công nợ 30 ngày (Net 30)",
+    "Công nợ 45 ngày (Net 45)": "Công nợ 45 ngày (Net 45)"
+  },
+  "categories": {
+    "Phụ kiện máy tính": "Phụ kiện máy tính",
+    "Màn hình hiển thị": "Màn hình hiển thị",
+    "Laptop & Máy tính": "Laptop & Máy tính",
+    "Dây cáp & Cáp nguồn": "Dây cáp & Cáp nguồn",
+    "Vật tư tiêu hao": "Vật tư tiêu hao",
+    "Thiết bị mạng": "Thiết bị mạng",
+    "Lưu trữ & Thẻ nhớ": "Lưu trữ & Thẻ nhớ",
+    "Linh kiện máy tính": "Linh kiện máy tính"
+  },
+  "units": {
+    "Cái (Piece)": "Cái (Piece)",
+    "Chiếc (Unit)": "Chiếc (Unit)",
+    "Máy (Unit)": "Máy (Unit)",
+    "Sợi (Piece)": "Sợi (Piece)",
+    "Hộp (Box)": "Hộp (Box)",
+    "Thùng (Box)": "Thùng (Box)",
+    "Bộ (Set)": "Bộ (Set)",
+    "Thanh (Piece)": "Thanh (Piece)",
+    "Cuộn (Roll)": "Cuộn (Roll)"
+  },
+  "departments": {
+    "Ban Điều hành CNTT (IT Operations)": "Ban Điều hành CNTT (IT Operations)",
+    "IT Operations Directorate": "Ban Điều hành CNTT (IT Operations)",
+    "Vận hành Kho Miền Bắc": "Vận hành Kho Miền Bắc",
+    "Northern Warehouse Operations": "Vận hành Kho Miền Bắc",
+    "Vận hành Kho Miền Trung": "Vận hành Kho Miền Trung",
+    "Central Warehouse Operations": "Vận hành Kho Miền Trung",
+    "Vận hành Kho Miền Nam": "Vận hành Kho Miền Nam",
+    "Southern Warehouse Operations": "Vận hành Kho Miền Nam",
+    "Tài chính & Kiểm toán Nội bộ": "Tài chính & Kiểm toán Nội bộ",
+    "Finance & Internal Audit": "Tài chính & Kiểm toán Nội bộ"
+  }
+}

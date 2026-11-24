@@ -1,0 +1,34 @@
+{
+  "errors": {
+    "invitationEmail": "Your sign-in email does not match the invited email.",
+    "alreadyMember": "Your account already belongs to a company.",
+    "acceptFailed": "Could not accept the invitation. Please try again.",
+    "createFailed": "Could not create the company. Check your details and try again.",
+    "slugTaken": "This company code is already in use. Choose a different code."
+  },
+  "account": {
+    "unavailable": "Account unavailable", "nextStep": "What would you like to do next?", "title": "Your account",
+    "suspended": "Your company is suspended.", "inactive": "Your account or membership is inactive.",
+    "contactAdmin": "Contact an administrator.", "noCompany": "Your account does not belong to a company yet. You can decide later.",
+    "createCompany": "Create a company", "joinTitle": "Join through an invitation",
+    "joinDesc": "Open the email invitation using this account. If the invitation was sent to another address, sign out and use that address.",
+    "decideLater": "Decide later", "refresh": "Refresh status"
+  },
+  "create": {
+    "inactiveTitle": "Account inactive", "inactiveDesc": "Your account is inactive. Contact your company administrator.",
+    "invalidName": "Enter a company name and code with at least 2 characters.",
+    "refreshError": "Company created, but the new permissions could not be loaded. Refresh the page.",
+    "greeting": "Hello {name}", "title": "Create your company", "ownerNotice": "You will become this company's Admin and Owner.",
+    "name": "Company name", "namePlaceholder": "Example: An Phat Company", "slug": "Company code",
+    "slugHint": "Used in internal addresses. Only lowercase letters, numbers and hyphens.", "industry": "Industry",
+    "industries": { "general": "General business", "retail": "Retail", "manufacturing": "Manufacturing", "food": "Food and beverages" },
+    "submit": "Create company", "inviteNote": "Already invited? Open the email invitation after signing in with the invited address.",
+    "back": "Back to account"
+  },
+  "invitation": {
+    "invalidLink": "The invitation link is invalid.",
+    "refreshError": "Invitation accepted, but the new permissions could not be loaded. Refresh the page.",
+    "title": "Join a company", "description": "Confirm that you want to join the company using the invitation sent to your email.",
+    "accept": "Accept invitation", "signedInAs": "Signed in as {email}", "switchAccount": "Switch account"
+  }
+}

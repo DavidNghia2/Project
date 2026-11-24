@@ -1,0 +1,9 @@
+{
+  "no_items_title": "找不到库存商品",
+  "no_items_desc": "库存列表为空。请添加首个商品以跟踪库存、存放地点和变动。",
+  "add_item": "添加首个商品",
+  "no_results_title": "无搜索结果",
+  "no_results_desc": "没有找到符合条件的商品。请更换关键词或清除筛选。",
+  "clear_filters": "清除筛选",
+  "noticeAria": "空状态提示"
+}

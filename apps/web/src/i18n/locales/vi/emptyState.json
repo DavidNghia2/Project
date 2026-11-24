@@ -1,0 +1,9 @@
+{
+  "no_items_title": "Chưa có sản phẩm nào trong kho",
+  "no_items_desc": "Danh mục tồn kho hiện đang trống. Hãy thêm sản phẩm đầu tiên để bắt đầu theo dõi vị trí, số lượng và lịch sử xuất nhập kho.",
+  "add_item": "Thêm sản phẩm đầu tiên",
+  "no_results_title": "Không tìm thấy kết quả phù hợp",
+  "no_results_desc": "Không có mặt hàng nào khớp với từ khóa tìm kiếm. Vui lòng kiểm tra lại từ khóa hoặc xóa bớt các bộ lọc đang kích hoạt.",
+  "clear_filters": "Xóa bộ lọc",
+  "noticeAria": "Thông báo trạng thái trống"
+}

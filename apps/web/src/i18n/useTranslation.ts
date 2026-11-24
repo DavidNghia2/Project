@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { I18nContext } from './context';
 import type { I18nContextValue } from './context';
-import type { Language } from './translations';
+import type { Language } from './languages';
 import { translateKey } from './translate';
 
 /**
@@ -20,7 +20,6 @@ export const useTranslation = (): I18nContextValue => {
     return {
       language: 'en',
       setLanguage: () => {},
-      toggleLanguage: () => {},
       t: (key: string, params?: Record<string, string | number>) =>
         translateKey('en', key, params),
     };

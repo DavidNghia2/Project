@@ -1,0 +1,151 @@
+{
+  "mockLastActive": "Vừa tạo (mô phỏng)",
+  "roles": {
+    "ADMIN": {
+      "label": "Quản trị hệ thống (Admin)",
+      "scopeNote": "Toàn quyền hệ thống, người dùng, cấu hình & tất cả kho",
+      "short": "Quản trị viên"
+    },
+    "WAREHOUSE_MANAGER": {
+      "label": "Quản lý kho (Manager)",
+      "scopeNote": "Quản lý danh mục, phê duyệt phiếu & ngưỡng trong kho được gán",
+      "short": "Quản lý kho"
+    },
+    "WAREHOUSE_STAFF": {
+      "label": "Nhân viên kho (Staff)",
+      "scopeNote": "Lập phiếu nhập/xuất & kiểm kê; chỉ xem sản phẩm và danh mục",
+      "short": "Nhân viên kho"
+    },
+    "VIEWER": {
+      "label": "Người xem (Viewer)",
+      "scopeNote": "Chỉ xem tồn kho, dữ liệu nền, cảnh báo và báo cáo (không sửa)",
+      "short": "Người xem"
+    }
+  },
+  "previewBar": {
+    "ariaLabel": "Thanh mô phỏng vai trò dành cho môi trường phát triển",
+    "badge": "XEM THỬ VAI TRÒ",
+    "roleGroupAriaLabel": "Chọn vai trò mô phỏng",
+    "activeMenusSummary": "{role} · {count} menu",
+    "readOnlySuffix": "(Chỉ xem)",
+    "resetAriaLabel": "Đặt lại vai trò Admin mặc định",
+    "resetBtn": "Quản trị viên",
+    "notice": "Mô phỏng UI ở Dev (ẩn menu không thay thế bảo mật Backend API)"
+  },
+  "scopeNotice": {
+    "restrictedTitle": "Không có quyền truy cập trang quản trị này",
+    "restrictedDesc": "Vai trò hiện tại ({role}) không được cấp quyền sử dụng phân hệ này theo ma trận phân quyền.",
+    "readOnlyViewerDesc": "Chế độ chỉ xem (Viewer): Các thao tác thêm mới, chỉnh sửa, xóa và phê duyệt đã được ẩn trên giao diện.",
+    "readOnlyStaffDesc": "Quyền chỉ xem danh mục (Staff): Chỉ Admin hoặc Warehouse Manager mới có quyền thêm, sửa hoặc xóa dữ liệu này."
+  },
+  "matrix": {
+    "title": "Ma trận phân quyền 4 vai trò (RBAC Reference)",
+    "subtitle": "Đối chiếu quyền truy cập menu và thao tác nghiệp vụ theo đặc tả thiết kế hệ thống.",
+    "moduleHeader": "Phân hệ / Chức năng",
+    "levels": {
+      "FULL": "Toàn quyền",
+      "SCOPED": "Theo kho gán",
+      "CREATE": "Lập & gửi",
+      "READ": "Chỉ xem",
+      "LIMITED": "Giới hạn",
+      "NONE": "Ẩn / Khóa"
+    },
+    "modules": {
+      "users": "Quản lý người dùng & vai trò",
+      "settings": "Cấu hình quy tắc hệ thống",
+      "warehouses": "Quản lý kho hàng",
+      "catalog": "Sản phẩm, Danh mục, ĐVT, NCC",
+      "stock-create": "Lập & gửi phiếu Nhập / Xuất kho",
+      "stock-approve": "Phê duyệt / từ chối phiếu & điều chỉnh tồn",
+      "stocktaking": "Kiểm kê thực tế (Stocktaking)",
+      "alerts": "Cảnh báo tồn thấp & thiết lập ngưỡng",
+      "reports": "Báo cáo tồn kho & phân tích"
+    }
+  },
+  "validation": {
+    "fullNameRequired": "Vui lòng nhập họ tên người dùng.",
+    "fullNameMin": "Họ tên phải có ít nhất 2 ký tự.",
+    "emailRequired": "Vui lòng nhập địa chỉ email.",
+    "emailInvalid": "Định dạng email không hợp lệ (vd: ten@smartinventory.local).",
+    "emailDuplicate": "Email này đã tồn tại trong danh sách người dùng.",
+    "departmentRequired": "Vui lòng nhập hoặc chọn phòng ban.",
+    "warehousesRequired": "Vui lòng gán ít nhất 1 kho làm việc cho vai trò này."
+  },
+  "errors": {
+    "userNotFound": "Không tìm thấy người dùng.",
+    "missingUserId": "Thiếu mã người dùng.",
+    "lastAdminDeactivate": "Không thể vô hiệu hóa tài khoản Admin đang hoạt động duy nhất trong hệ thống."
+  },
+  "filters": {
+    "searchLabel": "Tìm kiếm người dùng",
+    "searchPlaceholder": "Tìm theo mã (USR-...), họ tên, email hoặc phòng ban...",
+    "roleLabel": "Vai trò",
+    "allRoles": "Tất cả vai trò",
+    "statusLabel": "Trạng thái",
+    "allStatuses": "Tất cả trạng thái",
+    "statusActive": "Đang hoạt động",
+    "statusInactive": "Ngừng hoạt động",
+    "reset": "Đặt lại"
+  },
+  "form": {
+    "mockAlert": "Tài khoản mô phỏng trong mock data — Không yêu cầu hoặc lưu trữ mật khẩu đăng nhập.",
+    "fullNameLabel": "Họ và tên",
+    "fullNamePlaceholder": "Ví dụ: Nguyễn Minh Anh",
+    "emailLabel": "Email",
+    "emailPlaceholder": "ten.nhanvien@smartinventory.local",
+    "departmentLabel": "Phòng ban / Đơn vị",
+    "departmentPlaceholder": "Ví dụ: Vận hành Kho Miền Bắc",
+    "statusLabel": "Trạng thái tài khoản",
+    "statusActiveOption": "Đang hoạt động (Active)",
+    "statusInactiveOption": "Ngừng hoạt động (Inactive)",
+    "roleSectionTitle": "Phân quyền vai trò",
+    "roleLabel": "Vai trò hệ thống",
+    "warehouseSectionTitle": "Phạm vi kho làm việc được gán",
+    "allWarehousesBadge": "TẤT CẢ KHO",
+    "adminAllWarehousesNote": "Vai trò Quản trị hệ thống (ADMIN) tự động quản lý toàn bộ các kho hàng trên hệ thống.",
+    "reserveTag": "Dự phòng",
+    "cancel": "Hủy",
+    "submitCreate": "Tạo tài khoản mẫu",
+    "submitEdit": "Lưu thay đổi",
+    "createTitle": "Tạo người dùng mẫu mới",
+    "editTitle": "Cập nhật & gán quyền: {id}",
+    "createDescription": "Khai báo hồ sơ người dùng, chọn vai trò và gán danh sách kho phụ trách.",
+    "editDescription": "Chỉnh sửa thông tin nhân sự, thay đổi vai trò hoặc cập nhật kho được gán."
+  },
+  "warehouseScope": {
+    "allWarehouses": "Toàn hệ thống (All)",
+    "unassigned": "Chưa gán kho"
+  },
+  "page": {
+    "description": "Quản lý tài khoản mẫu, gán vai trò và phân bổ phạm vi kho làm việc. Không lưu mật khẩu và không thực hiện xác thực thực trong nguyên mẫu.",
+    "createBtn": "Thêm người dùng mẫu",
+    "toastCreated": "Đã tạo tài khoản mẫu {id} ({fullName}) với vai trò {role}.",
+    "toastUpdated": "Đã cập nhật thông tin & phân quyền cho {id} ({role}).",
+    "toastStatusChanged": "Tài khoản {id} ({fullName}) đã chuyển sang trạng thái {statusLabel}.",
+    "statusActiveText": "đang hoạt động",
+    "statusInactiveText": "ngừng hoạt động",
+    "kpiTotal": "Tổng tài khoản mẫu",
+    "kpiActive": "Đang hoạt động",
+    "kpiInactive": "Ngừng hoạt động",
+    "kpiAdmins": "Quản trị viên (Admin)",
+    "tableCaption": "Danh sách tài khoản người dùng và phạm vi kho",
+    "emptyTitle": "Không tìm thấy người dùng phù hợp",
+    "emptyDescription": "Thử điều chỉnh từ khóa tìm kiếm hoặc bộ lọc vai trò / trạng thái.",
+    "emptyReset": "Đặt lại bộ lọc",
+    "columns": {
+      "id": "Mã NV",
+      "fullName": "Họ và tên / Phòng ban",
+      "role": "Vai trò",
+      "assignedWarehouses": "Kho làm việc",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "statusBadgeActive": "Hoạt động",
+    "statusBadgeInactive": "Đã khóa",
+    "editBtn": "Sửa & Gán quyền",
+    "disableBtn": "Tắt",
+    "enableBtn": "Bật",
+    "deactivateAria": "Tạm khóa {id}",
+    "activateAria": "Kích hoạt {id}"
+  }
+}

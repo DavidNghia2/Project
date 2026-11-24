@@ -1,0 +1,39 @@
+{
+  "kpi": {
+    "totalSkusTitle": "Total Catalog SKUs",
+    "totalSkusChange": "+12 this week",
+    "lowStockTitle": "Low Stock Warnings",
+    "lowStockChange": "Needs reorder",
+    "pendingInTitle": "Pending Stock-In",
+    "pendingInChange": "2 awaiting Manager",
+    "activeOutTitle": "Active Dispatches",
+    "activeOutChange": "All in allocation"
+  },
+  "colTrx": "Trx #",
+  "colProduct": "Product / SKU",
+  "colType": "Type",
+  "colQty": "Qty",
+  "colWarehouse": "Warehouse",
+  "colTime": "Time",
+  "yesterday": "Yesterday",
+  "recentTitle": "Recent Inventory Movements",
+  "recentDesc": "Real-time ledger entries from completed stock orders and approved adjustments.",
+  "txTypes": {
+    "IN": "IN",
+    "OUT": "OUT",
+    "ADJ_IN": "ADJ+"
+  },
+  "flowTitle": "Standard Warehouse Flow",
+  "flowDesc": "Maker-checker flow enforcing transaction integrity.",
+  "flowStep1Title": "Stock Inward",
+  "flowStep1Desc": "Create DRAFT -> Submit SUBMITTED -> Manager approves APPROVED -> Increase stock.",
+  "flowStep2Title": "Stock Outward",
+  "flowStep2Desc": "Validate on-hand stock -> Reserve allocation -> Complete -> Decrease stock.",
+  "flowStep3Title": "Stocktaking",
+  "flowStep3Desc": "Capture snapshot -> Count physical stock -> Calculate variance -> Approve adjustment.",
+  "flowStep4Title": "Low Stock Alerts",
+  "flowStep4Desc": "Automatically triggered when on_hand <= reorder_level.",
+  "scopeTitle": "Multi-warehouse Scope Enforced",
+  "scopeAdminDesc": "Logged in as Admin with global system visibility. Use the warehouse selector on topbar to filter data scopes.",
+  "scopeRolePreview": "Previewing scope for {role}. {note}."
+}

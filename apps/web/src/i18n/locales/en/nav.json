@@ -1,0 +1,26 @@
+{
+  "dashboard": "Dashboard",
+  "products": "Products",
+  "warehouses": "Warehouses",
+  "categories": "Categories",
+  "units": "Units of Measure",
+  "suppliers": "Suppliers",
+  "stockIn": "Stock In",
+  "stockOut": "Stock Out",
+  "stocktaking": "Stocktaking",
+  "reports": "Reports",
+  "alerts": "Alerts",
+  "users": "Users & Roles",
+  "settings": "Settings",
+  "designSystem": "UI Design System",
+  "collapse": "Collapse sidebar",
+  "expand": "Expand sidebar",
+  "menu": "Main Navigation",
+  "systemOnline": "System Online",
+  "sections": {
+    "operations": "OPERATIONS",
+    "masterData": "MASTER DATA",
+    "insights": "INSIGHTS & MONITORING",
+    "admin": "ADMINISTRATION"
+  }
+}

@@ -1,11 +1,14 @@
 import { createContext } from 'react';
-import type { Language, TranslationKey } from './translations';
+import type { TranslationKey } from './translations';
+import type { Language } from './languages';
 
 export interface I18nContextValue {
   language: Language;
   setLanguage: (lang: Language) => void;
-  toggleLanguage: () => void;
-  t: (key: TranslationKey | string, params?: Record<string, string | number>) => string;
+  t: <K extends string>(
+    key: string extends K ? K : K extends TranslationKey ? K : never,
+    params?: Record<string, string | number>
+  ) => string;
 }
 
 export const I18nContext = createContext<I18nContextValue | undefined>(undefined);

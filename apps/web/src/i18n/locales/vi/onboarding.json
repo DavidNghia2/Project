@@ -1,0 +1,34 @@
+{
+  "errors": {
+    "invitationEmail": "Email đăng nhập không khớp với email được mời.",
+    "alreadyMember": "Tài khoản đã thuộc một công ty.",
+    "acceptFailed": "Không thể chấp nhận lời mời. Vui lòng thử lại.",
+    "createFailed": "Không thể tạo công ty. Kiểm tra thông tin rồi thử lại.",
+    "slugTaken": "Mã công ty đã được sử dụng. Hãy chọn mã khác."
+  },
+  "account": {
+    "unavailable": "Tài khoản chưa thể truy cập", "nextStep": "Bạn muốn làm gì tiếp theo?", "title": "Tài khoản của bạn",
+    "suspended": "Công ty của bạn đang bị tạm ngưng.", "inactive": "Tài khoản hoặc quyền thành viên đã bị vô hiệu hóa.",
+    "contactAdmin": "Hãy liên hệ quản trị viên.", "noCompany": "Tài khoản của bạn chưa thuộc công ty nào. Bạn có thể quyết định sau.",
+    "createCompany": "Tạo công ty", "joinTitle": "Tham gia qua lời mời",
+    "joinDesc": "Mở liên kết trong email mời bằng đúng tài khoản này. Nếu email mời dùng địa chỉ khác, hãy đăng xuất và đăng nhập bằng địa chỉ đó.",
+    "decideLater": "Để sau", "refresh": "Tải lại trạng thái"
+  },
+  "create": {
+    "inactiveTitle": "Tài khoản chưa hoạt động", "inactiveDesc": "Tài khoản của bạn đã bị vô hiệu hóa. Hãy liên hệ quản trị viên công ty.",
+    "invalidName": "Nhập tên công ty và mã công ty có ít nhất 2 ký tự.",
+    "refreshError": "Công ty đã được tạo nhưng không tải được quyền mới. Hãy tải lại trang.",
+    "greeting": "Xin chào {name}", "title": "Tạo công ty của bạn", "ownerNotice": "Bạn sẽ trở thành Admin và Owner của công ty.",
+    "name": "Tên công ty", "namePlaceholder": "Ví dụ: Công ty An Phát", "slug": "Mã công ty",
+    "slugHint": "Dùng trong địa chỉ nội bộ, chỉ gồm chữ thường, số và dấu gạch ngang.", "industry": "Lĩnh vực",
+    "industries": { "general": "Kinh doanh tổng hợp", "retail": "Bán lẻ", "manufacturing": "Sản xuất", "food": "Thực phẩm và đồ uống" },
+    "submit": "Tạo công ty", "inviteNote": "Đã nhận lời mời? Hãy mở liên kết trong email sau khi đăng nhập bằng đúng địa chỉ được mời.",
+    "back": "Quay lại tài khoản"
+  },
+  "invitation": {
+    "invalidLink": "Liên kết lời mời không hợp lệ.",
+    "refreshError": "Đã chấp nhận lời mời nhưng chưa tải được quyền mới. Hãy tải lại trang.",
+    "title": "Tham gia công ty", "description": "Xác nhận tham gia công ty theo lời mời gửi đến email của bạn.",
+    "accept": "Chấp nhận lời mời", "signedInAs": "Đang đăng nhập bằng {email}", "switchAccount": "Đổi tài khoản"
+  }
+}

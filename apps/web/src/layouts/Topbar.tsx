@@ -5,7 +5,6 @@ import {
   Bell,
   Warehouse,
   ChevronDown,
-  Globe,
   User,
   Shield,
   LogOut,
@@ -14,7 +13,7 @@ import {
   AlertTriangle,
   PackagePlus,
 } from 'lucide-react';
-import { useTranslation } from '../i18n';
+import { LanguageSelect, useTranslation } from '../i18n';
 import { Badge } from '../design-system';
 import { ROLE_META, useRolePreview, type RoleCode } from '../features/users-rbac';
 import { useAuth } from '../features/auth';
@@ -45,7 +44,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   activeWarehouse,
   onSelectWarehouse,
 }) => {
-  const { t, language, toggleLanguage } = useTranslation();
+  const { t } = useTranslation();
   const { activeRole, capabilities } = useRolePreview();
   const { user: authUser, signOut } = useAuth();
   const roleMeta = ROLE_META[activeRole];
@@ -258,17 +257,7 @@ export const Topbar: React.FC<TopbarProps> = ({
           )}
         </div>
 
-        {/* Language Switcher Pill */}
-        <button
-          type="button"
-          onClick={toggleLanguage}
-          className="flex items-center gap-1.5 h-9 px-2.5 rounded-md border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-xs font-semibold text-[#334155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors"
-          title={t('demo.switch_lang')}
-          aria-label={t('demo.switch_lang')}
-        >
-          <Globe className="w-4 h-4 text-blue-600 shrink-0" />
-          <span className="uppercase">{language}</span>
-        </button>
+        <LanguageSelect id="workspace-language" />
 
         {/* Notifications Popover */}
         <div className="relative" ref={notifRef}>

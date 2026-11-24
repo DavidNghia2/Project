@@ -1,0 +1,213 @@
+{
+  "page": {
+    "exportButton": "Xuất báo cáo CSV",
+    "exportNotice": "Đã xuất file {filename} ({rows} dòng dữ liệu + dòng tổng hợp)."
+  },
+  "tabs": {
+    "tablistAria": "Chọn loại báo cáo kho",
+    "current_stock": {
+      "label": "Tồn kho hiện tại",
+      "sub": "Bảng cân đối tồn kho"
+    },
+    "stock_in": {
+      "label": "Báo cáo nhập kho",
+      "sub": "Chi tiết phiếu nhập"
+    },
+    "stock_out": {
+      "label": "Báo cáo xuất kho",
+      "sub": "Chi tiết phiếu xuất"
+    },
+    "stock_movement": {
+      "label": "Biến động tồn kho",
+      "sub": "Nhập - Xuất - Tồn"
+    },
+    "low_stock": {
+      "label": "Tồn dưới ngưỡng",
+      "sub": "Cảnh báo định mức"
+    }
+  },
+  "filters": {
+    "startDate": "Từ ngày",
+    "endDate": "Đến ngày",
+    "warehouse": "Kho hàng",
+    "allWarehouses": "Tất cả kho hàng",
+    "category": "Danh mục sản phẩm",
+    "allCategories": "Tất cả danh mục",
+    "reset": "Đặt lại",
+    "presetsLabel": "Mốc nhanh:",
+    "presets": {
+      "7d": "7 ngày qua (05–11/11)",
+      "nov": "Tháng 11/2026",
+      "oct": "Tháng 10/2026",
+      "q4": "Toàn kỳ Q4"
+    },
+    "snapshotNote": "Số liệu tồn hiện tại & dưới ngưỡng phản ánh ảnh chụp kho tại thời điểm hiện tại.",
+    "invalidRangeTitle": "Khoảng ngày lọc không hợp lệ"
+  },
+  "validation": {
+    "missingDates": "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc.",
+    "invalidFormat": "Định dạng ngày không hợp lệ (YYYY-MM-DD).",
+    "startAfterEnd": "Khoảng thời gian không hợp lệ: Ngày bắt đầu không được lớn hơn ngày kết thúc."
+  },
+  "warehouseScope": {
+    "all": "Toàn hệ thống ({count} kho)"
+  },
+  "kpi": {
+    "catalogSkus": "Số mặt hàng (SKU)",
+    "totalOnHandQty": "Tổng số lượng tồn",
+    "totalInventoryValuation": "Tổng giá trị tồn kho",
+    "atBelowThreshold": "SKU chạm/dưới ngưỡng",
+    "ledgerLines": "Số dòng giao dịch",
+    "totalInboundQty": "Tổng số lượng nhập",
+    "totalOutboundQty": "Tổng số lượng xuất",
+    "totalInboundValue": "Tổng giá trị nhập kho",
+    "totalOutboundValue": "Tổng giá trị xuất kho",
+    "avgValuePerLine": "Giá trị TB / dòng hàng",
+    "periodInboundQty": "Tổng nhập trong kỳ",
+    "periodOutboundQty": "Tổng xuất trong kỳ",
+    "closingBalanceQty": "Tồn cuối kỳ (SL)",
+    "periodInboundValue": "Tổng giá trị nhập kỳ",
+    "belowThresholdSkus": "SKU dưới ngưỡng",
+    "totalRemainingStock": "Tổng tồn hiện có",
+    "totalDeficitUnits": "Tổng SL cần bổ sung",
+    "estRestockBudget": "Dự trù chi phí nhập bù"
+  },
+  "charts": {
+    "titles": {
+      "currentAll": "Phân bổ giá trị & số lượng tồn hiện tại theo danh mục",
+      "currentCategory": "Tồn kho & giá trị theo SKU ({category})",
+      "stockInDate": "Biểu đồ lượng & giá trị nhập kho theo ngày",
+      "stockOutDate": "Biểu đồ lượng & giá trị xuất kho theo ngày",
+      "movementAll": "Đối chiếu Nhập kho vs Xuất kho theo danh mục",
+      "movementCategory": "Biến động Nhập vs Xuất theo SKU ({category})",
+      "lowStock": "So sánh tồn hiện tại với ngưỡng an toàn (Mặt hàng dưới ngưỡng)"
+    },
+    "legends": {
+      "stockQty": "Số lượng tồn",
+      "inboundQty": "SL Nhập",
+      "outboundQty": "SL Xuất",
+      "movementInbound": "Nhập trong kỳ",
+      "movementOutbound": "Xuất trong kỳ",
+      "onHandQty": "Tồn hiện tại",
+      "safetyLevel": "Ngưỡng tối thiểu"
+    },
+    "valueLabel": "Giá trị:",
+    "unavailableTitle": "Chưa thể dựng biểu đồ",
+    "unavailableDesc": "Vui lòng chọn khoảng ngày hợp lệ để xem phân tích trực quan.",
+    "noDataTitle": "Không có dữ liệu trong phạm vi lọc",
+    "noDataDesc": "Thử mở rộng ngày lọc, chọn tất cả kho hoặc chọn tất cả danh mục.",
+    "reconciliation": "Đối soát biểu đồ: {count} nhóm dữ liệu (khớp 100% bảng bên dưới)"
+  },
+  "table": {
+    "titles": {
+      "current_stock": "Bảng chi tiết tồn kho hiện tại",
+      "stock_in": "Bảng chi tiết giao dịch nhập kho",
+      "stock_out": "Bảng chi tiết giao dịch xuất kho",
+      "stock_movement": "Bảng tổng hợp Nhập – Xuất – Tồn theo SKU",
+      "low_stock": "Danh sách sản phẩm tồn dưới ngưỡng an toàn"
+    },
+    "captions": {
+      "current_stock": "Dữ liệu tồn kho chi tiết"
+    },
+    "descValid": "Hiển thị {count} bản ghi chính xác từ mock data (không trùng lặp giao dịch)",
+    "descInvalid": "Vui lòng sửa khoảng thời gian lọc để xem dữ liệu báo cáo.",
+    "exportCsv": "Xuất CSV báo cáo này",
+    "invalidRangeTitle": "Khoảng ngày lọc không hợp lệ",
+    "invalidRangeDesc": "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc trước khi tổng hợp báo cáo.",
+    "restoreDates": "Khôi phục ngày mặc định",
+    "cols": {
+      "sku": "SKU",
+      "product": "Sản phẩm",
+      "warehouseScope": "Phạm vi kho",
+      "onHand": "Tồn hiện tại",
+      "minLevel": "Ngưỡng tối thiểu",
+      "unitCost": "Giá vốn",
+      "stockValuation": "Giá trị tồn",
+      "status": "Trạng thái",
+      "date": "Ngày chứng từ",
+      "voucher": "Mã phiếu",
+      "warehouse": "Kho",
+      "supplier": "Nhà cung cấp",
+      "destination": "Nơi nhận",
+      "skuProduct": "Sản phẩm / Danh mục",
+      "qty": "Số lượng",
+      "lineTotal": "Thành tiền",
+      "productCategory": "Sản phẩm & Danh mục",
+      "opening": "Tồn đầu kỳ",
+      "inboundPlus": "Nhập kỳ",
+      "outboundMinus": "Xuất kỳ",
+      "closing": "Tồn cuối kỳ",
+      "closingValue": "Giá trị tồn cuối",
+      "deficit": "Thiếu hụt",
+      "estRestockCost": "Dự trù nhập bù",
+      "severity": "Mức cảnh báo"
+    },
+    "severity": {
+      "out": "Hết hàng",
+      "critical": "Nguy cấp",
+      "low": "Dưới ngưỡng"
+    },
+    "empty": {
+      "currentTitle": "Không có mặt hàng phù hợp",
+      "currentDesc": "Không có sản phẩm nào khớp với bộ lọc kho hoặc danh mục.",
+      "txTitle": "Không có giao dịch trong khoảng lọc",
+      "txDesc": "Không có chứng từ hoàn tất nào nằm trong khoảng ngày, kho và danh mục đã chọn.",
+      "movementTitle": "Không có dữ liệu biến động",
+      "movementDesc": "Hãy chọn danh mục hoặc kho khác để xem số dư đầu kỳ, nhập, xuất và tồn cuối.",
+      "lowTitle": "Không có mặt hàng nào dưới ngưỡng",
+      "lowDesc": "Tất cả sản phẩm trong bộ lọc hiện tại đều đạt định mức tồn kho an toàn.",
+      "resetFilters": "Đặt lại bộ lọc"
+    },
+    "footer": {
+      "summaryTitle": "Tổng hợp bảng báo cáo",
+      "rowsUnit": "dòng",
+      "totalIn": "Tổng nhập:",
+      "totalOut": "Tổng xuất:",
+      "closing": "Tồn cuối:",
+      "inValue": "Giá trị nhập:",
+      "currentQty": "Tồn hiện có:",
+      "deficitQty": "Thiếu hụt:",
+      "estRestock": "Dự trù bổ sung:",
+      "totalQty": "Tổng số lượng:",
+      "totalValue": "Tổng giá trị:"
+    }
+  },
+  "csv": {
+    "totalLabel": "TỔNG CỘNG",
+    "skuCount": "{count} SKU",
+    "linesCount": "{count} dòng",
+    "cols": {
+      "sku": "SKU",
+      "productName": "Tên sản phẩm",
+      "category": "Danh mục",
+      "unit": "Đơn vị",
+      "warehouse": "Kho",
+      "onHandQty": "Tồn hiện tại",
+      "reorderLevel": "Ngưỡng an toàn",
+      "unitCostVnd": "Đơn giá vốn (VND)",
+      "stockValueVnd": "Giá trị tồn (VND)",
+      "status": "Trạng thái",
+      "date": "Ngày",
+      "voucherCode": "Mã phiếu",
+      "direction": "Loại",
+      "warehouseCode": "Mã kho",
+      "warehouseName": "Tên kho",
+      "partnerDest": "Đối tác / Nơi nhận",
+      "quantity": "Số lượng",
+      "lineTotalVnd": "Thành tiền (VND)",
+      "operator": "Người thực hiện",
+      "openingQty": "Tồn đầu kỳ",
+      "inboundQty": "Nhập trong kỳ",
+      "outboundQty": "Xuất trong kỳ",
+      "closingQty": "Tồn cuối kỳ",
+      "inboundValueVnd": "Giá trị nhập (VND)",
+      "outboundValueVnd": "Giá trị xuất (VND)",
+      "closingValueVnd": "Giá trị tồn cuối (VND)",
+      "currentQty": "Tồn hiện tại",
+      "deficitQty": "Số lượng thiếu hụt",
+      "estUnitCostVnd": "Đơn giá dự kiến (VND)",
+      "estRestockValueVnd": "Dự trù nhập bổ sung (VND)",
+      "severity": "Mức độ"
+    }
+  }
+}

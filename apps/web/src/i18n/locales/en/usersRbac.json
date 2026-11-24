@@ -1,0 +1,151 @@
+{
+  "mockLastActive": "Just created (mock)",
+  "roles": {
+    "ADMIN": {
+      "label": "Administrator",
+      "scopeNote": "Full system access, users & settings, all warehouses",
+      "short": "Admin"
+    },
+    "WAREHOUSE_MANAGER": {
+      "label": "Warehouse Manager",
+      "scopeNote": "Catalog, approvals & threshold config for assigned warehouses",
+      "short": "Manager"
+    },
+    "WAREHOUSE_STAFF": {
+      "label": "Warehouse Staff",
+      "scopeNote": "Create stock vouchers & physical counts; view-only catalog",
+      "short": "Staff"
+    },
+    "VIEWER": {
+      "label": "Viewer",
+      "scopeNote": "Strictly read-only inventory, alerts and reports across scope",
+      "short": "Viewer"
+    }
+  },
+  "previewBar": {
+    "ariaLabel": "Development-only role UI simulation bar",
+    "badge": "DEV ROLE PREVIEW",
+    "roleGroupAriaLabel": "Select simulated role",
+    "activeMenusSummary": "{role} · {count} menus",
+    "readOnlySuffix": "(Read-only)",
+    "resetAriaLabel": "Reset role preview to Admin",
+    "resetBtn": "Admin",
+    "notice": "Dev UI simulation only — hiding UI controls does not enforce backend RBAC."
+  },
+  "scopeNotice": {
+    "restrictedTitle": "Access restricted for current role",
+    "restrictedDesc": "The active role ({role}) does not have permission to access this administration module.",
+    "readOnlyViewerDesc": "Read-only Viewer mode: Create, edit, delete, and approval controls are hidden.",
+    "readOnlyStaffDesc": "Read-only catalog scope (Staff): Only Admin or Warehouse Manager can create, edit, or delete records."
+  },
+  "matrix": {
+    "title": "4-Role RBAC Permission Matrix",
+    "subtitle": "Module visibility and action permissions mapped across the four system roles.",
+    "moduleHeader": "Module / Capability",
+    "levels": {
+      "FULL": "Full",
+      "SCOPED": "Assigned scope",
+      "CREATE": "Create / Submit",
+      "READ": "Read-only",
+      "LIMITED": "Limited",
+      "NONE": "Hidden"
+    },
+    "modules": {
+      "users": "User & Role Management",
+      "settings": "System Settings & Rules",
+      "warehouses": "Warehouse Management",
+      "catalog": "Products, Categories, Units, Suppliers",
+      "stock-create": "Create & Submit Stock-In / Stock-Out",
+      "stock-approve": "Approve / Reject Vouchers & Adjustments",
+      "stocktaking": "Physical Stocktaking Entry",
+      "alerts": "Low-Stock Alerts & Thresholds",
+      "reports": "Inventory Reports & Analytics"
+    }
+  },
+  "validation": {
+    "fullNameRequired": "Full name is required.",
+    "fullNameMin": "Full name must be at least 2 characters.",
+    "emailRequired": "Email address is required.",
+    "emailInvalid": "Invalid email format (e.g. name@smartinventory.local).",
+    "emailDuplicate": "This email address already exists.",
+    "departmentRequired": "Department is required.",
+    "warehousesRequired": "Assign at least 1 warehouse for non-Admin roles."
+  },
+  "errors": {
+    "userNotFound": "User not found.",
+    "missingUserId": "Missing user ID.",
+    "lastAdminDeactivate": "Cannot deactivate the last active Administrator account."
+  },
+  "filters": {
+    "searchLabel": "Search users",
+    "searchPlaceholder": "Search by ID (USR-...), full name, email or department...",
+    "roleLabel": "Role",
+    "allRoles": "All roles",
+    "statusLabel": "Status",
+    "allStatuses": "All statuses",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "reset": "Reset"
+  },
+  "form": {
+    "mockAlert": "Mock prototype account — No password fields or real authentication credentials are stored.",
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "e.g. Nguyen Minh Anh",
+    "emailLabel": "Email",
+    "emailPlaceholder": "staff.name@smartinventory.local",
+    "departmentLabel": "Department",
+    "departmentPlaceholder": "e.g. Northern Warehouse Operations",
+    "statusLabel": "Account Status",
+    "statusActiveOption": "Active",
+    "statusInactiveOption": "Inactive",
+    "roleSectionTitle": "Role Assignment",
+    "roleLabel": "System Role",
+    "warehouseSectionTitle": "Assigned Warehouse Scope",
+    "allWarehousesBadge": "ALL WAREHOUSES",
+    "adminAllWarehousesNote": "System Administrator automatically has access across all warehouses.",
+    "reserveTag": "Reserve",
+    "cancel": "Cancel",
+    "submitCreate": "Create Mock User",
+    "submitEdit": "Save Changes",
+    "createTitle": "Create Mock User",
+    "editTitle": "Edit User & Role Scope: {id}",
+    "createDescription": "Define user profile, system role, and warehouse operating scope.",
+    "editDescription": "Update user details, reassign system role, or change warehouse scope."
+  },
+  "warehouseScope": {
+    "allWarehouses": "All Warehouses (System)",
+    "unassigned": "Unassigned"
+  },
+  "page": {
+    "description": "Manage mock users, assign RBAC roles, and scope warehouse assignments. Prototype mode without real credentials or authentication.",
+    "createBtn": "Create Mock User",
+    "toastCreated": "Created mock user {id} ({fullName}) as {role}.",
+    "toastUpdated": "Updated profile & assignments for {id} ({role}).",
+    "toastStatusChanged": "Account {id} ({fullName}) is now {statusLabel}.",
+    "statusActiveText": "active",
+    "statusInactiveText": "inactive",
+    "kpiTotal": "Total Mock Users",
+    "kpiActive": "Active Accounts",
+    "kpiInactive": "Inactive Accounts",
+    "kpiAdmins": "Active Admins",
+    "tableCaption": "System user accounts and warehouse scope table",
+    "emptyTitle": "No matching users found",
+    "emptyDescription": "Try adjusting the search keyword, role filter, or status filter.",
+    "emptyReset": "Reset Filters",
+    "columns": {
+      "id": "User ID",
+      "fullName": "Name / Department",
+      "role": "Role",
+      "assignedWarehouses": "Assigned Warehouses",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "statusBadgeActive": "Active",
+    "statusBadgeInactive": "Inactive",
+    "editBtn": "Edit / Assign",
+    "disableBtn": "Disable",
+    "enableBtn": "Enable",
+    "deactivateAria": "Deactivate {id}",
+    "activateAria": "Activate {id}"
+  }
+}

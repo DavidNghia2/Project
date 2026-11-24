@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileSpreadsheet } from 'lucide-react';
 import { Badge, Button, Card, EmptyState, Table, type Column } from '../../../design-system';
-import { useTranslation } from '../../../i18n';
+import { getIntlLocale, useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type {
@@ -73,7 +73,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0F172A]">
-                {r.quantity.toLocaleString('en-US')}
+                {r.quantity.toLocaleString(getIntlLocale(language))}
               </span>
             ),
           },
@@ -477,19 +477,19 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                     <span>
                       {t('reports.table.footer.totalIn')}{' '}
                       <strong className="text-[#16A34A]">
-                        +{report.totals.totalPrimaryQty.toLocaleString('en-US')}
+                        +{report.totals.totalPrimaryQty.toLocaleString(getIntlLocale(language))}
                       </strong>
                     </span>
                     <span>
                       {t('reports.table.footer.totalOut')}{' '}
                       <strong className="text-[#D97706]">
-                        -{(report.totals.totalSecondaryQty ?? 0).toLocaleString('en-US')}
+                        -{(report.totals.totalSecondaryQty ?? 0).toLocaleString(getIntlLocale(language))}
                       </strong>
                     </span>
                     <span>
                       {t('reports.table.footer.closing')}{' '}
                       <strong className="text-[#0284C7]">
-                        {(report.totals.totalClosingQty ?? 0).toLocaleString('en-US')}
+                        {(report.totals.totalClosingQty ?? 0).toLocaleString(getIntlLocale(language))}
                       </strong>
                     </span>
                     <span>
@@ -501,12 +501,12 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                   <>
                     <span>
                       {t('reports.table.footer.currentQty')}{' '}
-                      <strong>{report.totals.totalPrimaryQty.toLocaleString('en-US')}</strong>
+                      <strong>{report.totals.totalPrimaryQty.toLocaleString(getIntlLocale(language))}</strong>
                     </span>
                     <span>
                       {t('reports.table.footer.deficitQty')}{' '}
                       <strong className="text-[#D97706]">
-                        {(report.totals.totalSecondaryQty ?? 0).toLocaleString('en-US')}
+                        {(report.totals.totalSecondaryQty ?? 0).toLocaleString(getIntlLocale(language))}
                       </strong>
                     </span>
                     <span>
@@ -520,7 +520,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                   <>
                     <span>
                       {t('reports.table.footer.totalQty')}{' '}
-                      <strong>{report.totals.totalPrimaryQty.toLocaleString('en-US')}</strong>
+                      <strong>{report.totals.totalPrimaryQty.toLocaleString(getIntlLocale(language))}</strong>
                     </span>
                     <span>
                       {t('reports.table.footer.totalValue')}{' '}

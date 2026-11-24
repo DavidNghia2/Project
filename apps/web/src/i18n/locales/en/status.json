@@ -1,0 +1,10 @@
+{
+  "active": "Active",
+  "inactive": "Inactive",
+  "draft": "Draft",
+  "pending": "Pending",
+  "submitted": "Submitted",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "completed": "Completed"
+}

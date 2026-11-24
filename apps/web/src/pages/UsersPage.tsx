@@ -9,7 +9,7 @@ import {
   Users as UsersIcon,
 } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Badge, Button, Card, Input, Select, Table, type Column } from '../design-system';
+import { Alert, Badge, Button, Card, Input, Modal, Select, Table, type Column } from '../design-system';
 import {
   ROLE_META,
   RoleMatrixSummaryCard,
@@ -391,16 +391,26 @@ type RemoteMember = {
 
 type RemoteWarehouse = { id: string; code: string; name: string };
 
+type MemberDraft = {
+  roleCode: RoleCode;
+  warehouseIds: string[];
+};
+
 const roles: RoleCode[] = ['ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF', 'VIEWER'];
 
-const SupabaseUsersPage: React.FC = () => {
+export const SupabaseUsersPage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
+  const roleOptions = roles.map((role) => ({ value: role, label: t(`topbar.roleShort.${role}`) }));
   const [members, setMembers] = useState<RemoteMember[]>([]);
-  const [memberWarehouseIds, setMemberWarehouseIds] = useState<Record<string, string[]>>({});
+  const [memberDrafts, setMemberDrafts] = useState<Record<string, MemberDraft>>({});
+  const [memberErrors, setMemberErrors] = useState<Record<string, boolean>>({});
+  const [pendingRoleSave, setPendingRoleSave] = useState<RemoteMember | null>(null);
+  const [savingMemberId, setSavingMemberId] = useState<string | null>(null);
   const [warehouses, setWarehouses] = useState<RemoteWarehouse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ key: string; name?: string } | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<RoleCode>('WAREHOUSE_STAFF');
   const [inviteWarehouseIds, setInviteWarehouseIds] = useState<string[]>([]);
@@ -413,11 +423,12 @@ const SupabaseUsersPage: React.FC = () => {
       supabase.rpc('list_company_members'),
       supabase.from('warehouses').select('id, code, name').eq('status', 'active').order('code'),
     ]);
-    if (memberResult.error) setError(memberResult.error.message);
-    if (warehouseResult.error) setError(warehouseResult.error.message);
+    if (memberResult.error) setError('members.loadError');
+    if (warehouseResult.error) setError('members.loadError');
     const nextMembers = (memberResult.data ?? []) as RemoteMember[];
     setMembers(nextMembers);
-    setMemberWarehouseIds(Object.fromEntries(nextMembers.map((member) => [member.user_id, member.warehouse_ids])));
+    setMemberDrafts({});
+    setMemberErrors({});
     setWarehouses((warehouseResult.data ?? []) as RemoteWarehouse[]);
     setLoading(false);
   };
@@ -431,7 +442,7 @@ const SupabaseUsersPage: React.FC = () => {
     setNotice(null);
     const { data, error: invokeError } = await supabase.functions.invoke('admin-users', { body });
     if (invokeError) {
-      setError(invokeError.message);
+      setError('members.actionError');
       return null;
     }
     return data as Record<string, unknown>;
@@ -447,7 +458,7 @@ const SupabaseUsersPage: React.FC = () => {
     });
     if (!result) return;
     setInviteLink(typeof result.invitationUrl === 'string' ? result.invitationUrl : null);
-    setNotice(result.emailSent ? 'Lời mời đã được gửi qua email.' : 'Lời mời đã tạo. Sao chép liên kết bên dưới để gửi cho người nhận.');
+    setNotice({ key: result.emailSent ? 'members.sent' : 'members.created' });
     setInviteEmail('');
     setInviteWarehouseIds([]);
   };
@@ -456,7 +467,7 @@ const SupabaseUsersPage: React.FC = () => {
     member: RemoteMember,
     roleCode: RoleCode,
     status: 'active' | 'inactive',
-    warehouseIds = memberWarehouseIds[member.user_id] ?? member.warehouse_ids
+    warehouseIds = member.warehouse_ids
   ) => {
     const result = await invokeAdminUsers({
       action: 'update',
@@ -466,7 +477,7 @@ const SupabaseUsersPage: React.FC = () => {
       warehouseIds: roleCode === 'ADMIN' ? [] : warehouseIds,
     });
     if (result) {
-      setNotice('Đã cập nhật thành viên.');
+      setNotice({ key: 'members.updated' });
       await load();
     }
   };
@@ -474,7 +485,7 @@ const SupabaseUsersPage: React.FC = () => {
   const transferOwner = async (member: RemoteMember) => {
     const result = await invokeAdminUsers({ action: 'transfer-owner', userId: member.user_id });
     if (result) {
-      setNotice(`Đã chuyển quyền sở hữu cho ${member.full_name || member.email}.`);
+      setNotice({ key: 'members.transferred', name: member.full_name || member.email });
       await load();
     }
   };
@@ -485,66 +496,234 @@ const SupabaseUsersPage: React.FC = () => {
       : [...current, warehouseId]);
   };
 
-  const toggleMemberWarehouse = (memberId: string, warehouseId: string) => {
-    setMemberWarehouseIds((current) => {
-      const assigned = current[memberId] ?? [];
-      return {
-        ...current,
-        [memberId]: assigned.includes(warehouseId)
-          ? assigned.filter((id) => id !== warehouseId)
-          : [...assigned, warehouseId],
-      };
-    });
+  const getDraft = (member: RemoteMember): MemberDraft =>
+    memberDrafts[member.user_id] ?? { roleCode: member.role_code, warehouseIds: member.warehouse_ids };
+
+  const setMemberRole = (member: RemoteMember, roleCode: RoleCode) => {
+    const draft = getDraft(member);
+    setMemberDrafts((current) => ({ ...current, [member.user_id]: { ...draft, roleCode } }));
+    setMemberErrors((current) => ({ ...current, [member.user_id]: false }));
   };
 
-  if (loading) return <div className="p-6 text-sm text-slate-600">Đang tải thành viên...</div>;
+  const toggleMemberWarehouse = (member: RemoteMember, warehouseId: string) => {
+    const draft = getDraft(member);
+    setMemberDrafts((current) => {
+      const assigned = draft.warehouseIds;
+      return {
+        ...current,
+        [member.user_id]: {
+          ...draft,
+          warehouseIds: assigned.includes(warehouseId)
+            ? assigned.filter((id) => id !== warehouseId)
+            : [...assigned, warehouseId],
+        },
+      };
+    });
+    setMemberErrors((current) => ({ ...current, [member.user_id]: false }));
+  };
+
+  const discardMemberChanges = (memberId: string) => {
+    setMemberDrafts((current) => {
+      const { [memberId]: _discarded, ...rest } = current;
+      return rest;
+    });
+    setMemberErrors((current) => ({ ...current, [memberId]: false }));
+  };
+
+  const hasDraftChanges = (member: RemoteMember, draft: MemberDraft) =>
+    draft.roleCode !== member.role_code
+      || draft.warehouseIds.length !== member.warehouse_ids.length
+      || draft.warehouseIds.some((id) => !member.warehouse_ids.includes(id));
+
+  const saveDraft = async (member: RemoteMember) => {
+    const draft = getDraft(member);
+    setSavingMemberId(member.user_id);
+    const result = await invokeAdminUsers({
+      action: 'update',
+      userId: member.user_id,
+      roleCode: draft.roleCode,
+      status: member.membership_status,
+      warehouseIds: draft.roleCode === 'ADMIN' ? [] : draft.warehouseIds,
+    });
+    if (result) {
+      setNotice({ key: 'members.updated' });
+      await load();
+    }
+    setSavingMemberId(null);
+  };
+
+  const requestSave = (member: RemoteMember) => {
+    const draft = getDraft(member);
+    if (draft.roleCode !== 'ADMIN' && draft.warehouseIds.length === 0) {
+      setMemberErrors((current) => ({ ...current, [member.user_id]: true }));
+      return;
+    }
+    if (draft.roleCode !== member.role_code) {
+      setPendingRoleSave(member);
+      return;
+    }
+    void saveDraft(member);
+  };
+
+  const confirmRoleSave = async () => {
+    if (!pendingRoleSave) return;
+    const member = pendingRoleSave;
+    setPendingRoleSave(null);
+    await saveDraft(member);
+  };
+
+  if (loading) return <div className="p-6 text-sm text-slate-600">{t('members.loading')}</div>;
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Thành viên và quyền" description={`Quản lý thành viên của ${user?.company?.name ?? 'công ty'}.`} />
-      {error && <Alert variant="error" message={error} dismissible onDismiss={() => setError(null)} />}
-      {notice && <Alert variant="success" message={notice} dismissible onDismiss={() => setNotice(null)} />}
+      <PageHeader title={t('members.title')} description={t('members.description', { company: user?.company?.name ?? t('members.company') })} />
+      {error && <Alert variant="error" message={t(error)} dismissible onDismiss={() => setError(null)} />}
+      {notice && <Alert variant="success" message={t(notice.key, notice.name ? { name: notice.name } : undefined)} dismissible onDismiss={() => setNotice(null)} />}
 
       <Card padding="md" className="space-y-4">
-        <div><h2 className="font-semibold text-slate-900">Mời thành viên</h2><p className="text-sm text-slate-600 mt-1">Người nhận đăng ký hoặc đăng nhập bằng đúng email rồi chấp nhận lời mời.</p></div>
+        <div><h2 className="font-semibold text-slate-900">{t('members.invite')}</h2><p className="text-sm text-slate-600 mt-1">{t('members.inviteHelp')}</p></div>
         <form onSubmit={sendInvitation} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-          <Input label="Email" type="email" value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} required placeholder="member@example.com" />
-          <Select label="Vai trò" value={inviteRole} onChange={(event) => setInviteRole(event.target.value as RoleCode)} options={roles.map((role) => ({ value: role, label: role }))} />
-          <Button type="submit">Tạo lời mời</Button>
+          <Input label={t('auth.email')} type="email" value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} required placeholder="member@example.com" />
+          <Select label={t('members.role')} value={inviteRole} onChange={(event) => setInviteRole(event.target.value as RoleCode)} options={roleOptions} />
+          <Button type="submit">{t('members.createInvite')}</Button>
         </form>
         {inviteRole !== 'ADMIN' && warehouses.length > 0 && (
           <div className="flex flex-wrap gap-3 border-t border-slate-200 pt-3">
             {warehouses.map((warehouse) => <label key={warehouse.id} className="inline-flex gap-2 text-sm text-slate-700"><input type="checkbox" checked={inviteWarehouseIds.includes(warehouse.id)} onChange={() => toggleInviteWarehouse(warehouse.id)} />{warehouse.code}</label>)}
           </div>
         )}
-        {inviteLink && <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm"><p className="font-medium text-slate-800">Liên kết lời mời</p><a href={inviteLink} className="text-blue-700 break-all underline">{inviteLink}</a></div>}
+        {inviteLink && <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm"><p className="font-medium text-slate-800">{t('members.inviteLink')}</p><a href={inviteLink} className="text-blue-700 break-all underline">{inviteLink}</a></div>}
       </Card>
 
       <Card padding="md" className="overflow-x-auto">
         <table className="min-w-full text-sm">
-          <thead className="border-b border-slate-200 text-left text-slate-500"><tr><th className="py-3 pr-4">Thành viên</th><th className="py-3 pr-4">Vai trò</th><th className="py-3 pr-4">Kho</th><th className="py-3 pr-4">Trạng thái</th><th className="py-3">Thao tác</th></tr></thead>
+          <thead className="border-b border-slate-200 text-left text-slate-500"><tr><th className="py-3 pr-4">{t('members.member')}</th><th className="py-3 pr-4">{t('members.role')}</th><th className="py-3 pr-4">{t('members.warehouse')}</th><th className="py-3 pr-4">{t('members.status')}</th><th className="py-3">{t('members.actions')}</th></tr></thead>
           <tbody>
-            {members.map((member) => (
-              <tr key={member.user_id} className="border-b border-slate-100 align-top">
-                <td className="py-3 pr-4"><p className="font-medium text-slate-900">{member.full_name || 'Chưa đặt tên'} {member.is_owner && <span className="text-xs text-blue-700">Owner</span>}</p><p className="text-xs text-slate-500">{member.email}</p></td>
-                <td className="py-3 pr-4"><select aria-label={`Vai trò ${member.email}`} defaultValue={member.role_code} onChange={(event) => void updateMember(member, event.target.value as RoleCode, member.membership_status)} className="rounded border border-slate-300 px-2 py-1"><option value="ADMIN">ADMIN</option><option value="WAREHOUSE_MANAGER">WAREHOUSE_MANAGER</option><option value="WAREHOUSE_STAFF">WAREHOUSE_STAFF</option><option value="VIEWER">VIEWER</option></select></td>
-                <td className="py-3 pr-4 text-slate-600">
-                  {member.role_code === 'ADMIN' ? 'Tất cả kho' : (
-                    <div className="space-y-1.5 min-w-44">
-                      {warehouses.map((warehouse) => <label key={warehouse.id} className="flex items-center gap-2 text-xs"><input type="checkbox" checked={(memberWarehouseIds[member.user_id] ?? []).includes(warehouse.id)} onChange={() => toggleMemberWarehouse(member.user_id, warehouse.id)} />{warehouse.code}</label>)}
-                    </div>
-                  )}
-                </td>
-                <td className="py-3 pr-4"><Button size="sm" variant={member.membership_status === 'active' ? 'ghost' : 'secondary'} onClick={() => void updateMember(member, member.role_code, member.membership_status === 'active' ? 'inactive' : 'active')}>{member.membership_status === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt'}</Button></td>
-                <td className="py-3 space-y-2">
-                  {member.role_code !== 'ADMIN' && <Button size="sm" variant="secondary" onClick={() => void updateMember(member, member.role_code, member.membership_status)}>Lưu kho</Button>}
-                  {user?.isOwner && !member.is_owner && member.role_code === 'ADMIN' && member.membership_status === 'active' && <Button size="sm" variant="secondary" onClick={() => void transferOwner(member)}>Chuyển Owner</Button>}
-                </td>
-              </tr>
-            ))}
+            {members.map((member) => {
+              const draft = getDraft(member);
+              const hasChanges = hasDraftChanges(member, draft);
+              const isSaving = savingMemberId === member.user_id;
+              const isRoleChanged = draft.roleCode !== member.role_code;
+              const requiresWarehouse = draft.roleCode !== 'ADMIN';
+
+              return (
+                <tr key={member.user_id} className="border-b border-slate-100 align-top">
+                  <td className="py-3 pr-4">
+                    <p className="font-medium text-slate-900">{member.full_name || t('members.unnamed')} {member.is_owner && <span className="text-xs text-blue-700">{t('members.owner')}</span>}</p>
+                    <p className="text-xs text-slate-500">{member.email}</p>
+                  </td>
+                  <td className="py-3 pr-4 min-w-64">
+                    <Select
+                      id={`member-role-${member.user_id}`}
+                      aria-label={t('members.memberRole', { email: member.email })}
+                      value={draft.roleCode}
+                      size="sm"
+                      disabled={member.is_owner || isSaving}
+                      onChange={(event) => setMemberRole(member, event.target.value as RoleCode)}
+                      options={roleOptions}
+                    />
+                    {hasChanges && <p className="mt-1.5 text-[11px] font-medium text-amber-700">{t('members.unsaved')}</p>}
+                    {isRoleChanged && draft.roleCode === 'ADMIN' && (
+                      <Alert
+                        variant="warning"
+                        title={t('members.adminWarning')}
+                        message={t('members.adminHelp')}
+                        className="mt-2 p-3"
+                      />
+                    )}
+                    {isRoleChanged && draft.roleCode !== 'ADMIN' && (
+                      <p className="mt-1.5 text-[11px] leading-relaxed text-slate-600">
+                        {draft.roleCode === 'VIEWER' ? t('members.viewerHelp') : t('members.assignedHelp')}
+                      </p>
+                    )}
+                    {member.is_owner && <p className="mt-1.5 text-[11px] text-slate-500">{t('members.ownerHelp')}</p>}
+                  </td>
+                  <td className="py-3 pr-4 text-slate-600 min-w-52">
+                    {!requiresWarehouse ? (
+                      <div className="rounded-md border border-blue-100 bg-blue-50 px-2.5 py-2 text-xs font-medium text-blue-800">{t('members.allWarehouses')}</div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        {warehouses.map((warehouse) => (
+                          <label key={warehouse.id} className="flex items-center gap-2 text-xs text-slate-700">
+                            <input
+                              type="checkbox"
+                              checked={draft.warehouseIds.includes(warehouse.id)}
+                              disabled={member.is_owner || isSaving}
+                              onChange={() => toggleMemberWarehouse(member, warehouse.id)}
+                            />
+                            {warehouse.code}
+                          </label>
+                        ))}
+                        {memberErrors[member.user_id] && <p role="alert" className="pt-1 text-xs font-medium text-red-600">{t('members.warehouseRequired')}</p>}
+                      </div>
+                    )}
+                  </td>
+                  <td className="py-3 pr-4">
+                    <Button
+                      size="sm"
+                      variant={member.membership_status === 'active' ? 'ghost' : 'secondary'}
+                      disabled={hasChanges || isSaving}
+                      onClick={() => void updateMember(member, member.role_code, member.membership_status === 'active' ? 'inactive' : 'active')}
+                    >
+                      {member.membership_status === 'active' ? t('members.disable') : t('members.enable')}
+                    </Button>
+                  </td>
+                  <td className="py-3 space-y-2 min-w-40">
+                    <Button size="sm" variant="secondary" loading={isSaving} disabled={!hasChanges || member.is_owner} onClick={() => requestSave(member)}>{t('members.save')}</Button>
+                    {hasChanges && <Button size="sm" variant="ghost" disabled={isSaving} onClick={() => discardMemberChanges(member.user_id)}>{t('members.discard')}</Button>}
+                    {user?.isOwner && !member.is_owner && member.role_code === 'ADMIN' && member.membership_status === 'active' && <Button size="sm" variant="secondary" disabled={hasChanges || isSaving} onClick={() => void transferOwner(member)}>{t('members.transfer')}</Button>}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </Card>
+
+      {pendingRoleSave && (() => {
+        const draft = getDraft(pendingRoleSave);
+        const isAdminPromotion = draft.roleCode === 'ADMIN';
+        return (
+          <Modal
+            open
+            onClose={() => setPendingRoleSave(null)}
+            closeOnBackdrop={false}
+            title={t('members.confirmTitle')}
+            description={t('members.confirmHelp')}
+            actions={
+              <>
+                <Button variant="secondary" onClick={() => setPendingRoleSave(null)}>{t('common.cancel')}</Button>
+                <Button onClick={() => void confirmRoleSave()}>{t('members.confirmSave')}</Button>
+              </>
+            }
+          >
+            <div className="space-y-4 text-sm">
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <p className="font-semibold text-slate-900">{pendingRoleSave.full_name || pendingRoleSave.email}</p>
+                {pendingRoleSave.full_name && <p className="mt-0.5 text-xs text-slate-600">{pendingRoleSave.email}</p>}
+              </div>
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-lg border border-slate-200 p-3">
+                <div><p className="text-xs text-slate-500">{t('members.currentRole')}</p><p className="mt-1 font-semibold text-slate-900">{t(`topbar.roleShort.${pendingRoleSave.role_code}`)}</p></div>
+                <span className="text-slate-400" aria-hidden="true">→</span>
+                <div><p className="text-xs text-slate-500">{t('members.newRole')}</p><p className="mt-1 font-semibold text-slate-900">{t(`topbar.roleShort.${draft.roleCode}`)}</p></div>
+              </div>
+              {isAdminPromotion ? (
+                <Alert
+                  variant="warning"
+                  title={t('members.grantAdmin')}
+                  message={t('members.grantHelp')}
+                />
+              ) : (
+                <Alert
+                  variant="info"
+                  title={t('members.scope')}
+                  message={t('members.scopeHelp', { count: draft.warehouseIds.length })}
+                />
+              )}
+            </div>
+          </Modal>
+        );
+      })()}
     </div>
   );
 };

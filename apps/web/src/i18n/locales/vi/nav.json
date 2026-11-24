@@ -1,0 +1,26 @@
+{
+  "dashboard": "Bảng điều khiển",
+  "products": "Sản phẩm",
+  "warehouses": "Kho hàng",
+  "categories": "Danh mục",
+  "units": "Đơn vị tính",
+  "suppliers": "Nhà cung cấp",
+  "stockIn": "Nhập kho",
+  "stockOut": "Xuất kho",
+  "stocktaking": "Kiểm kê",
+  "reports": "Báo cáo",
+  "alerts": "Cảnh báo",
+  "users": "Người dùng & Quyền",
+  "settings": "Cài đặt",
+  "designSystem": "Hệ thống Giao diện",
+  "collapse": "Thu gọn thanh bên",
+  "expand": "Mở rộng thanh bên",
+  "menu": "Điều hướng chính",
+  "systemOnline": "Hệ thống sẵn sàng",
+  "sections": {
+    "operations": "VẬN HÀNH KHO",
+    "masterData": "DANH MỤC HÀNG HÓA",
+    "insights": "BÁO CÁO & GIÁM SÁT",
+    "admin": "HỆ THỐNG & CẤU HÌNH"
+  }
+}

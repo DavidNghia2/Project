@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from '../../../i18n';
+import { getIntlLocale, useTranslation } from '../../../i18n';
 import { Calendar, Link2, Pencil } from 'lucide-react';
 import { Modal, Button, Badge } from '../../../design-system';
 import type { MasterStatus, ProductReferenceSummary } from '../types';
@@ -45,7 +45,7 @@ export const MasterDataDetailModal: React.FC<MasterDataDetailModalProps> = ({
   const formatDate = (iso?: string) => {
     if (!iso) return '—';
     try {
-      return new Date(iso).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', {
+      return new Date(iso).toLocaleDateString(getIntlLocale(language), {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',

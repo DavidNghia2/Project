@@ -1,0 +1,7 @@
+{
+  "code": "404",
+  "title": "Page Not Found",
+  "desc": "The requested route does not exist or has been moved to another location.",
+  "backHome": "Return to Dashboard",
+  "errorBadge": "ERROR 404"
+}

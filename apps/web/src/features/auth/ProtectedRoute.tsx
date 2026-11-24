@@ -5,6 +5,7 @@ import { useAuth } from './useAuth';
 import { Button, Spinner } from '../../design-system';
 import { useTranslation } from '../../i18n';
 import type { RoleCode } from '../users-rbac/types';
+import { authenticationUrl } from './invitationRedirect';
 
 export interface ProtectedRouteProps {
   children?: React.ReactNode;
@@ -35,7 +36,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={redirectTo} replace state={{ from: location }} />;
+    const destination = location.pathname === '/accept-invitation' ? location.pathname + location.search : null;
+    return <Navigate to={destination ? authenticationUrl('/login', destination) : redirectTo} replace state={{ from: location }} />;
   }
 
   if (allowedRoles && (!user?.role || !allowedRoles.includes(user.role))) {

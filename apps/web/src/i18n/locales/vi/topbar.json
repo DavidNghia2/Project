@@ -1,0 +1,36 @@
+{
+  "warehouse": "Kho đang làm việc",
+  "allWarehouses": "Tất cả các kho",
+  "warehouseHanoi": "Kho Tổng Hà Nội (WH-01)",
+  "warehouseDanang": "Kho Đà Nẵng (WH-02)",
+  "warehouseSaigon": "Kho Trung Chuyển HCM (WH-03)",
+  "notifications": "Thông báo",
+  "notificationsCount": "{count} thông báo chưa đọc",
+  "markAllRead": "Đánh dấu đã đọc tất cả",
+  "noNotifications": "Không có thông báo mới",
+  "profile": "Hồ sơ người dùng",
+  "accountSettings": "Thiết lập tài khoản",
+  "systemAudit": "Bảo mật & Hoạt động",
+  "logout": "Đăng xuất",
+  "adminUser": "Nguyễn Quản Trị",
+  "adminRole": "Quản trị viên hệ thống",
+  "searchPlaceholder": "Tìm nhanh SKU, mã phiếu, vị trí...",
+  "openMenuAria": "Mở trình đơn điều hướng",
+  "breadcrumbAria": "Đường dẫn điều hướng",
+  "userMenuAria": "Menu tài khoản người dùng",
+  "logoutMockAlert": "Đã kích hoạt hành động Đăng xuất (mẫu)",
+  "roleShort": {
+    "ADMIN": "Quản trị",
+    "WAREHOUSE_MANAGER": "Quản lý",
+    "WAREHOUSE_STAFF": "Nhân viên",
+    "VIEWER": "Người xem"
+  },
+  "mockNotifs": {
+    "n1Title": "5 sản phẩm chạm ngưỡng tồn tối thiểu tại Kho Tổng Hà Nội",
+    "n1Time": "12 phút trước",
+    "n2Title": "Phiếu nhập kho PO-2026-089 vừa gửi duyệt",
+    "n2Time": "45 phút trước",
+    "n3Title": "Đợt kiểm kê tháng #STK-04 đã hoàn tất điều chỉnh",
+    "n3Time": "2 giờ trước"
+  }
+}

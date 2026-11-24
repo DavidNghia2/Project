@@ -18,6 +18,7 @@ export interface AuthUser {
   company: AuthCompany | null;
   isOwner: boolean;
   profileStatus: 'active' | 'inactive';
+  accessStatus?: 'ready' | 'no-company' | 'inactive' | 'suspended';
 }
 
 export interface AuthSession {

@@ -161,6 +161,15 @@ describe('Master Data Pages Component Integration', () => {
      4. SUPPLIERS PAGE
      ======================================================================== */
   describe('SuppliersPage', () => {
+    it('renders Chinese supplier controls and payment terms while retaining supplier codes', () => {
+      localStorage.setItem('smart_inventory_language', 'zh-CN');
+      renderWithI18n(<SuppliersPage />);
+      expect(screen.getByRole('button', { name: '添加供应商' })).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/按供应商编码/)).toBeInTheDocument();
+      expect(screen.getByRole('columnheader', { name: '付款条件' })).toBeInTheDocument();
+      expect(screen.getAllByText('30 天账期').length).toBeGreaterThan(1);
+      expect(screen.getByText('SUP-LOGI-VN')).toBeInTheDocument();
+    });
     it('validates email format, prevents duplicate supplier, and blocks referenced delete until acknowledged', async () => {
       const user = userEvent.setup();
       renderWithI18n(<SuppliersPage />);

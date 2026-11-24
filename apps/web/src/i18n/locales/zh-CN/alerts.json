@@ -1,0 +1,22 @@
+{
+  "rescanBtn": "重新检查库存阈值",
+  "warningTitle": "检测到 {count} 项商品低于安全库存阈值",
+  "warningMessage": "系统检测到可用库存低于设定的最低补货阈值。请检查并安排补货。",
+  "colSku": "SKU / 条形码",
+  "colItem": "商品名称",
+  "colWarehouse": "仓库范围",
+  "colStockThreshold": "现有库存 / 阈值",
+  "colUrgency": "紧急程度",
+  "colStatus": "状态",
+  "colAction": "操作",
+  "thresholdUnit": "/ 最低 {threshold}",
+  "severity": {
+    "critical": "严重",
+    "high": "高",
+    "medium": "中"
+  },
+  "statusActive": "未处理",
+  "statusAck": "已确认",
+  "actionAck": "确认",
+  "actionReorder": "创建补货采购单"
+}

@@ -1,0 +1,13 @@
+{
+  "makerCheckerTitle": "Quy tắc phê duyệt Maker-Checker",
+  "makerCheckerDesc": "Ràng buộc người tạo phiếu không được tự phê duyệt giao dịch của chính mình.",
+  "ruleOwnOrderLabel": "Bắt buộc Manager khác duyệt phiếu do Manager tạo",
+  "ruleOwnOrderHint": "Theo baseline an toàn dữ liệu của tài liệu đặc tả đồ án tốt nghiệp.",
+  "ruleNegativeStockLabel": "Chặn hoàn tất giao dịch nếu phát hiện tồn kho âm",
+  "ruleNegativeStockHint": "Database transaction rollback tự động khi on-hand không đủ.",
+  "prefixesTitle": "Quy ước tiền tố mã chứng từ",
+  "prefixesDesc": "Cấu hình tiền tố tự động sinh cho các loại phiếu.",
+  "prefixIn": "Tiền tố phiếu nhập (Stock-In)",
+  "prefixOut": "Tiền tố phiếu xuất (Stock-Out)",
+  "prefixStk": "Tiền tố phiên kiểm kê (Stocktaking)"
+}

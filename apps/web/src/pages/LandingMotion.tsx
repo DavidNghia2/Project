@@ -16,6 +16,7 @@ import {
   staggerGridVariants,
   staggerItemVariants,
 } from './landingMotionPrimitives';
+import { getIntlLocale, useTranslation } from '../i18n';
 
 export interface LandingMotionRootProps {
   children: React.ReactNode;
@@ -54,6 +55,7 @@ export const AnimatedStatCounter: React.FC<AnimatedStatCounterProps> = ({
   const ref = useRef<HTMLSpanElement>(null);
   const prevTargetRef = useRef<number>(0);
   const shouldReduceMotion = useReducedMotion();
+  const { language } = useTranslation();
   const isInView = useInView(ref, { once: true, amount: 0.25 });
   const shouldStart = trigger === 'mount' || isInView;
   const [displayValue, setDisplayValue] = useState<number>(() =>
@@ -84,7 +86,7 @@ export const AnimatedStatCounter: React.FC<AnimatedStatCounterProps> = ({
     return () => controls.stop();
   }, [duration, shouldReduceMotion, shouldStart, target]);
 
-  const formatNum = (n: number) => (useLocaleGrouping ? n.toLocaleString('en-US') : String(n));
+  const formatNum = (n: number) => (useLocaleGrouping ? n.toLocaleString(getIntlLocale(language)) : String(n));
   const finalString = `${formatNum(target)}${suffix}`;
   const currentString = `${formatNum(shouldReduceMotion ? target : displayValue)}${suffix}`;
 

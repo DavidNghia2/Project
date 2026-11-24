@@ -1,0 +1,11 @@
+{
+  "dismiss": "Dismiss alert",
+  "success_title": "Operation Completed",
+  "success_msg": "The stock adjustments have been successfully recorded in the warehouse ledger.",
+  "warning_title": "Low Stock Alert",
+  "warning_msg": "5 SKUs are currently below their minimum safety stock threshold. Reorder recommended.",
+  "error_title": "Sync Operation Failed",
+  "error_msg": "Unable to synchronize inventory data with the ERP service. Please verify network connectivity and retry.",
+  "info_title": "Scheduled Maintenance",
+  "info_msg": "System scheduled maintenance is set for Sunday at 02:00 AM UTC. Warehouse intake will be queued."
+}

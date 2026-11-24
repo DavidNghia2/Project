@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { authenticationUrl, invitationDestination } from './invitationRedirect';
 import { Check, Eye, EyeOff, Lock, Mail, User, UserPlus } from 'lucide-react';
 import { useAuth } from './useAuth';
 import { validateRegisterFields, type RegisterFormErrors } from './validators';
@@ -12,6 +13,8 @@ export const RegisterPage: React.FC = () => {
   const { t } = useTranslation();
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const invitation = invitationDestination(params.get('next'));
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,7 +47,7 @@ export const RegisterPage: React.FC = () => {
 
     setSubmitting(true);
     try {
-      const { user, error } = await signUp({
+      const { user, session, error } = await signUp({
         fullName,
         email,
         password,
@@ -59,7 +62,11 @@ export const RegisterPage: React.FC = () => {
         return;
       }
 
-      navigate('/login', {
+      if (session) {
+        navigate(invitation ?? '/onboarding', { replace: true });
+        return;
+      }
+      navigate(invitation ? authenticationUrl('/login', invitation) : '/login', {
         replace: true,
         state: {
           registeredEmail: user.email,
@@ -268,7 +275,7 @@ export const RegisterPage: React.FC = () => {
         <div className="pt-4 border-t border-[#E2E8F0] text-center text-sm text-[#475569]">
           <span>{t('auth.hasAccount')} </span>
           <Link
-            to="/login"
+            to={invitation ? authenticationUrl('/login', invitation) : '/login'}
             className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded px-1 py-1 inline-block"
           >
             {t('auth.signInHere')}

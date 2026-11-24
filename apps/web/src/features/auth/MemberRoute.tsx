@@ -6,7 +6,7 @@ export const MemberRoute: React.FC = () => {
   const { user } = useAuth();
 
   if (!user?.company || !user.role) {
-    return <Navigate to="/onboarding" replace />;
+    return <Navigate to="/account" replace />;
   }
 
   return <Outlet />;

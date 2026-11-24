@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint",
     "test": "vitest run",
+    "check:locales": "node scripts/check-locales.mjs",
     "test:browser": "node test-browser.mjs",
     "preview": "vite preview"
   },

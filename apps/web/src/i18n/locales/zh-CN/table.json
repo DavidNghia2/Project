@@ -1,0 +1,14 @@
+{
+  "no_data": "表格暂无数据",
+  "showing_entries": "显示第 {from} 至 {to} 条，共 {total} 条",
+  "previous": "上一页",
+  "next": "下一页",
+  "rows_per_page": "每页行数",
+  "select_all": "选择所有行",
+  "select_row": "选择此行",
+  "selected_count": "已选择 {count} 项",
+  "loadingAria": "正在加载表格数据",
+  "noDataTitle": "暂无数据",
+  "noDataDesc": "目前没有可显示的记录。",
+  "selectRowAria": "选择第 {index} 行"
+}

@@ -15,7 +15,7 @@ export interface AuthContextValue {
   isAuthenticated: boolean;
   isMockMode: boolean;
   signIn: (credentials: SignInCredentials) => Promise<AuthError | null>;
-  signUp: (credentials: SignUpCredentials) => Promise<{ user: AuthUser | null; error: AuthError | null }>;
+  signUp: (credentials: SignUpCredentials) => Promise<{ user: AuthUser | null; session: AuthSession | null; error: AuthError | null }>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
   hasRole: (roles: RoleCode | readonly RoleCode[]) => boolean;
@@ -34,6 +34,7 @@ export const DEFAULT_AUTH_CONTEXT_VALUE: AuthContextValue = {
   }),
   signUp: async () => ({
     user: null,
+    session: null,
     error: {
       code: 'NETWORK_ERROR',
       messageKey: 'auth.errors.networkError',

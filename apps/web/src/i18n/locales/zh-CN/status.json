@@ -1,0 +1,10 @@
+{
+  "active": "启用",
+  "inactive": "停用",
+  "draft": "草稿",
+  "pending": "待处理",
+  "submitted": "已提交",
+  "approved": "已批准",
+  "rejected": "已拒绝",
+  "completed": "已完成"
+}

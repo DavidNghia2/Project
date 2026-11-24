@@ -1,0 +1,36 @@
+{
+  "warehouse": "Active Warehouse",
+  "allWarehouses": "All Warehouses",
+  "warehouseHanoi": "Hanoi Main Hub (WH-01)",
+  "warehouseDanang": "Danang Logistics (WH-02)",
+  "warehouseSaigon": "HCM Distribution Center (WH-03)",
+  "notifications": "Notifications",
+  "notificationsCount": "{count} unread notifications",
+  "markAllRead": "Mark all as read",
+  "noNotifications": "No unread notifications",
+  "profile": "User Profile",
+  "accountSettings": "Account Settings",
+  "systemAudit": "Security & Audit",
+  "logout": "Sign Out",
+  "adminUser": "Admin Supervisor",
+  "adminRole": "System Administrator",
+  "searchPlaceholder": "Search SKUs, receipts, orders...",
+  "openMenuAria": "Open navigation menu",
+  "breadcrumbAria": "Breadcrumb",
+  "userMenuAria": "User account menu",
+  "logoutMockAlert": "Logout action triggered (prototype mock)",
+  "roleShort": {
+    "ADMIN": "Admin",
+    "WAREHOUSE_MANAGER": "Manager",
+    "WAREHOUSE_STAFF": "Staff",
+    "VIEWER": "Viewer"
+  },
+  "mockNotifs": {
+    "n1Title": "5 SKUs are below safety reorder threshold (Hanoi Main Hub)",
+    "n1Time": "12m ago",
+    "n2Title": "Stock-In order PO-2026-089 submitted for Manager approval",
+    "n2Time": "45m ago",
+    "n3Title": "Monthly Stocktaking batch #STK-04 reconciliation finalized",
+    "n3Time": "2h ago"
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback, type ReactNode } from 'react';
-import { type Language, type TranslationKey } from './translations';
+import { type TranslationKey } from './translations';
+import { isLanguage, SUPPORTED_LANGUAGES, type Language } from './languages';
 import { translateKey } from './translate';
 import { I18nContext } from './context';
 
@@ -9,7 +10,7 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [language, setLanguageState] = useState<Language>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === 'vi' || saved === 'en') {
+      if (isLanguage(saved)) {
         return saved;
       }
     } catch {
@@ -27,20 +28,9 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  const toggleLanguage = useCallback(() => {
-    setLanguageState((prev) => {
-      const next = prev === 'en' ? 'vi' : 'en';
-      try {
-        localStorage.setItem(STORAGE_KEY, next);
-      } catch {
-        // Ignore
-      }
-      return next;
-    });
-  }, []);
-
   useEffect(() => {
     document.documentElement.lang = language;
+    document.documentElement.dir = SUPPORTED_LANGUAGES.find((item) => item.code === language)!.direction;
   }, [language]);
 
   const t = useMemo(() => {
@@ -49,8 +39,8 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [language]);
 
   const value = useMemo(
-    () => ({ language, setLanguage, toggleLanguage, t }),
-    [language, setLanguage, toggleLanguage, t]
+    () => ({ language, setLanguage, t }),
+    [language, setLanguage, t]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

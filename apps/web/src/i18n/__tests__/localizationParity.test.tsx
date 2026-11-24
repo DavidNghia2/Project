@@ -2,9 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import en from '../locales/en.json';
-import vi from '../locales/vi.json';
-import { I18nProvider, useTranslation } from '../index';
+import { I18nProvider, LanguageSelect, translations, useTranslation } from '../index';
 import { translateKey } from '../translate';
 import { RolePreviewProvider } from '../../features/users-rbac';
 import { AppLayout } from '../../layouts/AppLayout';
@@ -50,48 +48,54 @@ const RAW_KEY_PATTERN =
   /(?<!@)\b(?:common|status|table|validation|emptyState|alert|nav|topbar|notFound|pages|demo|layout|domain|dashboard|alerts|stocktaking|settings|products|masterData|stockOps|reports|usersRbac|auth|landing)\.[a-zA-Z0-9_]+/;
 
 const LanguageProbe: React.FC = () => {
-  const { language, toggleLanguage, t } = useTranslation();
+  const { language, t } = useTranslation();
   return (
     <div>
       <span data-testid="probe-lang">{language}</span>
       <span data-testid="probe-sample">{t('pages.dashboardTitle')}</span>
-      <button type="button" onClick={toggleLanguage}>
-        toggle-probe
-      </button>
+      <LanguageSelect id="probe-language" />
     </div>
   );
 };
 
-describe('Bilingual Localization Integrity & Parity (EN <-> VI)', () => {
+describe('Localization integrity (EN, VI, ZH-CN)', () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.lang = '';
   });
 
-  it('maintains 100% leaf-key, non-empty string, and placeholder parity between en.json and vi.json', () => {
-    const enFlat = flattenKeys(en as Record<string, unknown>);
-    const viFlat = flattenKeys(vi as Record<string, unknown>);
+  it('maintains leaf-key, non-empty string, and placeholder parity in all locale files', () => {
+    const enFlat = flattenKeys(translations.en as Record<string, unknown>);
+    const viFlat = flattenKeys(translations.vi as Record<string, unknown>);
+    const zhFlat = flattenKeys(translations['zh-CN'] as Record<string, unknown>);
 
     const enKeys = Object.keys(enFlat).sort();
     const viKeys = Object.keys(viFlat).sort();
+    const zhKeys = Object.keys(zhFlat).sort();
 
     expect(enKeys.length).toBeGreaterThan(1200);
     expect(enKeys).toEqual(viKeys);
+    expect(enKeys).toEqual(zhKeys);
 
     for (const key of enKeys) {
       const enVal = enFlat[key];
       const viVal = viFlat[key];
+      const zhVal = zhFlat[key];
       expect(typeof enVal).toBe('string');
       expect(typeof viVal).toBe('string');
+      expect(typeof zhVal).toBe('string');
       expect((enVal as string).trim().length).toBeGreaterThan(0);
       expect((viVal as string).trim().length).toBeGreaterThan(0);
+      expect((zhVal as string).trim().length).toBeGreaterThan(0);
       expect(extractPlaceholders(enVal as string)).toEqual(extractPlaceholders(viVal as string));
+      expect(extractPlaceholders(enVal as string)).toEqual(extractPlaceholders(zhVal as string));
       expect(translateKey('en', key)).not.toBe(key);
       expect(translateKey('vi', key)).not.toBe(key);
+      expect(translateKey('zh-CN', key)).not.toBe(key);
     }
   });
 
-  it('persists selected language to localStorage, updates html lang, and toggles live across layout and routes', async () => {
+  it('persists selected language and updates html lang and translated text', async () => {
     const user = userEvent.setup();
     render(
       <I18nProvider>
@@ -103,15 +107,34 @@ describe('Bilingual Localization Integrity & Parity (EN <-> VI)', () => {
     expect(screen.getByTestId('probe-sample')).toHaveTextContent('Warehouse Dashboard');
     expect(document.documentElement.lang).toBe('en');
 
-    await user.click(screen.getByRole('button', { name: 'toggle-probe' }));
+    const selector = screen.getByRole('combobox', { name: /Switch Language/i });
+    await user.selectOptions(selector, 'vi');
 
     expect(screen.getByTestId('probe-lang')).toHaveTextContent('vi');
     expect(screen.getByTestId('probe-sample')).toHaveTextContent('Bảng Điều Khiển Quản Lý Kho');
     expect(localStorage.getItem('smart_inventory_language')).toBe('vi');
     expect(document.documentElement.lang).toBe('vi');
+
+    await user.selectOptions(selector, 'zh-CN');
+    expect(screen.getByTestId('probe-lang')).toHaveTextContent('zh-CN');
+    expect(screen.getByTestId('probe-sample')).toHaveTextContent('仓库仪表盘');
+    expect(localStorage.getItem('smart_inventory_language')).toBe('zh-CN');
+    expect(document.documentElement.lang).toBe('zh-CN');
   });
 
-  it('switches Topbar language pill cleanly inside AppLayout from EN -> VI -> EN', async () => {
+  it('restores Chinese after remount and rejects unsupported saved codes', () => {
+    localStorage.setItem('smart_inventory_language', 'zh-CN');
+    const first = render(<I18nProvider><LanguageProbe /></I18nProvider>);
+    expect(screen.getByTestId('probe-lang')).toHaveTextContent('zh-CN');
+    expect(screen.getByTestId('probe-sample')).toHaveTextContent('仓库仪表盘');
+    first.unmount();
+
+    localStorage.setItem('smart_inventory_language', 'fr');
+    render(<I18nProvider><LanguageProbe /></I18nProvider>);
+    expect(screen.getByTestId('probe-lang')).toHaveTextContent('en');
+  });
+
+  it('switches Topbar across all three languages', async () => {
     const user = userEvent.setup();
     render(
       <I18nProvider>
@@ -128,14 +151,20 @@ describe('Bilingual Localization Integrity & Parity (EN <-> VI)', () => {
     );
 
     expect(screen.getByRole('heading', { name: /Warehouse Dashboard/i })).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /Switch Language/i }));
+    const selector = screen.getByRole('combobox', { name: /Switch Language/i });
+    await user.selectOptions(selector, 'vi');
 
     expect(
       screen.getByRole('heading', { name: /Bảng Điều Khiển Quản Lý Kho/i })
     ).toBeInTheDocument();
     expect(localStorage.getItem('smart_inventory_language')).toBe('vi');
 
-    await user.click(screen.getByRole('button', { name: /Đổi ngôn ngữ/i }));
+    await user.selectOptions(selector, 'zh-CN');
+    expect(screen.getByRole('heading', { name: /仓库仪表盘/i })).toBeInTheDocument();
+    expect(localStorage.getItem('smart_inventory_language')).toBe('zh-CN');
+    expect(document.documentElement.lang).toBe('zh-CN');
+
+    await user.selectOptions(selector, 'en');
     expect(screen.getByRole('heading', { name: /Warehouse Dashboard/i })).toBeInTheDocument();
     expect(localStorage.getItem('smart_inventory_language')).toBe('en');
   });

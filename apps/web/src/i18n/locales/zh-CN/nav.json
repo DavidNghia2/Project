@@ -1,0 +1,26 @@
+{
+  "dashboard": "仪表盘",
+  "products": "商品",
+  "warehouses": "仓库",
+  "categories": "分类",
+  "units": "计量单位",
+  "suppliers": "供应商",
+  "stockIn": "入库",
+  "stockOut": "出库",
+  "stocktaking": "库存盘点",
+  "reports": "报表",
+  "alerts": "预警",
+  "users": "用户与角色",
+  "settings": "设置",
+  "designSystem": "界面设计系统",
+  "collapse": "收起侧边栏",
+  "expand": "展开侧边栏",
+  "menu": "主导航",
+  "systemOnline": "系统在线",
+  "sections": {
+    "operations": "仓库业务",
+    "masterData": "基础数据",
+    "insights": "分析与监控",
+    "admin": "系统管理"
+  }
+}

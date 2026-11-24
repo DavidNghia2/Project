@@ -51,6 +51,7 @@ async function toAuthSession(session: Session): Promise<AuthSession> {
     .maybeSingle();
 
   const profile = profileResult.data as ProfileRow | null;
+  if (profileResult.error || !profile) throw new Error('Unable to load your profile. Please retry.');
   const baseUser: AuthUser = {
     id: user.id,
     email: profile?.email ?? user.email ?? '',
@@ -60,10 +61,11 @@ async function toAuthSession(session: Session): Promise<AuthSession> {
     assignedWarehouses: [],
     company: null,
     isOwner: false,
-    profileStatus: profile?.status ?? 'inactive',
+    profileStatus: profile.status,
+    accessStatus: profile.status === 'active' ? 'no-company' : 'inactive',
   };
 
-  if (!profile || profile.status !== 'active') {
+  if (profile.status !== 'active') {
     return {
       user: baseUser,
       accessToken: session.access_token,
@@ -78,8 +80,9 @@ async function toAuthSession(session: Session): Promise<AuthSession> {
     .eq('user_id', user.id)
     .maybeSingle();
   const membership = membershipResult.data as MembershipRow | null;
+  if (membershipResult.error) throw new Error('Unable to load your membership. Please retry.');
 
-  if (!membership || membership.status !== 'active') {
+  if (!membership) {
     return {
       user: baseUser,
       accessToken: session.access_token,
@@ -88,16 +91,21 @@ async function toAuthSession(session: Session): Promise<AuthSession> {
     };
   }
 
+  if (membership.status !== 'active') {
+    return { user: { ...baseUser, accessStatus: 'inactive' }, accessToken: session.access_token, expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000, provider: 'supabase' };
+  }
+
   const companyResult = await supabase
     .from('companies')
     .select('id, name, slug, status')
     .eq('id', membership.company_id)
     .maybeSingle();
   const company = companyResult.data as CompanyRow | null;
+  if (companyResult.error) throw new Error('Unable to load your company. Please retry.');
 
   if (!company || company.status !== 'active') {
     return {
-      user: baseUser,
+      user: { ...baseUser, accessStatus: 'suspended' },
       accessToken: session.access_token,
       expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000,
       provider: 'supabase',
@@ -110,6 +118,7 @@ async function toAuthSession(session: Session): Promise<AuthSession> {
     .eq('company_id', company.id)
     .eq('status', 'active');
   const warehouses = (warehousesResult.data ?? []) as WarehouseRow[];
+  if (warehousesResult.error) throw new Error('Unable to load your warehouses. Please retry.');
 
   return {
     user: {
@@ -117,6 +126,7 @@ async function toAuthSession(session: Session): Promise<AuthSession> {
       role: membership.role_code,
       isOwner: membership.is_owner,
       company: { id: company.id, name: company.name, slug: company.slug },
+      accessStatus: 'ready',
       assignedWarehouses: warehouses.map((warehouse) => warehouse.code),
     },
     accessToken: session.access_token,
@@ -131,7 +141,8 @@ export class SupabaseAuthService implements IAuthService {
 
   async getSession(): Promise<AuthSession | null> {
     const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) return null;
+    if (error) throw error;
+    if (!data.session) return null;
     return toAuthSession(data.session);
   }
 

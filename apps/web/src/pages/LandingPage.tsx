@@ -11,7 +11,6 @@ import {
   Check,
   CheckCircle2,
   ClipboardCheck,
-  Globe,
   Menu,
   Minus,
   Package,
@@ -19,7 +18,7 @@ import {
   Warehouse,
   X,
 } from 'lucide-react';
-import { useTranslation } from '../i18n';
+import { LanguageSelect, useTranslation } from '../i18n';
 import { Badge, Button } from '../design-system';
 import { RBAC_ROLE_MATRIX, ROLE_META, ROLE_ORDER } from '../features/users-rbac/rbacMatrix';
 import type { RoleCode } from '../features/users-rbac/types';
@@ -110,7 +109,7 @@ const HERO_WAREHOUSE_SNAPSHOTS: Record<HeroWarehouseKey, HeroWarehouseSnapshot> 
 };
 
 export const LandingPage: React.FC = () => {
-  const { t, language, toggleLanguage } = useTranslation();
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [previewRole, setPreviewRole] = useState<RoleCode>('WAREHOUSE_MANAGER');
   const [heroWarehouse, setHeroWarehouse] = useState<HeroWarehouseKey>('ALL');
@@ -248,17 +247,7 @@ export const LandingPage: React.FC = () => {
 
             {/* Header Actions */}
             <div className="hidden md:flex items-center gap-2.5 shrink-0">
-              <button
-                type="button"
-                id="landing-lang-toggle"
-                onClick={toggleLanguage}
-                className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-lg border border-white/15 bg-white/[0.04] hover:bg-white/[0.09] active:scale-[0.985] text-xs font-semibold text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 transition-all duration-150 cursor-pointer"
-                title={t('demo.switch_lang')}
-                aria-label={t('demo.switch_lang')}
-              >
-                <Globe className="w-4 h-4 text-sky-400 shrink-0" />
-                <span className="uppercase">{language}</span>
-              </button>
+              <LanguageSelect id="landing-language" variant="dark" />
 
               <Link
                 id="landing-nav-login"
@@ -279,16 +268,7 @@ export const LandingPage: React.FC = () => {
 
             {/* Mobile Controls */}
             <div className="flex md:hidden items-center gap-2 shrink-0">
-              <button
-                type="button"
-                id="landing-mobile-lang-toggle"
-                onClick={toggleLanguage}
-                className="inline-flex items-center justify-center gap-1 min-h-[44px] min-w-[44px] px-2.5 rounded-lg border border-white/15 bg-white/[0.04] text-xs font-semibold text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-                aria-label={t('demo.switch_lang')}
-              >
-                <Globe className="w-4 h-4 text-sky-400 shrink-0" />
-                <span className="uppercase">{language}</span>
-              </button>
+              <LanguageSelect id="landing-mobile-language" className="min-h-11" variant="dark" />
 
               <button
                 type="button"
