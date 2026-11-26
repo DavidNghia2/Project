@@ -15,7 +15,7 @@ export function LanguageSelect({ id, className = '', variant = 'light' }: Langua
       value={language}
       onChange={(event) => setLanguage(event.target.value as Language)}
       aria-label={t('demo.switch_lang')}
-      className={`min-h-10 rounded-lg border px-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${variant === 'dark' ? 'border-white/20 bg-slate-900 text-white' : 'border-slate-300 bg-white text-slate-800'} ${className}`}
+      className={`min-h-11 sm:min-h-10 rounded-lg border px-2 text-base sm:text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${variant === 'dark' ? 'border-white/20 bg-slate-900 text-white' : 'border-slate-300 bg-white text-slate-800'} ${className}`}
     >
       {SUPPORTED_LANGUAGES.map(({ code, label }) => (
         <option key={code} value={code}>{label}</option>

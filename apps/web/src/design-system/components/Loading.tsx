@@ -60,7 +60,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     <div
       aria-hidden="true"
       style={style}
-      className={`animate-pulse bg-[#E2E8F0] ${roundedMap[rounded]} ${className}`}
+      className={`skeleton-shimmer ${roundedMap[rounded]} ${className}`}
     />
   );
 };

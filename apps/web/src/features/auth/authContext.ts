@@ -12,6 +12,8 @@ export interface AuthContextValue {
   session: AuthSession | null;
   user: AuthUser | null;
   isLoading: boolean;
+  recoveryStatus?: 'checking' | 'slow' | 'unavailable';
+  retrySession?: () => void;
   isAuthenticated: boolean;
   isMockMode: boolean;
   signIn: (credentials: SignInCredentials) => Promise<AuthError | null>;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { RotateCcw, Search, UserCheck } from 'lucide-react';
-import { Button, Input, Select } from '../../../design-system';
+import { Button, Input, Select, Tabs, TabsList, TabsTrigger } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_WAREHOUSES } from '../../master-data/mockData';
@@ -59,6 +59,27 @@ export const OrderFiltersBar: React.FC<OrderFiltersBarProps> = ({
 
   return (
     <div className="space-y-3">
+      {/* Quick Status Ink-Indicator Tab Bar (desktop/tablet fast workflow filter) */}
+      <div className="overflow-x-auto -mx-1 px-1">
+        <Tabs value={filters.status} onValueChange={onStatusChange} variant="ink">
+          <TabsList className="flex w-max min-w-full gap-1">
+            {statusOptions.map((opt) => (
+              <TabsTrigger
+                key={opt.value}
+                value={opt.value}
+                className={`px-3 py-2 text-xs font-medium whitespace-nowrap ${
+                  filters.status === opt.value
+                    ? 'text-[#2563EB] font-semibold'
+                    : 'text-[#64748B] hover:text-[#0F172A]'
+                }`}
+              >
+                {opt.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
         <div className="lg:col-span-4">
           <Input

@@ -3,7 +3,7 @@ import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
+import { Card, Button, Badge, Table, Alert, useToast, type Column } from '../design-system';
 import {
   useWarehouses,
   WAREHOUSE_REGIONS,
@@ -19,6 +19,7 @@ import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const WarehousesPage: React.FC = () => {
   const { t, language } = useTranslation();
+  const toast = useToast();
   const { activeRole, capabilities } = useRolePreview();
   const canManageWarehouses = capabilities.canManageWarehouses;
   const {
@@ -46,7 +47,7 @@ export const WarehousesPage: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
-    setToastMessage(msg);
+    if (!toast.success(msg)) setToastMessage(msg);
   };
 
   const handleOpenCreate = () => {

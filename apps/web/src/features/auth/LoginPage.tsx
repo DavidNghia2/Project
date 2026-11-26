@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { authenticationUrl, invitationDestination } from './invitationRedirect';
 import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react';
@@ -34,6 +34,10 @@ export const LoginPage: React.FC = () => {
     Boolean(state?.registrationSuccess)
   );
 
+  useEffect(() => {
+    document.title = `${t('auth.signIn')} — ${t('layout.brandName')}`;
+  }, [t]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerErrorKey(null);
@@ -42,6 +46,14 @@ export const LoginPage: React.FC = () => {
     const validationErrors = validateLoginFields(email, password);
     setFieldErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) {
+      const firstErrorId = validationErrors.email
+        ? 'login-input-email'
+        : validationErrors.password
+        ? 'login-input-password'
+        : null;
+      if (firstErrorId) {
+        document.getElementById(firstErrorId)?.focus();
+      }
       return;
     }
 
@@ -104,10 +116,12 @@ export const LoginPage: React.FC = () => {
         <form id="login-form" onSubmit={handleSubmit} noValidate className="space-y-4">
           <Input
             id="login-input-email"
+            name="email"
             type="email"
             label={t('auth.email')}
             placeholder={t('auth.emailPlaceholder')}
             autoComplete="email"
+            spellCheck={false}
             size="lg"
             required
             value={email}
@@ -118,11 +132,12 @@ export const LoginPage: React.FC = () => {
               }
             }}
             error={fieldErrors.email ? t(fieldErrors.email) : undefined}
-            prefix={<Mail className="w-4 h-4" />}
+            prefix={<Mail className="w-4 h-4" aria-hidden="true" />}
           />
 
           <Input
             id="login-input-password"
+            name="password"
             type={showPassword ? 'text' : 'password'}
             label={t('auth.password')}
             placeholder={t('auth.passwordPlaceholder')}
@@ -137,16 +152,16 @@ export const LoginPage: React.FC = () => {
               }
             }}
             error={fieldErrors.password ? t(fieldErrors.password) : undefined}
-            prefix={<Lock className="w-4 h-4" />}
+            prefix={<Lock className="w-4 h-4" aria-hidden="true" />}
             suffix={
               <button
                 type="button"
                 id="btn-toggle-login-password"
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                className="p-1.5 -mr-1 text-[#64748B] hover:text-[#0F172A] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
+                className="min-h-10 min-w-10 -mr-2 inline-flex items-center justify-center text-[#64748B] hover:text-[#0F172A] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
               </button>
             }
           />
@@ -159,7 +174,7 @@ export const LoginPage: React.FC = () => {
               size="lg"
               fullWidth
               loading={submitting}
-              iconLeft={!submitting ? <LogIn className="w-4 h-4" /> : undefined}
+              iconLeft={!submitting ? <LogIn className="w-4 h-4" aria-hidden="true" /> : undefined}
             >
               {submitting ? t('auth.signingIn') : t('auth.signIn')}
             </Button>
@@ -170,7 +185,7 @@ export const LoginPage: React.FC = () => {
           <span>{t('auth.noAccount')} </span>
           <Link
             to={invitation ? authenticationUrl('/register', invitation) : '/register'}
-            className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded px-1 py-1 inline-block"
+            className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded px-1.5 py-2 inline-block"
           >
             {t('auth.createOne')}
           </Link>

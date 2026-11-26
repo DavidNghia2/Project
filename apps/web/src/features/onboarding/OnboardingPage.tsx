@@ -69,14 +69,14 @@ export const OnboardingPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-8">
-      <section className="max-w-xl w-full bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+    <main className="min-h-screen min-h-dvh bg-slate-50 flex items-center justify-center p-4 sm:p-8 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <section className="max-w-xl w-full bg-white border border-slate-200 rounded-2xl p-5 sm:p-8 shadow-sm space-y-6">
         <div className="flex justify-end"><LanguageSelect id="onboarding-language" /></div>
         <div className="flex items-start gap-3">
-          <div className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center"><Building2 className="w-5 h-5" /></div>
-          <div>
-            <p className="text-sm text-slate-500">{t('onboarding.create.greeting', { name: user?.fullName || user?.email || '' })}</p>
-            <h1 className="text-2xl font-bold text-slate-900">{t('onboarding.create.title')}</h1>
+          <div className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0"><Building2 className="w-5 h-5" /></div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-slate-500 break-words">{t('onboarding.create.greeting', { name: user?.fullName || user?.email || '' })}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 break-words">{t('onboarding.create.title')}</h1>
             <p className="text-sm text-slate-600 mt-1">{t('onboarding.create.ownerNotice')}</p>
           </div>
         </div>

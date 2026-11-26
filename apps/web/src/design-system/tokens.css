@@ -1,6 +1,8 @@
 /* Professional Enterprise Design System Tokens */
 
 :root {
+  color-scheme: light;
+
   /* Colors */
   --color-primary: #2563EB;
   --color-primary-dark: #1D4ED8;
@@ -78,6 +80,19 @@
   /* Focus Ring */
   --focus-ring-color: #2563EB;
   --focus-ring-offset: 2px;
+
+  /* Motion Design System Tokens */
+  --motion-duration-instant: 100ms;
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 220ms;
+  --motion-duration-moderate: 320ms;
+  --motion-duration-slow: 500ms;
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --motion-surface-shimmer-base: #E2E8F0;
+  --motion-surface-shimmer-highlight: #F8FAFC;
+  --motion-row-flash-bg: rgba(37, 99, 235, 0.12);
 }
 
 @theme {

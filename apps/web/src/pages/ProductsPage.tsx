@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Package, AlertTriangle, Boxes, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Alert } from '../design-system';
+import { AnimatedCounter, Card, Button, Alert, useToast } from '../design-system';
 import {
   useProducts,
   ProductFilters,
@@ -17,6 +17,7 @@ import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const ProductsPage: React.FC = () => {
   const { t } = useTranslation();
+  const toast = useToast();
   const { activeRole, capabilities } = useRolePreview();
   const canEditCatalog = capabilities.canManageCatalog;
 
@@ -51,10 +52,13 @@ export const ProductsPage: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
+    const id = toast.success(msg, t('common.operationSuccess'));
+    if (!id) {
+      setToastMessage(msg);
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+    }
   };
 
   // KPI Calculations
@@ -147,44 +151,61 @@ export const ProductsPage: React.FC = () => {
       )}
 
       {/* Quick KPIs Summary Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3">
+      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
             <Package className="w-5 h-5" />
           </div>
-          <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.totalItems')}</span>
-            <span className="font-mono text-lg font-bold text-[#0F172A]">{t('products.kpi.totalItemsUnit', { count: totalCatalogCount })}</span>
+          <div className="min-w-0">
+            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.totalItems')}</span>
+            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-[#0F172A] block truncate">
+              <AnimatedCounter
+                value={totalCatalogCount}
+                format={(n) => t('products.kpi.totalItemsUnit', { count: n })}
+              />
+            </span>
           </div>
         </div>
 
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3">
+        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
             <CheckCircle2 className="w-5 h-5" />
           </div>
-          <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.activeItems')}</span>
-            <span className="font-mono text-lg font-bold text-emerald-700">{t('products.kpi.activeItemsUnit', { count: activeCount })}</span>
+          <div className="min-w-0">
+            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.activeItems')}</span>
+            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-emerald-700 block truncate">
+              <AnimatedCounter
+                value={activeCount}
+                format={(n) => t('products.kpi.activeItemsUnit', { count: n })}
+              />
+            </span>
           </div>
         </div>
 
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3">
+        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
-          <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.lowStockItems')}</span>
-            <span className="font-mono text-lg font-bold text-amber-600">{t('products.kpi.lowStockItemsUnit', { count: lowStockCount })}</span>
+          <div className="min-w-0">
+            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.lowStockItems')}</span>
+            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-amber-600 block truncate">
+              <AnimatedCounter
+                value={lowStockCount}
+                format={(n) => t('products.kpi.lowStockItemsUnit', { count: n })}
+              />
+            </span>
           </div>
         </div>
 
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3">
+        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
             <Boxes className="w-5 h-5" />
           </div>
-          <div>
-            <span className="text-[11px] text-[#64748B] block font-medium">{t('products.kpi.totalOnHand')}</span>
-            <span className="font-mono text-lg font-bold text-purple-700">{totalStockUnits.toLocaleString()}</span>
+          <div className="min-w-0">
+            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.totalOnHand')}</span>
+            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-purple-700 block truncate">
+              <AnimatedCounter value={totalStockUnits} />
+            </span>
           </div>
         </div>
       </div>

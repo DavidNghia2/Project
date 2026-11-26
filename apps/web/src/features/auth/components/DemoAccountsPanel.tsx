@@ -57,7 +57,7 @@ export const DemoAccountsPanel: React.FC<DemoAccountsPanelProps> = ({
                   type="button"
                   data-testid={`demo-account-${account.role}`}
                   onClick={() => onSelectDemoAccount(account.email, account.passwordHint)}
-                  className="w-full min-h-[44px] p-3 rounded-xl border border-slate-200/90 bg-white hover:border-[#2563EB] hover:bg-[#EFF6FF]/45 text-left flex flex-col justify-between gap-1.5 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer group"
+                  className="w-full min-h-[44px] p-3 rounded-xl border border-slate-200/90 bg-white hover:border-[#2563EB] hover:bg-[#EFF6FF]/45 text-left flex flex-col justify-between gap-1.5 transition-[border-color,background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-1.5 w-full">
                     <Badge variant={roleMeta.badgeVariant} size="sm">

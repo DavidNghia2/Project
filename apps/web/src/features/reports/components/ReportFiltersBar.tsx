@@ -1,4 +1,5 @@
 import React from 'react';
+import { m, useReducedMotion } from 'motion/react';
 import {
   AlertTriangle,
   ArrowDownToLine,
@@ -8,7 +9,7 @@ import {
   Calendar,
   RotateCcw,
 } from 'lucide-react';
-import { Alert, Button, Select } from '../../../design-system';
+import { Alert, Button, MOTION_SPRING, Select } from '../../../design-system';
 import { useTranslation, type TranslationKey } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_WAREHOUSES } from '../../master-data/mockData';
@@ -62,6 +63,7 @@ export const ReportFiltersBar: React.FC<ReportFiltersBarProps> = ({
   onReset,
 }) => {
   const { t, language } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   const warehouseOptions = [
     {
@@ -110,19 +112,27 @@ export const ReportFiltersBar: React.FC<ReportFiltersBarProps> = ({
               role="tab"
               aria-selected={active}
               onClick={() => onReportTypeChange(tab.id)}
-              className={`flex items-start gap-2.5 rounded-lg border px-3.5 py-2.5 text-left transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${
+              className={`relative flex items-start gap-2.5 rounded-lg border px-3.5 py-2.5 text-left transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] ${
                 active
-                  ? 'border-[#0284C7] bg-[#F0F9FF] text-[#0F172A]'
+                  ? 'border-transparent text-[#0F172A]'
                   : 'border-[#E2E8F0] bg-white text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
               }`}
             >
+              {active && (
+                <m.span
+                  layoutId="report-type-linked-pill"
+                  aria-hidden="true"
+                  transition={shouldReduceMotion ? { duration: 0.01 } : MOTION_SPRING.tab}
+                  className="pointer-events-none absolute inset-0 rounded-lg border border-[#0284C7] bg-[#F0F9FF] shadow-2xs"
+                />
+              )}
               <Icon
-                className={`w-4 h-4 shrink-0 mt-0.5 ${
+                className={`relative z-10 w-4 h-4 shrink-0 mt-0.5 transition-colors ${
                   active ? 'text-[#0284C7]' : 'text-[#64748B]'
                 }`}
                 aria-hidden="true"
               />
-              <span className="min-w-0">
+              <span className="relative z-10 min-w-0">
                 <span className="block text-xs font-semibold truncate">
                   {t(`reports.tabs.${tab.id}.label`)}
                 </span>
@@ -150,7 +160,7 @@ export const ReportFiltersBar: React.FC<ReportFiltersBarProps> = ({
             value={filters.startDate}
             onChange={(e) => onStartDateChange(e.target.value)}
             aria-invalid={!dateValidation.valid}
-            className={`w-full h-8 rounded-md border px-2.5 text-xs font-mono tabular-nums text-[#0F172A] bg-white outline-none transition-colors focus:ring-2 ${
+            className={`w-full min-h-11 sm:min-h-0 sm:h-8 rounded-md border px-2.5 text-base sm:text-xs font-mono tabular-nums text-[#0F172A] bg-white outline-none transition-colors focus:ring-2 ${
               !dateValidation.valid
                 ? 'border-[#DC2626] focus:ring-[#FEE2E2]'
                 : 'border-[#CBD5E1] hover:border-[#94A3B8] focus:border-[#0284C7] focus:ring-[#E0F2FE]'
@@ -171,7 +181,7 @@ export const ReportFiltersBar: React.FC<ReportFiltersBarProps> = ({
             value={filters.endDate}
             onChange={(e) => onEndDateChange(e.target.value)}
             aria-invalid={!dateValidation.valid}
-            className={`w-full h-8 rounded-md border px-2.5 text-xs font-mono tabular-nums text-[#0F172A] bg-white outline-none transition-colors focus:ring-2 ${
+            className={`w-full min-h-11 sm:min-h-0 sm:h-8 rounded-md border px-2.5 text-base sm:text-xs font-mono tabular-nums text-[#0F172A] bg-white outline-none transition-colors focus:ring-2 ${
               !dateValidation.valid
                 ? 'border-[#DC2626] focus:ring-[#FEE2E2]'
                 : 'border-[#CBD5E1] hover:border-[#94A3B8] focus:border-[#0284C7] focus:ring-[#E0F2FE]'
@@ -232,13 +242,23 @@ export const ReportFiltersBar: React.FC<ReportFiltersBarProps> = ({
                 id={`preset-date-${preset.id}`}
                 type="button"
                 onClick={() => onApplyPreset(preset.start, preset.end)}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors cursor-pointer ${
+                className={`relative px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors cursor-pointer ${
                   isSelected
-                    ? 'border-[#0284C7] bg-[#F0F9FF] text-[#0284C7]'
+                    ? 'border-transparent text-[#0284C7]'
                     : 'border-[#E2E8F0] bg-[#F8FAFC] text-[#475569] hover:border-[#CBD5E1] hover:text-[#0F172A]'
                 }`}
               >
-                {t(`reports.filters.presets.${preset.id}` as TranslationKey)}
+                {isSelected && (
+                  <m.span
+                    layoutId="report-date-preset-overshoot"
+                    aria-hidden="true"
+                    transition={shouldReduceMotion ? { duration: 0.01 } : MOTION_SPRING.overshoot}
+                    className="pointer-events-none absolute inset-0 rounded-md border border-[#0284C7] bg-[#F0F9FF] shadow-2xs"
+                  />
+                )}
+                <span className="relative z-10">
+                  {t(`reports.filters.presets.${preset.id}` as TranslationKey)}
+                </span>
               </button>
             );
           })}

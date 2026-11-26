@@ -1,5 +1,6 @@
 // Design System Barrel Export
 export * from './tokens';
+export * from './motion';
 export * from './components/Button';
 export * from './components/Input';
 export * from './components/Select';
@@ -12,3 +13,7 @@ export * from './components/Dropdown';
 export * from './components/Loading';
 export * from './components/EmptyState';
 export * from './components/Alert';
+export * from './components/Tabs';
+export * from './components/Tooltip';
+export * from './components/Toast';
+export * from './components/toastContext';

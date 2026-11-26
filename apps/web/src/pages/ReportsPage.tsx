@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
+import { m, useReducedMotion } from 'motion/react';
 import { Download } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Button, Card } from '../design-system';
+import { Alert, Button, Card, MOTION_DURATION, MOTION_EASE, useToast } from '../design-system';
 import { useTranslation } from '../i18n';
 import {
   REPORT_DEFAULT_END_DATE,
@@ -26,11 +27,22 @@ const INITIAL_FILTERS: ReportFilterState = {
   category: 'ALL',
 };
 
+const REPORT_ORDER: ReadonlyArray<ReportType> = [
+  'current_stock',
+  'stock_in',
+  'stock_out',
+  'stock_movement',
+  'low_stock',
+];
+
 export const ReportsPage: React.FC = () => {
   const { t, language } = useTranslation();
+  const toast = useToast();
+  const shouldReduceMotion = useReducedMotion();
   const { activeRole, capabilities } = useRolePreview();
   const [filters, setFilters] = useState<ReportFilterState>(INITIAL_FILTERS);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
+  const [tabDirection, setTabDirection] = useState<number>(1);
 
   const dateValidation = useMemo(
     () => validateDateRange(filters.startDate, filters.endDate, language),
@@ -40,6 +52,9 @@ export const ReportsPage: React.FC = () => {
   const report = useMemo(() => computeReport(filters, language), [filters, language]);
 
   const handleReportTypeChange = (reportType: ReportType) => {
+    const prevIdx = REPORT_ORDER.indexOf(filters.reportType);
+    const nextIdx = REPORT_ORDER.indexOf(reportType);
+    setTabDirection(nextIdx >= prevIdx ? 1 : -1);
     setExportNotice(null);
     setFilters((prev) => ({ ...prev, reportType }));
   };
@@ -55,12 +70,12 @@ export const ReportsPage: React.FC = () => {
   const handleExportCsv = () => {
     if (!dateValidation.valid || report.rows.length === 0) return;
     const result = triggerCsvDownload(report, filters, language);
-    setExportNotice(
-      t('reports.page.exportNotice', {
-        filename: result.filename,
-        rows: result.rowCount,
-      })
-    );
+    const msg = t('reports.page.exportNotice', {
+      filename: result.filename,
+      rows: result.rowCount,
+    });
+    toast.success(msg);
+    setExportNotice(msg);
   };
 
   return (
@@ -113,16 +128,24 @@ export const ReportsPage: React.FC = () => {
         />
       </Card>
 
-      <ReportSummaryStrip report={report} validDateRange={dateValidation.valid} />
+      <m.div
+        key={filters.reportType}
+        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0.75, x: tabDirection * 10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: MOTION_DURATION.fast, ease: MOTION_EASE.out }}
+        className="space-y-6"
+      >
+        <ReportSummaryStrip report={report} validDateRange={dateValidation.valid} />
 
-      <ReportChartsPanel report={report} validDateRange={dateValidation.valid} />
+        <ReportChartsPanel report={report} validDateRange={dateValidation.valid} />
 
-      <ReportDataTable
-        report={report}
-        validDateRange={dateValidation.valid}
-        onResetFilters={handleResetFilters}
-        onExportCsv={handleExportCsv}
-      />
+        <ReportDataTable
+          report={report}
+          validDateRange={dateValidation.valid}
+          onResetFilters={handleResetFilters}
+          onExportCsv={handleExportCsv}
+        />
+      </m.div>
     </div>
   );
 };

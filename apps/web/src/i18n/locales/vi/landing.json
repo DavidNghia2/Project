@@ -96,6 +96,7 @@
     "title": "Rõ trách nhiệm cho từng vị trí vận hành",
     "subtitle": "Phân tách minh bạch giữa cấu hình hệ thống, phê duyệt chứng từ, thao tác nhập xuất và tra cứu báo cáo.",
     "tryAccount": "Đăng nhập bằng tài khoản mẫu",
+    "startWithRole": "Bắt đầu với không gian làm việc",
     "coverageLabel": "Phạm vi phân hệ",
     "capCreate": "Lập phiếu kho",
     "capApprove": "Duyệt & kiểm kê",
@@ -105,11 +106,13 @@
   "cta": {
     "title": "Sẵn sàng trải nghiệm hệ thống quản lý kho?",
     "subtitle": "Đăng ký tài khoản dùng thử cục bộ hoặc đăng nhập ngay bằng 1 trong 4 vai trò mẫu.",
+    "subtitleProd": "Tạo tài khoản công ty mới hoặc đăng nhập để bắt đầu vận hành kho hàng đa chi nhánh.",
     "button": "Tạo tài khoản ngay"
   },
   "footer": {
     "tagline": "Hệ Thống Quản Lý Kho Thông Minh",
     "copyright": "© 2026 Smart Inventory. Bản thử nghiệm giao diện với xác thực giả lập cục bộ.",
+    "copyrightProd": "© 2026 Smart Inventory. Hệ thống quản lý tồn kho đa chi nhánh.",
     "links": {
       "features": "Tính năng",
       "signIn": "Đăng nhập",

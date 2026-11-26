@@ -2,7 +2,9 @@ import React from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useAuth } from './useAuth';
-import { Button, Spinner } from '../../design-system';
+import { Button } from '../../design-system';
+import { SessionRecovery, type SessionRecoveryVariant } from './SessionRecovery';
+import { hasStoredSessionHint } from './sessionHint';
 import { useTranslation } from '../../i18n';
 import type { RoleCode } from '../users-rbac/types';
 import { authenticationUrl } from './invitationRedirect';
@@ -11,28 +13,23 @@ export interface ProtectedRouteProps {
   children?: React.ReactNode;
   redirectTo?: string;
   allowedRoles?: readonly RoleCode[];
+  loadingVariant?: SessionRecoveryVariant;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   redirectTo = '/',
   allowedRoles,
+  loadingVariant = 'dashboard',
 }) => {
-  const { isLoading, isAuthenticated, user } = useAuth();
+  const { isLoading, isAuthenticated, user, isMockMode } = useAuth();
   const { t } = useTranslation();
   const location = useLocation();
 
   if (isLoading) {
-    return (
-      <div
-        className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F8FAFC] gap-3"
-        data-testid="auth-loading"
-        aria-busy="true"
-      >
-        <Spinner size="lg" className="text-[#2563EB]" />
-        <span className="text-xs font-medium text-[#64748B]">{t('auth.checkingSession')}</span>
-      </div>
-    );
+    const effectiveVariant: SessionRecoveryVariant =
+      loadingVariant === 'dashboard' && hasStoredSessionHint(isMockMode) ? 'dashboard' : 'neutral';
+    return <SessionRecovery variant={effectiveVariant} />;
   }
 
   if (!isAuthenticated) {

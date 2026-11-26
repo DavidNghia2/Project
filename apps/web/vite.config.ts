@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { offlineShellPlugin } from './offlineShellPlugin.js'
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
@@ -12,7 +13,10 @@ export default defineConfig(({ command }) => ({
   cacheDir: command === 'serve'
     ? mkdtempSync(join(tmpdir(), 'smart-inventory-vite-'))
     : 'node_modules/.cache/vite',
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), offlineShellPlugin()],
+  build: {
+    emptyOutDir: false,
+  },
   test: {
     globals: true,
     environment: 'jsdom',

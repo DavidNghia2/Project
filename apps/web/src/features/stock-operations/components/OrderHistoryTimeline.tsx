@@ -1,5 +1,7 @@
 import React from 'react';
+import { m, useReducedMotion } from 'motion/react';
 import { Clock, ArrowRight } from 'lucide-react';
+import { MOTION_DURATION, MOTION_EASE } from '../../../design-system';
 import { getIntlLocale, useTranslation, type Language } from '../../../i18n';
 import type { StatusHistoryEntry } from '../types';
 import { OrderStatusBadge } from './OrderStatusBadge';
@@ -22,6 +24,7 @@ function formatTimestamp(iso: string, language: Language): string {
 
 export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ history }) => {
   const { t, language } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   if (history.length === 0) {
     return (
@@ -36,7 +39,17 @@ export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ hist
       {history.map((entry, idx) => {
         const isLast = idx === history.length - 1;
         return (
-          <li key={entry.id} className="relative">
+          <m.li
+            key={entry.id}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: MOTION_DURATION.normal,
+              delay: Math.min(idx, 6) * 0.04,
+              ease: MOTION_EASE.out,
+            }}
+            className="relative"
+          >
             <span
               className={`absolute -left-[25px] top-1 w-3 h-3 rounded-full border-2 border-white ${
                 isLast ? 'bg-[#0284C7] ring-2 ring-[#E0F2FE]' : 'bg-[#94A3B8]'
@@ -67,7 +80,7 @@ export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ hist
                 {entry.note && <span className="text-[#475569]"> — {entry.note}</span>}
               </div>
             </div>
-          </li>
+          </m.li>
         );
       })}
     </ol>

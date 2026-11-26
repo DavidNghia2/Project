@@ -8,7 +8,7 @@ export const LANDING_EASE_UI: [number, number, number, number] = [0.2, 0.8, 0.2,
 
 export const LANDING_VIEWPORT = {
   once: true,
-  amount: 0.12,
+  amount: 'some',
 } as const;
 
 export const heroContainerVariants: Variants = {
@@ -49,35 +49,35 @@ export const heroFrameVariants: Variants = {
 };
 
 export const sectionRevealVariants: Variants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0.92, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.48,
+      duration: 0.45,
       ease: LANDING_EASE_OUT,
     },
   },
 };
 
 export const staggerGridVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 1 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.065,
-      delayChildren: 0.05,
+      staggerChildren: 0.055,
+      delayChildren: 0.04,
     },
   },
 };
 
 export const staggerItemVariants: Variants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0.92, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.42,
+      duration: 0.38,
       ease: LANDING_EASE_OUT,
     },
   },

@@ -13,7 +13,7 @@ import {
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, type Column } from '../design-system';
+import { AnimatedCounter, Card, Button, Badge, StaggerItem, StaggerList, Table, type Column } from '../design-system';
 import { ROLE_META, useRolePreview } from '../features/users-rbac';
 
 export const DashboardPage: React.FC = () => {
@@ -24,28 +24,28 @@ export const DashboardPage: React.FC = () => {
   const kpis = [
     {
       title: t('dashboard.kpi.totalSkusTitle'),
-      value: '1,420',
+      value: 1420,
       change: t('dashboard.kpi.totalSkusChange'),
       icon: Package,
       color: 'text-blue-600 bg-blue-50',
     },
     {
       title: t('dashboard.kpi.lowStockTitle'),
-      value: '5',
+      value: 5,
       change: t('dashboard.kpi.lowStockChange'),
       icon: AlertTriangle,
       color: 'text-amber-600 bg-amber-50',
     },
     {
       title: t('dashboard.kpi.pendingInTitle'),
-      value: '3',
+      value: 3,
       change: t('dashboard.kpi.pendingInChange'),
       icon: ArrowDownToLine,
       color: 'text-emerald-600 bg-emerald-50',
     },
     {
       title: t('dashboard.kpi.activeOutTitle'),
-      value: '8',
+      value: 8,
       change: t('dashboard.kpi.activeOutChange'),
       icon: ArrowUpFromLine,
       color: 'text-purple-600 bg-purple-50',
@@ -100,7 +100,7 @@ export const DashboardPage: React.FC = () => {
       key: 'id',
       label: t('dashboard.colTrx'),
       render: (_val, row) => (
-        <span className="font-mono text-xs font-semibold text-[#0F172A] whitespace-nowrap">
+        <span className="font-mono tabular-nums text-xs font-semibold text-[#0F172A] whitespace-nowrap">
           {row.id}
         </span>
       ),
@@ -133,7 +133,7 @@ export const DashboardPage: React.FC = () => {
       align: 'right',
       render: (_val, row) => (
         <span
-          className={`font-mono font-semibold whitespace-nowrap ${
+          className={`font-mono tabular-nums font-semibold whitespace-nowrap ${
             row.qty.startsWith('+') ? 'text-emerald-600' : 'text-slate-800'
           }`}
         >
@@ -193,31 +193,33 @@ export const DashboardPage: React.FC = () => {
         }
       />
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Cards Grid with Stagger Entrance & Animated Counter */}
+      <StaggerList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => {
           const IconComponent = kpi.icon;
           return (
-            <Card key={idx} padding="md">
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1 min-w-0">
-                  <p className="text-xs font-medium text-[#64748B] truncate">{kpi.title}</p>
-                  <p className="text-2xl font-bold font-mono tabular-nums text-[#0F172A] tracking-tight">
-                    {kpi.value}
-                  </p>
-                  <p className="text-[11px] text-[#64748B] flex items-center gap-1 pt-1">
-                    <TrendingUp className="w-3 h-3 text-emerald-600 shrink-0" />
-                    <span className="truncate">{kpi.change}</span>
-                  </p>
+            <StaggerItem key={idx}>
+              <Card padding="md" className="h-full">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1 min-w-0">
+                    <p className="text-xs font-medium text-[#64748B] truncate">{kpi.title}</p>
+                    <p className="text-2xl font-bold font-mono tabular-nums text-[#0F172A] tracking-tight">
+                      <AnimatedCounter value={kpi.value} duration={0.4} />
+                    </p>
+                    <p className="text-[11px] text-[#64748B] flex items-center gap-1 pt-1">
+                      <TrendingUp className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <span className="truncate">{kpi.change}</span>
+                    </p>
+                  </div>
+                  <div className={`p-2.5 rounded-lg shrink-0 ${kpi.color}`}>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
                 </div>
-                <div className={`p-2.5 rounded-lg shrink-0 ${kpi.color}`}>
-                  <IconComponent className="w-5 h-5" />
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </StaggerItem>
           );
         })}
-      </div>
+      </StaggerList>
 
       {/* Quick Flow Guidance & Recent Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

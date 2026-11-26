@@ -96,6 +96,7 @@
     "title": "Clear boundaries for every team member",
     "subtitle": "Structured roles isolate administrative configuration, manager approvals, warehouse floor intake, and read-only auditing.",
     "tryAccount": "Sign in with demo role",
+    "startWithRole": "Start your workspace",
     "coverageLabel": "Module coverage",
     "capCreate": "Create vouchers",
     "capApprove": "Approve & reconcile",
@@ -105,11 +106,13 @@
   "cta": {
     "title": "Ready to explore the warehouse workspace?",
     "subtitle": "Create a local demo account or sign in immediately with one of four preconfigured test roles.",
+    "subtitleProd": "Create your company account or sign in to start managing multi-warehouse operations.",
     "button": "Create Account"
   },
   "footer": {
     "tagline": "Smart Inventory Management System",
     "copyright": "© 2026 Smart Inventory. Frontend prototype with local mock authentication.",
+    "copyrightProd": "© 2026 Smart Inventory. Multi-warehouse inventory management system.",
     "links": {
       "features": "Features",
       "signIn": "Sign In",

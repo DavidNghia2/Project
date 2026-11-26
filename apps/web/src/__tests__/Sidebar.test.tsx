@@ -74,4 +74,25 @@ describe('Sidebar Component', () => {
     expect(logoBox.className).toContain('h-9');
     expect(logoBox.className).toContain('shrink-0');
   });
+
+  it('positions collapsed mini counter badges out of flex flow and hides neutral tags on the rail', () => {
+    renderSidebar(true);
+
+    const stockInBadge = screen.getByTestId('collapsed-badge-stock-in');
+    const alertsBadge = screen.getByTestId('collapsed-badge-alerts');
+
+    expect(stockInBadge).toHaveTextContent('3');
+    expect(alertsBadge).toHaveTextContent('5');
+    expect(stockInBadge.className).toContain('absolute');
+    expect(stockInBadge.className).not.toContain('relative');
+    expect(alertsBadge.className).toContain('absolute');
+    expect(alertsBadge.className).not.toContain('relative');
+
+    // Neutral static label ('UI') must not produce a notification counter on the collapsed rail
+    expect(screen.queryByTestId('collapsed-badge-design-system')).not.toBeInTheDocument();
+
+    // Accessible labels expose counts for screen readers
+    expect(screen.getByRole('link', { name: /(stock in|nhập kho).*\(3\)/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /(alerts|cảnh báo).*\(5\)/i })).toBeInTheDocument();
+  });
 });

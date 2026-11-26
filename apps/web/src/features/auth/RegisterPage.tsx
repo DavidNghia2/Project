@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { authenticationUrl, invitationDestination } from './invitationRedirect';
 import { Check, Eye, EyeOff, Lock, Mail, User, UserPlus } from 'lucide-react';
@@ -29,6 +29,10 @@ export const RegisterPage: React.FC = () => {
 
   const policy = evaluatePasswordPolicy(password);
 
+  useEffect(() => {
+    document.title = `${t('auth.signUp')} — ${t('layout.brandName')}`;
+  }, [t]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerErrorKey(null);
@@ -42,6 +46,18 @@ export const RegisterPage: React.FC = () => {
     });
     setFieldErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) {
+      const firstErrorId = validationErrors.fullName
+        ? 'register-input-fullname'
+        : validationErrors.email
+        ? 'register-input-email'
+        : validationErrors.password
+        ? 'register-input-password'
+        : validationErrors.confirmPassword
+        ? 'register-input-confirm-password'
+        : null;
+      if (firstErrorId) {
+        document.getElementById(firstErrorId)?.focus();
+      }
       return;
     }
 
@@ -113,10 +129,13 @@ export const RegisterPage: React.FC = () => {
         <form id="register-form" onSubmit={handleSubmit} noValidate className="space-y-4">
           <Input
             id="register-input-fullname"
+            name="fullName"
             type="text"
             label={t('auth.fullName')}
             placeholder={t('auth.fullNamePlaceholder')}
             autoComplete="name"
+            autoCapitalize="words"
+            spellCheck={false}
             size="lg"
             required
             value={fullName}
@@ -127,15 +146,17 @@ export const RegisterPage: React.FC = () => {
               }
             }}
             error={fieldErrors.fullName ? t(fieldErrors.fullName) : undefined}
-            prefix={<User className="w-4 h-4" />}
+            prefix={<User className="w-4 h-4" aria-hidden="true" />}
           />
 
           <Input
             id="register-input-email"
+            name="email"
             type="email"
             label={t('auth.email')}
             placeholder={t('auth.emailPlaceholder')}
             autoComplete="email"
+            spellCheck={false}
             size="lg"
             required
             value={email}
@@ -146,12 +167,13 @@ export const RegisterPage: React.FC = () => {
               }
             }}
             error={fieldErrors.email ? t(fieldErrors.email) : undefined}
-            prefix={<Mail className="w-4 h-4" />}
+            prefix={<Mail className="w-4 h-4" aria-hidden="true" />}
           />
 
           <div className="space-y-2">
             <Input
               id="register-input-password"
+              name="password"
               type={showPassword ? 'text' : 'password'}
               label={t('auth.password')}
               placeholder={t('auth.createPasswordPlaceholder')}
@@ -166,16 +188,16 @@ export const RegisterPage: React.FC = () => {
                 }
               }}
               error={fieldErrors.password ? t(fieldErrors.password) : undefined}
-              prefix={<Lock className="w-4 h-4" />}
+              prefix={<Lock className="w-4 h-4" aria-hidden="true" />}
               suffix={
                 <button
                   type="button"
                   id="btn-toggle-register-password"
                   onClick={() => setShowPassword((prev) => !prev)}
                   aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                  className="p-1.5 -mr-1 text-[#64748B] hover:text-[#0F172A] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
+                  className="min-h-10 min-w-10 -mr-2 inline-flex items-center justify-center text-[#64748B] hover:text-[#0F172A] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                 </button>
               }
             />
@@ -205,14 +227,15 @@ export const RegisterPage: React.FC = () => {
                 {passwordRules.map((rule) => (
                   <li
                     key={rule.labelKey}
-                    className={`inline-flex items-center gap-1 text-[11px] ${
-                      rule.ok ? 'text-[#16A34A] font-medium' : 'text-[#64748B]'
+                    className={`inline-flex items-center gap-1 text-xs ${
+                      rule.ok ? 'text-[#16A34A] font-medium' : 'text-[#475569]'
                     }`}
                   >
                     <Check
-                      className={`w-3 h-3 shrink-0 ${
-                        rule.ok ? 'text-[#16A34A]' : 'text-[#CBD5E1]'
+                      className={`w-3.5 h-3.5 shrink-0 ${
+                        rule.ok ? 'text-[#16A34A]' : 'text-[#94A3B8]'
                       }`}
+                      aria-hidden="true"
                     />
                     <span>{t(rule.labelKey)}</span>
                   </li>
@@ -223,6 +246,7 @@ export const RegisterPage: React.FC = () => {
 
           <Input
             id="register-input-confirm-password"
+            name="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             label={t('auth.confirmPassword')}
             placeholder={t('auth.confirmPasswordPlaceholder')}
@@ -237,7 +261,7 @@ export const RegisterPage: React.FC = () => {
               }
             }}
             error={fieldErrors.confirmPassword ? t(fieldErrors.confirmPassword) : undefined}
-            prefix={<Lock className="w-4 h-4" />}
+            prefix={<Lock className="w-4 h-4" aria-hidden="true" />}
             suffix={
               <button
                 type="button"
@@ -246,12 +270,12 @@ export const RegisterPage: React.FC = () => {
                 aria-label={
                   showConfirmPassword ? t('auth.hidePassword') : t('auth.showPassword')
                 }
-                className="p-1.5 -mr-1 text-[#64748B] hover:text-[#0F172A] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
+                className="min-h-10 min-w-10 -mr-2 inline-flex items-center justify-center text-[#64748B] hover:text-[#0F172A] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] cursor-pointer"
               >
                 {showConfirmPassword ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="w-4 h-4" aria-hidden="true" />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4" aria-hidden="true" />
                 )}
               </button>
             }
@@ -265,7 +289,7 @@ export const RegisterPage: React.FC = () => {
               size="lg"
               fullWidth
               loading={submitting}
-              iconLeft={!submitting ? <UserPlus className="w-4 h-4" /> : undefined}
+              iconLeft={!submitting ? <UserPlus className="w-4 h-4" aria-hidden="true" /> : undefined}
             >
               {submitting ? t('auth.creatingAccount') : t('auth.signUp')}
             </Button>
@@ -276,7 +300,7 @@ export const RegisterPage: React.FC = () => {
           <span>{t('auth.hasAccount')} </span>
           <Link
             to={invitation ? authenticationUrl('/login', invitation) : '/login'}
-            className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded px-1 py-1 inline-block"
+            className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded px-1.5 py-2 inline-block"
           >
             {t('auth.signInHere')}
           </Link>

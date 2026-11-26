@@ -23,15 +23,15 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
 
 const sizeClasses: Record<SelectSize, { select: string; text: string }> = {
   sm: {
-    select: 'h-8 text-xs pl-2.5 pr-8',
-    text: 'text-xs',
+    select: 'min-h-11 sm:min-h-0 sm:h-8 text-base sm:text-xs pl-2.5 pr-8',
+    text: 'text-base sm:text-xs',
   },
   md: {
-    select: 'h-9 text-sm pl-3 pr-9',
-    text: 'text-sm',
+    select: 'min-h-11 sm:min-h-0 sm:h-9 text-base sm:text-sm pl-3 pr-9',
+    text: 'text-base sm:text-sm',
   },
   lg: {
-    select: 'h-11 text-base pl-3.5 pr-10',
+    select: 'min-h-11 text-base pl-3.5 pr-10',
     text: 'text-base',
   },
 };

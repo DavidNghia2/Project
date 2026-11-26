@@ -1,6 +1,7 @@
 import React from 'react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { AlertCircle, Plus, Trash2 } from 'lucide-react';
-import { Button } from '../../../design-system';
+import { Button, MOTION_DURATION, MOTION_EASE } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_PRODUCTS } from '../../products/mockData';
@@ -44,6 +45,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
   onRemoveLine,
 }) => {
   const { t, language } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   const resolvedLinesForTotal = items.map((line) => {
     const product = products.find((p) => p.id === line.productId);
@@ -97,6 +99,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
 
       <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
         <div className="divide-y divide-[#E2E8F0]">
+          <AnimatePresence initial={false}>
           {items.map((line, index) => {
             const product = products.find((p) => p.id === line.productId);
             const available =
@@ -123,8 +126,13 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
             const qtyError = err.quantity || liveOverStockError;
 
             return (
-              <div
+              <m.div
                 key={line.id}
+                layout={!shouldReduceMotion}
+                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                transition={{ duration: MOTION_DURATION.fast, ease: MOTION_EASE.out }}
                 data-testid={`line-row-${index}`}
                 className="p-3 bg-white hover:bg-[#F8FAFC]/60 transition-colors space-y-2.5"
               >
@@ -151,7 +159,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                         });
                       }}
                       aria-invalid={Boolean(err.productId)}
-                      className={`w-full h-9 rounded-md border bg-white px-2.5 text-xs text-[#0F172A] focus:outline-none focus:ring-2 ${
+                      className={`w-full min-h-11 sm:min-h-0 sm:h-9 rounded-md border bg-white px-2.5 text-base sm:text-xs text-[#0F172A] focus:outline-none focus:ring-2 ${
                         err.productId
                           ? 'border-[#DC2626] focus:ring-[#FEE2E2]'
                           : 'border-[#CBD5E1] focus:border-[#0284C7] focus:ring-[#E0F2FE]'
@@ -304,9 +312,10 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                     </div>
                   </div>
                 </div>
-              </div>
+              </m.div>
             );
           })}
+          </AnimatePresence>
         </div>
 
         {/* Totals Footer */}

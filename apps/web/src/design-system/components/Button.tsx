@@ -27,9 +27,9 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-8 px-2.5 text-xs font-medium gap-1.5 rounded-md',
-  md: 'h-9 px-3.5 text-sm font-medium gap-2 rounded-md',
-  lg: 'h-11 px-4.5 text-base font-medium gap-2.5 rounded-md',
+  sm: 'min-h-10 sm:min-h-8 py-1.5 px-3 sm:px-2.5 text-xs font-medium gap-1.5 rounded-md',
+  md: 'min-h-11 sm:min-h-9 py-1.5 px-3.5 text-sm font-medium gap-2 rounded-md',
+  lg: 'min-h-11 py-2 px-4.5 text-base font-medium gap-2.5 rounded-md',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -59,7 +59,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading ? 'true' : undefined}
         className={`
           inline-flex items-center justify-center font-sans tracking-normal select-none
-          transition-colors duration-150 ease-in-out
+          transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-[var(--motion-ease-ui)]
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
           ${variantStyles[variant]}
           ${sizeStyles[size]}
@@ -67,7 +67,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ${
             isDisabled
               ? 'opacity-50 cursor-not-allowed pointer-events-none'
-              : 'cursor-pointer active:scale-[0.98]'
+              : 'cursor-pointer active:scale-[0.97]'
           }
           ${className}
         `}

@@ -1,4 +1,6 @@
 import React, { forwardRef, useId } from 'react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { MOTION_DURATION, MOTION_EASE } from '../motion/tokens';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 
@@ -21,17 +23,17 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 
 const sizeClasses: Record<InputSize, { container: string; input: string; text: string }> = {
   sm: {
-    container: 'h-8 text-xs',
-    input: 'px-2.5 py-1 text-xs',
-    text: 'text-xs',
+    container: 'min-h-11 sm:min-h-0 sm:h-8 text-base sm:text-xs',
+    input: 'px-2.5 py-2 sm:py-1 text-base sm:text-xs',
+    text: 'text-base sm:text-xs',
   },
   md: {
-    container: 'h-9 text-sm',
-    input: 'px-3 py-1.5 text-sm',
-    text: 'text-sm',
+    container: 'min-h-11 sm:min-h-0 sm:h-9 text-base sm:text-sm',
+    input: 'px-3 py-2 sm:py-1.5 text-base sm:text-sm',
+    text: 'text-base sm:text-sm',
   },
   lg: {
-    container: 'h-11 text-base',
+    container: 'min-h-11 text-base',
     input: 'px-3.5 py-2 text-base',
     text: 'text-base',
   },
@@ -67,6 +69,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const charCount = typeof value === 'string' ? value.length : 0;
     const hasError = Boolean(error);
+    const shouldReduceMotion = useReducedMotion();
 
     return (
       <div className={`w-full flex flex-col gap-1.5 font-sans ${className}`}>
@@ -89,13 +92,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         <div
           className={`
-            relative flex items-center w-full rounded-md border bg-white transition-colors duration-150
+            relative flex items-center w-full rounded-md border bg-white transition-[border-color,box-shadow,background-color] duration-150
             ${sizeClasses[size].container}
             ${
               disabled
                 ? 'bg-[#F1F5F9] border-[#E2E8F0] text-[#94A3B8] cursor-not-allowed'
                 : hasError
-                ? 'border-[#DC2626] focus-within:ring-2 focus-within:ring-[#DC2626] focus-within:border-[#DC2626]'
+                ? 'border-[#DC2626] focus-within:ring-2 focus-within:ring-[#DC2626] focus-within:border-[#DC2626] input-error-shake'
                 : 'border-[#CBD5E1] hover:border-[#94A3B8] focus-within:ring-2 focus-within:ring-[#2563EB] focus-within:border-[#2563EB]'
             }
           `}
@@ -137,11 +140,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {hasError && (
-          <p id={errorId} role="alert" className="text-xs font-medium text-[#DC2626] mt-0.5">
-            {error}
-          </p>
-        )}
+        <AnimatePresence initial={false}>
+          {hasError && (
+            <m.p
+              key={error}
+              id={errorId}
+              role="alert"
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -3 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: MOTION_DURATION.fast, ease: MOTION_EASE.out }}
+              className="text-xs font-medium text-[#DC2626] mt-0.5"
+            >
+              {error}
+            </m.p>
+          )}
+        </AnimatePresence>
 
         {!hasError && hint && (
           <p id={hintId} className="text-xs text-[#64748B] mt-0.5">

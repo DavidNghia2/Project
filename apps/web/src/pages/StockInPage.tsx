@@ -10,7 +10,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Button, Card, Modal, Table, type Column } from '../design-system';
+import { Alert, Button, Card, Modal, Table, useToast, type Column } from '../design-system';
 import { useTranslation, type TranslationKey } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import {
@@ -28,6 +28,7 @@ import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const StockInPage: React.FC = () => {
   const { t, language } = useTranslation();
+  const toastApi = useToast();
   const { activeRole, capabilities } = useRolePreview();
   const canCreate = capabilities.canCreateStockOrder;
   const canApprove = capabilities.canApproveStockOrder;
@@ -60,7 +61,8 @@ export const StockInPage: React.FC = () => {
   const detailOrder = orders.find((o) => o.id === detailOrderId) ?? null;
 
   const notify = (variant: 'success' | 'error', message: string) => {
-    setToast({ variant, message });
+    const id = variant === 'error' ? toastApi.error(message) : toastApi.success(message);
+    if (!id) setToast({ variant, message });
   };
 
   const submittedCount = orders.filter((o) => o.status === 'SUBMITTED').length;
@@ -139,13 +141,18 @@ export const StockInPage: React.FC = () => {
       key: 'code',
       label: t('stockOps.shared.colCode'),
       render: (_, record) => (
-        <button
-          type="button"
-          onClick={() => setDetailOrderId(record.id)}
-          className="font-mono font-semibold text-[#0284C7] hover:underline text-left cursor-pointer whitespace-nowrap"
+        <a
+          href={`?orderId=${record.id}`}
+          onClick={(e) => {
+            if (!e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              setDetailOrderId(record.id);
+            }
+          }}
+          className="font-mono font-semibold text-[#0284C7] hover:underline text-left cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-sm"
         >
           {record.code}
-        </button>
+        </a>
       ),
     },
     {

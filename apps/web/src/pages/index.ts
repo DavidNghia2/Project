@@ -14,3 +14,5 @@ export * from './UsersPage';
 export * from './SettingsPage';
 export * from './NotFoundPage';
 export * from './DesignSystemDemo';
+export * from './DashboardSkeleton';
+export * from './UsersPageSkeleton';

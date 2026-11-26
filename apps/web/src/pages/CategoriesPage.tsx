@@ -3,7 +3,7 @@ import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
+import { Card, Button, Badge, Table, Alert, useToast, type Column } from '../design-system';
 import {
   useCategories,
   CATEGORY_PARENT_GROUPS,
@@ -19,6 +19,7 @@ import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const CategoriesPage: React.FC = () => {
   const { t, language } = useTranslation();
+  const toast = useToast();
   const { activeRole, capabilities } = useRolePreview();
   const canManageCatalog = capabilities.canManageCatalog;
   const {
@@ -45,7 +46,9 @@ export const CategoriesPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Category | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const showToast = (msg: string) => setToastMessage(msg);
+  const showToast = (msg: string) => {
+    if (!toast.success(msg)) setToastMessage(msg);
+  };
 
   const handleOpenCreate = () => {
     setSelectedItem(null);

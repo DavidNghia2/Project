@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, m } from 'motion/react';
 import {
@@ -19,7 +19,8 @@ import {
   X,
 } from 'lucide-react';
 import { LanguageSelect, useTranslation } from '../i18n';
-import { Badge, Button } from '../design-system';
+import { Badge, MOTION_SPRING } from '../design-system';
+import { useAuth } from '../features/auth';
 import { RBAC_ROLE_MATRIX, ROLE_META, ROLE_ORDER } from '../features/users-rbac/rbacMatrix';
 import type { RoleCode } from '../features/users-rbac/types';
 import {
@@ -110,9 +111,14 @@ const HERO_WAREHOUSE_SNAPSHOTS: Record<HeroWarehouseKey, HeroWarehouseSnapshot> 
 
 export const LandingPage: React.FC = () => {
   const { t } = useTranslation();
+  const { isMockMode } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [previewRole, setPreviewRole] = useState<RoleCode>('WAREHOUSE_MANAGER');
   const [heroWarehouse, setHeroWarehouse] = useState<HeroWarehouseKey>('ALL');
+
+  useEffect(() => {
+    document.title = `${t('layout.brandName')} — ${t('landing.footer.tagline')}`;
+  }, [t]);
 
   const activeMatrix = RBAC_ROLE_MATRIX[previewRole];
   const activeSnapshot = HERO_WAREHOUSE_SNAPSHOTS[heroWarehouse];
@@ -206,21 +212,28 @@ export const LandingPage: React.FC = () => {
   return (
     <LandingMotionRoot>
       <div id="top" className="min-h-screen flex flex-col bg-[#F6F8FB] text-[#0F172A] font-sans antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#2563EB] focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2563EB] font-medium text-sm"
+        >
+          {t('layout.skipToContent')}
+        </a>
+
         {/* Sticky Obsidian Header */}
         <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#060911]/90 backdrop-blur-md text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
             <a
               href="#top"
-              className="flex items-center gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 group"
+              className="flex items-center gap-2 sm:gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 group"
             >
               <div className="w-9 h-9 rounded-lg bg-[#2563EB] shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] text-white flex items-center justify-center shrink-0 transition-transform duration-150 group-hover:scale-105">
-                <Boxes className="w-5 h-5" />
+                <Boxes className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="flex flex-col leading-tight min-w-0">
-                <span className="font-display font-bold text-sm text-white tracking-tight truncate">
+                <span translate="no" className="font-display font-bold text-sm text-white tracking-tight truncate">
                   {t('layout.brandName')}
                 </span>
-                <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider truncate">
+                <span className="hidden min-[360px]:block text-[11px] font-medium text-slate-400 uppercase tracking-wider truncate">
                   {t('layout.brandSub')}
                 </span>
               </div>
@@ -252,7 +265,7 @@ export const LandingPage: React.FC = () => {
               <Link
                 id="landing-nav-login"
                 to="/login"
-                className="inline-flex items-center justify-center min-h-[40px] px-3.5 rounded-lg text-sm font-medium text-slate-200 hover:text-white hover:bg-white/[0.06] active:scale-[0.985] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                className="inline-flex items-center justify-center min-h-[40px] px-3.5 rounded-lg text-sm font-medium text-slate-200 hover:text-white hover:bg-white/[0.06] active:scale-[0.985] transition-[color,background-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
               >
                 {t('landing.nav.signIn')}
               </Link>
@@ -260,15 +273,15 @@ export const LandingPage: React.FC = () => {
               <Link
                 id="landing-nav-register"
                 to="/register"
-                className="inline-flex items-center justify-center min-h-[40px] px-4 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] hover:-translate-y-px active:translate-y-0 active:scale-[0.985] text-sm font-semibold text-white transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_6px_20px_-6px_rgba(37,99,235,0.7)]"
+                className="inline-flex items-center justify-center min-h-[40px] px-4 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] hover:-translate-y-px active:translate-y-0 active:scale-[0.985] text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_6px_20px_-6px_rgba(37,99,235,0.7)]"
               >
                 {t('landing.nav.getStarted')}
               </Link>
             </div>
 
             {/* Mobile Controls */}
-            <div className="flex md:hidden items-center gap-2 shrink-0">
-              <LanguageSelect id="landing-mobile-language" className="min-h-11" variant="dark" />
+            <div className="flex md:hidden items-center gap-1.5 sm:gap-2 shrink-0">
+              <LanguageSelect id="landing-mobile-language" className="min-h-11 max-w-[118px] text-base sm:text-sm" variant="dark" />
 
               <button
                 type="button"
@@ -278,7 +291,7 @@ export const LandingPage: React.FC = () => {
                 aria-label={t('topbar.openMenuAria')}
                 className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-lg border border-white/15 bg-white/[0.04] text-slate-200 hover:bg-white/[0.09] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
               </button>
             </div>
           </div>
@@ -346,7 +359,7 @@ export const LandingPage: React.FC = () => {
           </AnimatePresence>
         </header>
 
-        <main className="flex-1">
+        <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           {/* SECTION 1: FULL-VIEWPORT OBSIDIAN STAGE HERO + INTERACTIVE WAREHOUSE CONSOLE */}
           <section className="relative overflow-hidden bg-[#060911] text-white min-h-[calc(100svh-4rem)] flex items-center">
             {/* Subtle Architectural Coordinate Dot Horizon */}
@@ -381,7 +394,7 @@ export const LandingPage: React.FC = () => {
                 >
                   <m.h1
                     variants={heroItemVariants}
-                    className="font-display text-4xl sm:text-5xl xl:text-[3.35rem] font-extrabold text-white tracking-[-0.03em] leading-[1.08]"
+                    className="font-display text-4xl sm:text-5xl xl:text-[3.35rem] font-extrabold text-white tracking-[-0.03em] leading-[1.08] text-balance"
                   >
                     {t('landing.hero.headline')}
                   </m.h1>
@@ -398,29 +411,26 @@ export const LandingPage: React.FC = () => {
                     className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1"
                   >
                     <MotionCtaWrapper className="w-full sm:w-auto">
-                      <Link id="landing-hero-register" to="/register" className="block w-full sm:w-auto group">
-                        <Button
-                          variant="primary"
-                          size="lg"
-                          fullWidth
-                          className="h-12 px-6 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_10px_28px_-8px_rgba(37,99,235,0.72)]"
-                          iconRight={
-                            <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-0.5" />
-                          }
-                        >
-                          {t('landing.hero.ctaPrimary')}
-                        </Button>
+                      <Link
+                        id="landing-hero-register"
+                        to="/register"
+                        className="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto h-12 px-6 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] text-sm sm:text-base font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_10px_28px_-8px_rgba(37,99,235,0.72)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2563EB] group"
+                      >
+                        <span>{t('landing.hero.ctaPrimary')}</span>
+                        <ArrowRight
+                          className="w-4 h-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
                       </Link>
                     </MotionCtaWrapper>
 
                     <MotionCtaWrapper className="w-full sm:w-auto">
-                      <Link id="landing-hero-login" to="/login" className="block w-full sm:w-auto">
-                        <button
-                          type="button"
-                          className="w-full sm:w-auto h-12 px-6 rounded-lg border border-white/15 bg-white/[0.04] hover:bg-white/[0.09] hover:border-white/25 text-sm sm:text-base font-medium text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-                        >
-                          {t('landing.hero.ctaSecondary')}
-                        </button>
+                      <Link
+                        id="landing-hero-login"
+                        to="/login"
+                        className="inline-flex items-center justify-center w-full sm:w-auto h-12 px-6 rounded-lg border border-white/15 bg-white/[0.04] hover:bg-white/[0.09] hover:border-white/25 text-sm sm:text-base font-medium text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                      >
+                        {t('landing.hero.ctaSecondary')}
                       </Link>
                     </MotionCtaWrapper>
                   </m.div>
@@ -489,7 +499,7 @@ export const LandingPage: React.FC = () => {
                               type="button"
                               onClick={() => setHeroWarehouse(whKey)}
                               aria-pressed={active}
-                              className={`relative z-0 px-2 py-1 rounded-md text-[11px] font-mono font-semibold transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
+                              className={`relative z-0 min-h-[32px] px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                                 active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                               }`}
                             >
@@ -497,10 +507,10 @@ export const LandingPage: React.FC = () => {
                                 <m.span
                                   layoutId="hero-warehouse-pill"
                                   className="absolute inset-0 rounded-md bg-[#2563EB] shadow-xs -z-10"
-                                  transition={{ duration: 0.2, ease: LANDING_EASE_UI }}
+                                  transition={MOTION_SPRING.overshoot}
                                 />
                               )}
-                              <span className="relative z-10">
+                              <span translate={whKey === 'ALL' ? undefined : 'no'} className="relative z-10">
                                 {whKey === 'ALL' ? t('landing.hero.allWarehouses') : whKey}
                               </span>
                             </button>
@@ -511,8 +521,8 @@ export const LandingPage: React.FC = () => {
 
                     {/* Live Animated Metrics Strip */}
                     <div className="grid grid-cols-3 divide-x divide-white/[0.08] border-b border-white/[0.08] bg-white/[0.02]">
-                      <div className="p-3.5 sm:p-4">
-                        <p className="text-[11px] text-slate-400 truncate">
+                      <div className="p-3 sm:p-4">
+                        <p className="text-[11px] text-slate-400 leading-tight line-clamp-2">
                           {t('dashboard.kpi.totalSkusTitle')}
                         </p>
                         <p className="font-display text-lg sm:text-2xl font-bold text-white tabular-nums mt-1">
@@ -523,8 +533,8 @@ export const LandingPage: React.FC = () => {
                           />
                         </p>
                       </div>
-                      <div className="p-3.5 sm:p-4">
-                        <p className="text-[11px] text-slate-400 truncate">
+                      <div className="p-3 sm:p-4">
+                        <p className="text-[11px] text-slate-400 leading-tight line-clamp-2">
                           {t('dashboard.kpi.lowStockTitle')}
                         </p>
                         <p className="font-display text-lg sm:text-2xl font-bold text-amber-400 tabular-nums mt-1">
@@ -536,8 +546,8 @@ export const LandingPage: React.FC = () => {
                           />
                         </p>
                       </div>
-                      <div className="p-3.5 sm:p-4">
-                        <p className="text-[11px] text-slate-400 truncate">
+                      <div className="p-3 sm:p-4">
+                        <p className="text-[11px] text-slate-400 leading-tight line-clamp-2">
                           {t('dashboard.kpi.pendingInTitle')}
                         </p>
                         <p className="font-display text-lg sm:text-2xl font-bold text-emerald-400 tabular-nums mt-1">
@@ -630,10 +640,10 @@ export const LandingPage: React.FC = () => {
           </section>
 
           {/* SECTION 2: PRECISION APP-FRAME PREVIEW (Porcelain Ground) */}
-          <section id="preview" className="bg-white py-20 sm:py-24">
+          <section id="preview" className="scroll-mt-16 bg-white py-20 sm:py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
               <ScrollRevealBlock className="max-w-2xl space-y-3">
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em]">
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em] text-balance">
                   {t('landing.preview.title')}
                 </h2>
                 <p className="text-base text-[#475569] leading-relaxed">
@@ -653,7 +663,7 @@ export const LandingPage: React.FC = () => {
                         <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
                       </div>
                       <div className="flex items-center gap-2 min-w-0">
-                        <ShieldCheck className="w-4 h-4 text-[#2563EB] shrink-0" />
+                        <ShieldCheck className="w-4 h-4 text-[#2563EB] shrink-0" aria-hidden="true" />
                         <span className="text-xs font-semibold text-[#0F172A] truncate">
                           {t('landing.preview.roleSwitchLabel')}
                         </span>
@@ -661,7 +671,7 @@ export const LandingPage: React.FC = () => {
                     </div>
 
                     <div
-                      className="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-slate-200/70"
+                      className="grid grid-cols-2 sm:inline-flex items-center gap-1 p-1 rounded-xl bg-slate-200/70 w-full sm:w-auto"
                       role="tablist"
                     >
                       {ROLE_ORDER.map((roleCode) => {
@@ -673,7 +683,7 @@ export const LandingPage: React.FC = () => {
                             role="tab"
                             aria-selected={isSelected}
                             onClick={() => setPreviewRole(roleCode)}
-                            className={`relative z-0 min-h-[34px] px-3.5 py-1 rounded-lg text-xs font-semibold transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
+                            className={`relative z-0 min-h-[40px] px-3.5 py-1 rounded-lg text-xs font-semibold transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
                               isSelected ? 'text-white' : 'text-[#475569] hover:text-[#0F172A]'
                             }`}
                           >
@@ -681,7 +691,7 @@ export const LandingPage: React.FC = () => {
                               <m.span
                                 layoutId="landing-role-active-pill"
                                 className="absolute inset-0 rounded-lg bg-[#2563EB] shadow-xs -z-10"
-                                transition={{ duration: 0.2, ease: LANDING_EASE_UI }}
+                                transition={MOTION_SPRING.tab}
                               />
                             )}
                             <span className="relative z-10">{t(`topbar.roleShort.${roleCode}`)}</span>
@@ -762,10 +772,13 @@ export const LandingPage: React.FC = () => {
 
                         <div className="flex items-center gap-2 shrink-0">
                           {activeMatrix.canCreateStockOrder && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-semibold shadow-xs">
-                              <ArrowDownToLine className="w-3.5 h-3.5" />
+                            <Link
+                              to="/register"
+                              className="inline-flex items-center gap-1.5 min-h-[36px] px-3 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold shadow-xs transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                            >
+                              <ArrowDownToLine className="w-3.5 h-3.5" aria-hidden="true" />
                               {t('landing.preview.createVoucherBtn')}
-                            </span>
+                            </Link>
                           )}
                           {activeMatrix.isReadOnly && (
                             <Badge variant="neutral" size="sm">
@@ -853,10 +866,10 @@ export const LandingPage: React.FC = () => {
           </section>
 
           {/* SECTION 3: ASYMMETRIC BENTO + ARCHITECTURAL DIAGRAM GRID (Soft Porcelain Ground) */}
-          <section id="features" className="bg-[#F6F8FB] py-20 sm:py-24">
+          <section id="features" className="scroll-mt-16 bg-[#F6F8FB] py-20 sm:py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
               <ScrollRevealBlock className="max-w-2xl space-y-3">
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em]">
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em] text-balance">
                   {t('landing.features.title')}
                 </h2>
                 <p className="text-base text-[#475569] leading-relaxed">
@@ -981,11 +994,11 @@ export const LandingPage: React.FC = () => {
           </section>
 
           {/* SECTION 4: EDITORIAL BENEFITS & ANIMATED TELEMETRY METRICS (Porcelain Ground) */}
-          <section id="benefits" className="bg-white py-20 sm:py-24">
+          <section id="benefits" className="scroll-mt-16 bg-white py-20 sm:py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                 <ScrollRevealBlock className="lg:col-span-5 space-y-5">
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em]">
+                  <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em] text-balance">
                     {t('landing.benefits.title')}
                   </h2>
                   <p className="text-base text-[#475569] leading-relaxed">
@@ -1033,10 +1046,10 @@ export const LandingPage: React.FC = () => {
                       key={pointKey}
                       className="flex items-start gap-4 py-4 px-2 sm:px-3 hover:bg-[#F8FAFC] transition-colors duration-150"
                     >
-                      <span className="font-mono text-xs font-semibold text-[#94A3B8] pt-1 shrink-0 tabular-nums">
+                      <span className="font-mono text-xs font-semibold text-[#64748B] pt-1 shrink-0 tabular-nums">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
-                      <CheckCircle2 className="w-5 h-5 text-[#16A34A] shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-[#16A34A] shrink-0 mt-0.5" aria-hidden="true" />
                       <p className="text-sm sm:text-base text-[#0F172A] font-medium leading-relaxed">
                         {t(pointKey)}
                       </p>
@@ -1048,10 +1061,10 @@ export const LandingPage: React.FC = () => {
           </section>
 
           {/* SECTION 5: RBAC ACCESS MATRIX CARDS (Soft Porcelain Ground, no kicker above H2) */}
-          <section id="roles" className="bg-[#F6F8FB] py-20 sm:py-24">
+          <section id="roles" className="scroll-mt-16 bg-[#F6F8FB] py-20 sm:py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
               <ScrollRevealBlock className="max-w-2xl space-y-3">
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em]">
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F172A] tracking-[-0.025em] text-balance">
                   {t('landing.roles.title')}
                 </h2>
                 <p className="text-base text-[#475569] leading-relaxed">
@@ -1115,13 +1128,13 @@ export const LandingPage: React.FC = () => {
                             <li
                               key={cap.label}
                               className={`flex items-center gap-2 text-xs ${
-                                cap.ok ? 'text-[#0F172A] font-medium' : 'text-[#94A3B8]'
+                                cap.ok ? 'text-[#0F172A] font-medium' : 'text-[#64748B]'
                               }`}
                             >
                               {cap.ok ? (
-                                <Check className="w-3.5 h-3.5 text-[#16A34A] shrink-0" />
+                                <Check className="w-3.5 h-3.5 text-[#16A34A] shrink-0" aria-hidden="true" />
                               ) : (
-                                <Minus className="w-3.5 h-3.5 text-[#CBD5E1] shrink-0" />
+                                <Minus className="w-3.5 h-3.5 text-[#94A3B8] shrink-0" aria-hidden="true" />
                               )}
                               <span>{cap.label}</span>
                             </li>
@@ -1130,11 +1143,16 @@ export const LandingPage: React.FC = () => {
                       </div>
 
                       <Link
-                        to="/login"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] pt-3 border-t border-slate-100 group/link"
+                        to={isMockMode ? '/login' : '/register'}
+                        className="inline-flex items-center gap-1.5 min-h-[36px] text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] pt-3 border-t border-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded group/link"
                       >
-                        <span className="landing-nav-link">{t('landing.roles.tryAccount')}</span>
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover/link:translate-x-0.5" />
+                        <span className="landing-nav-link">
+                          {t(isMockMode ? 'landing.roles.tryAccount' : 'landing.roles.startWithRole')}
+                        </span>
+                        <ArrowRight
+                          className="w-3.5 h-3.5 transition-transform duration-150 group-hover/link:translate-x-0.5"
+                          aria-hidden="true"
+                        />
                       </Link>
                     </StaggerItem>
                   );
@@ -1154,36 +1172,31 @@ export const LandingPage: React.FC = () => {
               }}
             />
             <ScrollRevealBlock className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-              <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-[-0.025em]">
+              <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-[-0.025em] text-balance">
                 {t('landing.cta.title')}
               </h2>
               <p className="text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-                {t('landing.cta.subtitle')}
+                {t(isMockMode ? 'landing.cta.subtitle' : 'landing.cta.subtitleProd')}
               </p>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2">
                 <MotionCtaWrapper className="w-full sm:w-auto">
-                  <Link to="/register" className="block w-full sm:w-auto group">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      fullWidth
-                      className="h-12 px-6 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_10px_28px_-8px_rgba(37,99,235,0.72)]"
-                      iconRight={
-                        <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-0.5" />
-                      }
-                    >
-                      {t('landing.cta.button')}
-                    </Button>
+                  <Link
+                    to="/register"
+                    className="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto h-12 px-6 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] text-sm sm:text-base font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_10px_28px_-8px_rgba(37,99,235,0.72)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2563EB] group"
+                  >
+                    <span>{t('landing.cta.button')}</span>
+                    <ArrowRight
+                      className="w-4 h-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
                   </Link>
                 </MotionCtaWrapper>
                 <MotionCtaWrapper className="w-full sm:w-auto">
-                  <Link to="/login" className="block w-full sm:w-auto">
-                    <button
-                      type="button"
-                      className="w-full sm:w-auto h-12 px-6 rounded-lg border border-white/15 bg-white/[0.04] hover:bg-white/[0.09] hover:border-white/25 text-sm sm:text-base font-medium text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
-                    >
-                      {t('landing.nav.signIn')}
-                    </button>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center justify-center w-full sm:w-auto h-12 px-6 rounded-lg border border-white/15 bg-white/[0.04] hover:bg-white/[0.09] hover:border-white/25 text-sm sm:text-base font-medium text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                  >
+                    {t('landing.nav.signIn')}
                   </Link>
                 </MotionCtaWrapper>
               </div>
@@ -1196,10 +1209,12 @@ export const LandingPage: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 text-white font-display font-semibold text-sm">
-                <Boxes className="w-4 h-4 text-[#2563EB]" />
+                <Boxes className="w-4 h-4 text-[#2563EB]" aria-hidden="true" />
                 <span>{t('landing.footer.tagline')}</span>
               </div>
-              <p className="text-xs text-slate-400">{t('landing.footer.copyright')}</p>
+              <p className="text-xs text-slate-400">
+                {t(isMockMode ? 'landing.footer.copyright' : 'landing.footer.copyrightProd')}
+              </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-6 text-xs font-medium">

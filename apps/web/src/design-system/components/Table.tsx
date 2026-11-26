@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Checkbox } from './Checkbox';
 import { Skeleton } from './Loading';
 import { EmptyState } from './EmptyState';
@@ -29,6 +29,7 @@ export interface TableProps<T = Record<string, unknown>> {
   onSelectAll?: (selected: boolean) => void;
   getRowId?: (record: T, index: number) => string | number;
   caption?: string;
+  highlightRowId?: string | number | null;
   className?: string;
 }
 
@@ -53,9 +54,35 @@ export function Table<T = Record<string, unknown>>({
     return index;
   },
   caption,
+  highlightRowId = null,
   className = '',
 }: TableProps<T>) {
   const { t } = useTranslation();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollEdges, setScrollEdges] = useState({ left: false, right: false });
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const sync = () => {
+      const canRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
+      const canLeft = el.scrollLeft > 2;
+      setScrollEdges((prev) =>
+        prev.left === canLeft && prev.right === canRight ? prev : { left: canLeft, right: canRight }
+      );
+    };
+    sync();
+    el.addEventListener('scroll', sync, { passive: true });
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(sync);
+      ro.observe(el);
+    }
+    return () => {
+      el.removeEventListener('scroll', sync);
+      ro?.disconnect();
+    };
+  }, [data.length, columns.length]);
   const resolvedEmptyTitle = emptyTitle ?? t('table.noDataTitle');
   const resolvedEmptyDesc = emptyDescription ?? t('table.noDataDesc');
   const totalRows = data.length;
@@ -82,10 +109,22 @@ export function Table<T = Record<string, unknown>>({
 
   return (
     <div
-      className={`w-full overflow-hidden rounded-lg border border-[#E2E8F0] bg-white shadow-sm font-sans ${className}`}
+      className={`relative w-full min-w-0 rounded-lg border border-[#E2E8F0] bg-white shadow-sm font-sans ${className}`}
     >
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm text-[#0F172A]" aria-busy={loading}>
+      {scrollEdges.left && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 start-0 w-5 z-10 rounded-s-lg bg-gradient-to-r from-slate-900/[0.06] to-transparent"
+        />
+      )}
+      {scrollEdges.right && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 end-0 w-6 z-10 rounded-e-lg bg-gradient-to-l from-slate-900/[0.08] to-transparent"
+        />
+      )}
+      <div ref={scrollRef} className="w-full overflow-x-auto rounded-lg">
+        <table className="w-full border-collapse text-left text-xs sm:text-sm text-[#0F172A]" aria-busy={loading}>
           {caption && <caption className="sr-only">{caption}</caption>}
           <thead>
             <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
@@ -111,13 +150,28 @@ export function Table<T = Record<string, unknown>>({
                     key={column.key}
                     scope="col"
                     style={{ width: column.width }}
-                    className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#475569] ${
-                      column.sortable ? 'cursor-pointer select-none hover:bg-[#F1F5F9]' : ''
+                    tabIndex={column.sortable ? 0 : undefined}
+                    aria-sort={
+                      column.sortable
+                        ? isSorted
+                          ? sortDir === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : 'none'
+                        : undefined
+                    }
+                    onKeyDown={(e) => {
+                      if (column.sortable && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        handleSortClick(column);
+                      }
+                    }}
+                    className={`px-3 sm:px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#475569] whitespace-nowrap ${
+                      column.sortable
+                        ? 'cursor-pointer select-none hover:bg-[#F1F5F9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#2563EB]'
+                        : ''
                     }`}
                     onClick={() => handleSortClick(column)}
-                    aria-sort={
-                      isSorted ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined
-                    }
                   >
                     <div className={`flex items-center gap-1.5 ${alignClasses[alignment]}`}>
                       <span>{column.label}</span>
@@ -125,16 +179,16 @@ export function Table<T = Record<string, unknown>>({
                         <span className="inline-flex text-[#94A3B8]">
                           {isSorted ? (
                             sortDir === 'asc' ? (
-                              <svg className="w-3.5 h-3.5 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                              <svg aria-hidden="true" className="w-3.5 h-3.5 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
                               </svg>
                             ) : (
-                              <svg className="w-3.5 h-3.5 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                              <svg aria-hidden="true" className="w-3.5 h-3.5 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                               </svg>
                             )
                           ) : (
-                            <svg className="w-3.5 h-3.5 opacity-40 hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <svg aria-hidden="true" className="w-3.5 h-3.5 opacity-40 hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4" />
                             </svg>
                           )}
@@ -192,7 +246,8 @@ export function Table<T = Record<string, unknown>>({
                   <tr
                     key={String(rowId)}
                     className={`
-                      transition-colors duration-100
+                      transition-colors duration-150
+                      ${highlightRowId !== null && String(highlightRowId) === String(rowId) ? 'row-update-flash' : ''}
                       ${
                         isSelected
                           ? 'bg-[#EFF6FF]'
@@ -229,7 +284,7 @@ export function Table<T = Record<string, unknown>>({
                       return (
                         <td
                           key={column.key}
-                          className={`px-4 py-3 text-sm text-[#0F172A] align-middle ${alignClasses[alignment]}`}
+                          className={`px-3 sm:px-4 py-3 text-xs sm:text-sm text-[#0F172A] align-middle ${alignClasses[alignment]}`}
                         >
                           {renderedContent}
                         </td>

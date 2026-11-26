@@ -1,13 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  animate,
-  domAnimation,
-  LazyMotion,
-  m,
-  MotionConfig,
-  useInView,
-  useReducedMotion,
-} from 'motion/react';
+import React from 'react';
+import { m, useReducedMotion } from 'motion/react';
+import { AnimatedCounter, MotionRoot } from '../design-system/motion';
 import {
   LANDING_EASE_OUT,
   LANDING_EASE_UI,
@@ -16,18 +9,13 @@ import {
   staggerGridVariants,
   staggerItemVariants,
 } from './landingMotionPrimitives';
-import { getIntlLocale, useTranslation } from '../i18n';
 
 export interface LandingMotionRootProps {
   children: React.ReactNode;
 }
 
 export const LandingMotionRoot: React.FC<LandingMotionRootProps> = ({ children }) => {
-  return (
-    <MotionConfig reducedMotion="user">
-      <LazyMotion features={domAnimation}>{children}</LazyMotion>
-    </MotionConfig>
-  );
+  return <MotionRoot>{children}</MotionRoot>;
 };
 
 export interface AnimatedStatCounterProps {
@@ -39,72 +27,24 @@ export interface AnimatedStatCounterProps {
   className?: string;
 }
 
-/**
- * Animates a metric from 0 to its target value once visible.
- * Reserves exact final text dimensions via an invisible overlay grid cell to avoid layout shift,
- * and shows the final value immediately when prefers-reduced-motion is active.
- */
 export const AnimatedStatCounter: React.FC<AnimatedStatCounterProps> = ({
   target,
   suffix = '',
-  duration = 0.9,
+  duration = 0.85,
   trigger = 'inView',
   useLocaleGrouping = true,
   className = '',
-}) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const prevTargetRef = useRef<number>(0);
-  const shouldReduceMotion = useReducedMotion();
-  const { language } = useTranslation();
-  const isInView = useInView(ref, { once: true, amount: 0.25 });
-  const shouldStart = trigger === 'mount' || isInView;
-  const [displayValue, setDisplayValue] = useState<number>(() =>
-    shouldReduceMotion ? target : 0
-  );
-
-  useEffect(() => {
-    if (shouldReduceMotion || !shouldStart) {
-      prevTargetRef.current = target;
-      return;
-    }
-
-    const startValue = prevTargetRef.current;
-    const controls = animate(startValue, target, {
-      duration: startValue === 0 ? duration : Math.min(duration, 0.42),
-      ease: LANDING_EASE_OUT,
-      onUpdate: (latest) => {
-        const rounded = Math.round(latest);
-        prevTargetRef.current = rounded;
-        setDisplayValue(rounded);
-      },
-      onComplete: () => {
-        prevTargetRef.current = target;
-        setDisplayValue(target);
-      },
-    });
-
-    return () => controls.stop();
-  }, [duration, shouldReduceMotion, shouldStart, target]);
-
-  const formatNum = (n: number) => (useLocaleGrouping ? n.toLocaleString(getIntlLocale(language)) : String(n));
-  const finalString = `${formatNum(target)}${suffix}`;
-  const currentString = `${formatNum(shouldReduceMotion ? target : displayValue)}${suffix}`;
-
-  return (
-    <span
-      ref={ref}
-      className={`inline-grid align-baseline tabular-nums ${className}`}
-      aria-label={finalString}
-    >
-      <span className="col-start-1 row-start-1 invisible select-none" aria-hidden="true">
-        {finalString}
-      </span>
-      <span className="col-start-1 row-start-1" aria-hidden="true">
-        {currentString}
-      </span>
-    </span>
-  );
-};
+}) => (
+  <AnimatedCounter
+    value={target}
+    suffix={suffix}
+    duration={duration}
+    animateOnMount
+    trigger={trigger}
+    useLocaleGrouping={useLocaleGrouping}
+    className={className}
+  />
+);
 
 export interface MotionCtaWrapperProps {
   children: React.ReactNode;

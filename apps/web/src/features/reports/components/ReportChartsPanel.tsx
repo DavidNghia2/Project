@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { m, useReducedMotion } from 'motion/react';
 import { BarChart3 } from 'lucide-react';
-import { Card, EmptyState } from '../../../design-system';
+import { AnimatedCounter, Card, EmptyState, MOTION_DURATION, MOTION_EASE } from '../../../design-system';
 import { getIntlLocale, useTranslation } from '../../../i18n';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type { ComputedReportResult } from '../types';
@@ -20,6 +21,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
   validDateRange,
 }) => {
   const { t, language } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   const series = validDateRange ? report.chartSeries : [];
@@ -101,21 +103,21 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                 <span>
                   {primaryLegend}:{' '}
                   <strong className="text-[#0284C7]">
-                    {activePoint.primaryQty.toLocaleString(getIntlLocale(language))}
+                    <AnimatedCounter value={activePoint.primaryQty} />
                   </strong>
                 </span>
                 {hasSecondary && activePoint.secondaryQty !== undefined && (
                   <span>
                     {secondaryLegend}:{' '}
                     <strong className="text-[#D97706]">
-                      {activePoint.secondaryQty.toLocaleString(getIntlLocale(language))}
+                      <AnimatedCounter value={activePoint.secondaryQty} />
                     </strong>
                   </span>
                 )}
                 <span>
                   {t('reports.charts.valueLabel')}{' '}
                   <strong className="text-[#0F172A]">
-                    {formatCurrencyVND(activePoint.primaryValue)}
+                    <AnimatedCounter value={activePoint.primaryValue} format={formatCurrencyVND} />
                   </strong>
                 </span>
               </div>
@@ -128,7 +130,8 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
               role="img"
               aria-label={chartTitle}
               viewBox="0 0 760 250"
-              className="w-full min-w-[540px] h-60 select-none"
+              preserveAspectRatio="xMidYMid meet"
+              className="w-full min-w-[540px] max-w-5xl mx-auto h-60 sm:h-64 xl:h-72 select-none"
             >
               {/* Horizontal Gridlines & Y Ticks */}
               {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
@@ -187,8 +190,15 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                     tabIndex={0}
                     role="button"
                     aria-label={`${item.label}: ${item.primaryQty}`}
+                    onClick={() => setHoveredKey(item.key)}
                     onMouseEnter={() => setHoveredKey(item.key)}
                     onFocus={() => setHoveredKey(item.key)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setHoveredKey(item.key);
+                      }
+                    }}
                     className="cursor-pointer outline-none"
                   >
                     {/* Subtle column hover highlight */}
@@ -204,32 +214,50 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                     {hasSecondary ? (
                       <>
                         {/* Primary Bar (Inbound / Current Stock) */}
-                        <rect
+                        <m.rect
+                          key={`${report.reportType}-${item.key}-p`}
                           x={centerX - dualWidth - 2}
                           y={primaryY}
                           width={dualWidth}
                           height={Math.max(item.primaryQty > 0 ? 3 : 0, primaryH)}
                           rx={3}
                           fill={isActive ? '#0369A1' : '#0284C7'}
+                          style={{ transformBox: 'fill-box', transformOrigin: 'bottom' }}
+                          initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0.08, opacity: 0.7 }}
+                          animate={{ scaleY: 1, opacity: 1 }}
+                          transition={{
+                            duration: MOTION_DURATION.moderate,
+                            delay: Math.min(idx, 7) * 0.025,
+                            ease: MOTION_EASE.out,
+                          }}
                         >
                           <title>
                             {item.label} — {primaryLegend}: {item.primaryQty}
                           </title>
-                        </rect>
+                        </m.rect>
 
                         {/* Secondary Bar (Outbound / Safety Threshold) */}
-                        <rect
+                        <m.rect
+                          key={`${report.reportType}-${item.key}-s`}
                           x={centerX + 2}
                           y={secondaryY}
                           width={dualWidth}
                           height={Math.max(secondaryQty > 0 ? 3 : 0, secondaryH)}
                           rx={3}
                           fill={isActive ? '#B45309' : '#D97706'}
+                          style={{ transformBox: 'fill-box', transformOrigin: 'bottom' }}
+                          initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0.08, opacity: 0.7 }}
+                          animate={{ scaleY: 1, opacity: 1 }}
+                          transition={{
+                            duration: MOTION_DURATION.moderate,
+                            delay: Math.min(idx, 7) * 0.025 + 0.04,
+                            ease: MOTION_EASE.out,
+                          }}
                         >
                           <title>
                             {item.label} — {secondaryLegend}: {secondaryQty}
                           </title>
-                        </rect>
+                        </m.rect>
 
                         {/* Numeric label above taller bar */}
                         <text
@@ -246,18 +274,27 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                       </>
                     ) : (
                       <>
-                        <rect
+                        <m.rect
+                          key={`${report.reportType}-${item.key}-single`}
                           x={centerX - singleWidth / 2}
                           y={primaryY}
                           width={singleWidth}
                           height={Math.max(item.primaryQty > 0 ? 3 : 0, primaryH)}
                           rx={4}
                           fill={isActive ? '#0369A1' : '#0284C7'}
+                          style={{ transformBox: 'fill-box', transformOrigin: 'bottom' }}
+                          initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0.08, opacity: 0.7 }}
+                          animate={{ scaleY: 1, opacity: 1 }}
+                          transition={{
+                            duration: MOTION_DURATION.moderate,
+                            delay: Math.min(idx, 7) * 0.025,
+                            ease: MOTION_EASE.out,
+                          }}
                         >
                           <title>
                             {item.label}: {item.primaryQty} ({formatCurrencyVND(item.primaryValue)})
                           </title>
-                        </rect>
+                        </m.rect>
                         <text
                           x={centerX}
                           y={primaryY - 6}

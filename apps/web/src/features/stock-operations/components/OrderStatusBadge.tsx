@@ -1,5 +1,6 @@
 import React from 'react';
-import { Badge, type BadgeVariant } from '../../../design-system';
+import { m, useReducedMotion } from 'motion/react';
+import { Badge, MOTION_SPRING, type BadgeVariant } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import type { OrderStatus } from '../types';
 
@@ -21,10 +22,19 @@ export const OrderStatusBadge: React.FC<OrderStatusBadgeProps> = ({
   size = 'sm',
 }) => {
   const { t } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
   const cfg = STATUS_BADGE_MAP[status];
   return (
-    <Badge variant={cfg.variant} size={size} dot>
-      {t(cfg.i18nKey)}
-    </Badge>
+    <m.span
+      key={status}
+      initial={shouldReduceMotion ? { opacity: 1 } : { scale: 0.9, opacity: 0.85 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={shouldReduceMotion ? { duration: 0.01 } : MOTION_SPRING.snappy}
+      className="inline-flex"
+    >
+      <Badge variant={cfg.variant} size={size} dot>
+        {t(cfg.i18nKey)}
+      </Badge>
+    </m.span>
   );
 };

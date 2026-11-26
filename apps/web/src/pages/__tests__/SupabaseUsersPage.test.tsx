@@ -46,19 +46,21 @@ describe('SupabaseUsersPage role changes', () => {
   });
 
   it.each([
-    ['en', 'Members and permissions', 'Create invitation', 'Role for staff@example.com'],
-    ['zh-CN', '成员与权限', '创建邀请', 'staff@example.com 的角色'],
-  ])('localizes the Supabase member screen in %s', async (language, heading, invite, role) => {
+    ['en', 'Members and permissions', 'Create invitation', 'Role for staff@example.com', 'Edit permissions'],
+    ['zh-CN', '成员与权限', '创建邀请', 'staff@example.com 的角色', '修改权限'],
+  ])('localizes the Supabase member screen in %s', async (language, heading, invite, role, editBtn) => {
     localStorage.setItem('smart_inventory_language', language);
     renderPage();
     expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: invite })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: editBtn }));
     expect(screen.getByLabelText(role)).toHaveValue('WAREHOUSE_STAFF');
   });
 
   it('keeps an Admin promotion as a draft until it is confirmed', async () => {
     const user = userEvent.setup();
     renderPage();
+    await user.click(await screen.findByRole('button', { name: 'Sửa quyền' }));
     const roleSelect = await screen.findByLabelText('Vai trò staff@example.com');
 
     await user.selectOptions(roleSelect, 'ADMIN');
@@ -86,6 +88,7 @@ describe('SupabaseUsersPage role changes', () => {
     const user = userEvent.setup();
     rpc.mockResolvedValueOnce({ data: [{ ...member, warehouse_ids: [], warehouse_codes: [] }], error: null });
     renderPage();
+    await user.click(await screen.findByRole('button', { name: 'Sửa quyền' }));
     const roleSelect = await screen.findByLabelText('Vai trò staff@example.com');
 
     await user.selectOptions(roleSelect, 'VIEWER');
@@ -93,5 +96,26 @@ describe('SupabaseUsersPage role changes', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent('Cần gán ít nhất một kho');
     expect(invoke).not.toHaveBeenCalled();
+  });
+
+  it('opens confirmation modal before deactivating member', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(await screen.findByRole('button', { name: 'Vô hiệu hóa' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByText('Xác nhận vô hiệu hóa thành viên')).toBeInTheDocument();
+    expect(invoke).not.toHaveBeenCalled();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Xác nhận vô hiệu hóa' }));
+    expect(invoke).toHaveBeenCalledWith('admin-users', {
+      body: {
+        action: 'update',
+        userId: 'member-1',
+        roleCode: 'WAREHOUSE_STAFF',
+        status: 'inactive',
+        warehouseIds: ['warehouse-1'],
+      },
+    });
   });
 });

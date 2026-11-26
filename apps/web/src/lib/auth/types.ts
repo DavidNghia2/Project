@@ -63,7 +63,7 @@ export type SignUpResult =
   | { user: AuthUser; session: AuthSession | null; error: null }
   | { user: null; session: null; error: AuthError };
 
-export type AuthStateChangeCallback = (session: AuthSession | null) => void;
+export type AuthStateChangeCallback = (session: AuthSession | null, verificationToken?: string) => void;
 
 /**
  * Provider-agnostic authentication contract designed so MockAuthService can

@@ -7,8 +7,8 @@ import {
   DollarSign,
   Layers,
 } from 'lucide-react';
-import { Card } from '../../../design-system';
-import { getIntlLocale, useTranslation } from '../../../i18n';
+import { AnimatedCounter, Card } from '../../../design-system';
+import { useTranslation } from '../../../i18n';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type { ComputedReportResult, CurrentStockRow } from '../types';
 
@@ -21,10 +21,12 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
   report,
   validDateRange,
 }) => {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
 
-  const qtyText = (n: number) => (validDateRange ? n.toLocaleString(getIntlLocale(language)) : '—');
-  const moneyText = (n: number) => (validDateRange ? formatCurrencyVND(n) : '—');
+  const qtyNode = (n: number) =>
+    validDateRange ? <AnimatedCounter value={n} /> : '—';
+  const moneyNode = (n: number) =>
+    validDateRange ? <AnimatedCounter value={n} format={formatCurrencyVND} /> : '—';
 
   const cards = (() => {
     switch (report.reportType) {
@@ -35,28 +37,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
           {
             id: 'kpi-rows',
             label: t('reports.kpi.catalogSkus'),
-            value: qtyText(report.totals.rowCount),
+            value: qtyNode(report.totals.rowCount),
             icon: Layers,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },
           {
             id: 'kpi-primary-qty',
             label: t('reports.kpi.totalOnHandQty'),
-            value: qtyText(report.totals.totalPrimaryQty),
+            value: qtyNode(report.totals.totalPrimaryQty),
             icon: Boxes,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
           {
             id: 'kpi-primary-val',
             label: t('reports.kpi.totalInventoryValuation'),
-            value: moneyText(report.totals.totalPrimaryValue),
+            value: moneyNode(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#16A34A] bg-[#ECFDF5]',
           },
           {
             id: 'kpi-secondary',
             label: t('reports.kpi.atBelowThreshold'),
-            value: qtyText(lowCount),
+            value: qtyNode(lowCount),
             icon: AlertTriangle,
             tone: 'text-[#D97706] bg-[#FFFBEB]',
           },
@@ -74,28 +76,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
           {
             id: 'kpi-rows',
             label: t('reports.kpi.ledgerLines'),
-            value: qtyText(report.totals.rowCount),
+            value: qtyNode(report.totals.rowCount),
             icon: Layers,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },
           {
             id: 'kpi-primary-qty',
             label: isIn ? t('reports.kpi.totalInboundQty') : t('reports.kpi.totalOutboundQty'),
-            value: qtyText(report.totals.totalPrimaryQty),
+            value: qtyNode(report.totals.totalPrimaryQty),
             icon: isIn ? ArrowDownToLine : ArrowUpFromLine,
             tone: isIn ? 'text-[#16A34A] bg-[#ECFDF5]' : 'text-[#D97706] bg-[#FFFBEB]',
           },
           {
             id: 'kpi-primary-val',
             label: isIn ? t('reports.kpi.totalInboundValue') : t('reports.kpi.totalOutboundValue'),
-            value: moneyText(report.totals.totalPrimaryValue),
+            value: moneyNode(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
           {
             id: 'kpi-secondary',
             label: t('reports.kpi.avgValuePerLine'),
-            value: moneyText(avgPerLine),
+            value: moneyNode(avgPerLine),
             icon: Boxes,
             tone: 'text-[#475569] bg-[#F8FAFC]',
           },
@@ -107,28 +109,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
           {
             id: 'kpi-rows',
             label: t('reports.kpi.periodInboundQty'),
-            value: qtyText(report.totals.totalPrimaryQty),
+            value: qtyNode(report.totals.totalPrimaryQty),
             icon: ArrowDownToLine,
             tone: 'text-[#16A34A] bg-[#ECFDF5]',
           },
           {
             id: 'kpi-primary-qty',
             label: t('reports.kpi.periodOutboundQty'),
-            value: qtyText(report.totals.totalSecondaryQty ?? 0),
+            value: qtyNode(report.totals.totalSecondaryQty ?? 0),
             icon: ArrowUpFromLine,
             tone: 'text-[#D97706] bg-[#FFFBEB]',
           },
           {
             id: 'kpi-primary-val',
             label: t('reports.kpi.closingBalanceQty'),
-            value: qtyText(report.totals.totalClosingQty ?? 0),
+            value: qtyNode(report.totals.totalClosingQty ?? 0),
             icon: Boxes,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },
           {
             id: 'kpi-secondary',
             label: t('reports.kpi.periodInboundValue'),
-            value: moneyText(report.totals.totalPrimaryValue),
+            value: moneyNode(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
@@ -139,28 +141,28 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
           {
             id: 'kpi-rows',
             label: t('reports.kpi.belowThresholdSkus'),
-            value: qtyText(report.totals.rowCount),
+            value: qtyNode(report.totals.rowCount),
             icon: AlertTriangle,
             tone: 'text-[#DC2626] bg-[#FEF2F2]',
           },
           {
             id: 'kpi-primary-qty',
             label: t('reports.kpi.totalRemainingStock'),
-            value: qtyText(report.totals.totalPrimaryQty),
+            value: qtyNode(report.totals.totalPrimaryQty),
             icon: Boxes,
             tone: 'text-[#0F172A] bg-[#F1F5F9]',
           },
           {
             id: 'kpi-primary-val',
             label: t('reports.kpi.totalDeficitUnits'),
-            value: qtyText(report.totals.totalSecondaryQty ?? 0),
+            value: qtyNode(report.totals.totalSecondaryQty ?? 0),
             icon: Layers,
             tone: 'text-[#D97706] bg-[#FFFBEB]',
           },
           {
             id: 'kpi-secondary',
             label: t('reports.kpi.estRestockBudget'),
-            value: moneyText(report.totals.totalPrimaryValue),
+            value: moneyNode(report.totals.totalPrimaryValue),
             icon: DollarSign,
             tone: 'text-[#0284C7] bg-[#F0F9FF]',
           },

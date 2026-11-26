@@ -474,6 +474,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_access_context: { Args: never; Returns: Json }
       accept_invitation: {
         Args: { invitation_token: string }
         Returns: undefined

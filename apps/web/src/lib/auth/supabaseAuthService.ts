@@ -14,15 +14,7 @@ import type {
 } from './types';
 import type { RoleCode } from '../../features/users-rbac';
 
-type ProfileRow = { id: string; email: string; full_name: string; status: 'active' | 'inactive' };
-type MembershipRow = {
-  company_id: string;
-  role_code: RoleCode;
-  status: 'active' | 'inactive';
-  is_owner: boolean;
-};
-type CompanyRow = { id: string; name: string; slug: string; status: 'active' | 'suspended' };
-type WarehouseRow = { id: string; code: string; name: string };
+type ProfileRow = { email: string; full_name: string; status: 'active' | 'inactive' };
 
 function authError(code: AuthError['code'], messageKey: string, message: string): AuthError {
   return { code, messageKey, message };
@@ -42,96 +34,52 @@ function mapSupabaseError(message: string): AuthError {
   return authError('NETWORK_ERROR', 'auth.errors.networkError', message);
 }
 
-async function toAuthSession(session: Session): Promise<AuthSession> {
-  const user = session.user;
-  const profileResult = await supabase
-    .from('profiles')
-    .select('id, email, full_name, status')
-    .eq('id', user.id)
-    .maybeSingle();
+type AccessContext = {
+  profile: ProfileRow;
+  access: NonNullable<AuthUser['accessStatus']>;
+  company: AuthUser['company'];
+  role: RoleCode | null;
+  owner: boolean;
+  warehouses: string[];
+};
 
-  const profile = profileResult.data as ProfileRow | null;
-  if (profileResult.error || !profile) throw new Error('Unable to load your profile. Please retry.');
-  const baseUser: AuthUser = {
-    id: user.id,
-    email: profile?.email ?? user.email ?? '',
-    fullName: profile?.full_name || String(user.user_metadata.full_name ?? ''),
-    role: null,
-    avatarInitials: computeAvatarInitials(profile?.full_name || user.email || 'User'),
-    assignedWarehouses: [],
-    company: null,
-    isOwner: false,
-    profileStatus: profile.status,
-    accessStatus: profile.status === 'active' ? 'no-company' : 'inactive',
-  };
+const pending = new Map<string, Promise<AuthSession>>();
 
-  if (profile.status !== 'active') {
-    return {
-      user: baseUser,
-      accessToken: session.access_token,
-      expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000,
-      provider: 'supabase',
-    };
-  }
+function toAuthSession(session: Session): Promise<AuthSession> {
+  const token = session.access_token;
+  const existing = pending.get(token);
+  if (existing) return existing;
 
-  const membershipResult = await supabase
-    .from('memberships')
-    .select('company_id, role_code, status, is_owner')
-    .eq('user_id', user.id)
-    .maybeSingle();
-  const membership = membershipResult.data as MembershipRow | null;
-  if (membershipResult.error) throw new Error('Unable to load your membership. Please retry.');
+  const request = verifyAccess(session).finally(() => pending.delete(token));
+  pending.set(token, request);
+  return request;
+}
 
-  if (!membership) {
-    return {
-      user: baseUser,
-      accessToken: session.access_token,
-      expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000,
-      provider: 'supabase',
-    };
-  }
+async function verifyAccess(session: Session): Promise<AuthSession> {
+  const { data, error } = await supabase.rpc('get_my_access_context')
+    .abortSignal(AbortSignal.timeout(10_000));
+  if (error) throw error;
+  if (!data) throw new Error('Missing access context.');
 
-  if (membership.status !== 'active') {
-    return { user: { ...baseUser, accessStatus: 'inactive' }, accessToken: session.access_token, expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000, provider: 'supabase' };
-  }
-
-  const companyResult = await supabase
-    .from('companies')
-    .select('id, name, slug, status')
-    .eq('id', membership.company_id)
-    .maybeSingle();
-  const company = companyResult.data as CompanyRow | null;
-  if (companyResult.error) throw new Error('Unable to load your company. Please retry.');
-
-  if (!company || company.status !== 'active') {
-    return {
-      user: { ...baseUser, accessStatus: 'suspended' },
-      accessToken: session.access_token,
-      expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000,
-      provider: 'supabase',
-    };
-  }
-
-  const warehousesResult = await supabase
-    .from('warehouses')
-    .select('id, code, name')
-    .eq('company_id', company.id)
-    .eq('status', 'active');
-  const warehouses = (warehousesResult.data ?? []) as WarehouseRow[];
-  if (warehousesResult.error) throw new Error('Unable to load your warehouses. Please retry.');
-
+  const access = data as unknown as AccessContext;
+  const email = access.profile.email || session.user.email || '';
+  const fullName = access.profile.full_name || String(session.user.user_metadata.full_name ?? '');
   return {
-    user: {
-      ...baseUser,
-      role: membership.role_code,
-      isOwner: membership.is_owner,
-      company: { id: company.id, name: company.name, slug: company.slug },
-      accessStatus: 'ready',
-      assignedWarehouses: warehouses.map((warehouse) => warehouse.code),
-    },
+    provider: 'supabase',
     accessToken: session.access_token,
     expiresAt: (session.expires_at ?? Math.floor(Date.now() / 1000)) * 1000,
-    provider: 'supabase',
+    user: {
+      id: session.user.id,
+      email,
+      fullName,
+      avatarInitials: computeAvatarInitials(fullName || email || 'User'),
+      profileStatus: access.profile.status,
+      accessStatus: access.access,
+      company: access.company,
+      role: access.role,
+      isOwner: access.owner,
+      assignedWarehouses: access.warehouses,
+    },
   };
 }
 
@@ -141,8 +89,8 @@ export class SupabaseAuthService implements IAuthService {
 
   async getSession(): Promise<AuthSession | null> {
     const { data, error } = await supabase.auth.getSession();
-    if (error) throw error;
-    if (!data.session) return null;
+    if (error && !['refresh_token_not_found', 'refresh_token_already_used', 'session_not_found', 'session_expired'].includes(error.code ?? '')) throw error;
+    if (error || !data.session) return null;
     return toAuthSession(data.session);
   }
 
@@ -187,12 +135,9 @@ export class SupabaseAuthService implements IAuthService {
   }
 
   onAuthStateChange(callback: AuthStateChangeCallback): () => void {
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      if (!nextSession) {
-        callback(null);
-        return;
-      }
-      void toAuthSession(nextSession).then(callback).catch(() => callback(null));
+    const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (event === 'INITIAL_SESSION') return;
+      callback(null, nextSession?.access_token);
     });
     return () => data.subscription.unsubscribe();
   }

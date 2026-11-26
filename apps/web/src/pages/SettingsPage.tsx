@@ -56,9 +56,9 @@ export const SettingsPage: React.FC = () => {
             padding="md"
             className="space-y-3"
           >
-            <Input label={t('settings.prefixIn')} value="IN-" onChange={() => {}} disabled size="sm" />
-            <Input label={t('settings.prefixOut')} value="OUT-" onChange={() => {}} disabled size="sm" />
-            <Input label={t('settings.prefixStk')} value="STK-" onChange={() => {}} disabled size="sm" />
+            <Input id="settings-prefix-in" label={t('settings.prefixIn')} value="IN-" onChange={() => {}} disabled size="sm" />
+            <Input id="settings-prefix-out" label={t('settings.prefixOut')} value="OUT-" onChange={() => {}} disabled size="sm" />
+            <Input id="settings-prefix-stk" label={t('settings.prefixStk')} value="STK-" onChange={() => {}} disabled size="sm" />
           </Card>
         </div>
       )}

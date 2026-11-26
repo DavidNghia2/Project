@@ -96,6 +96,7 @@
     "title": "每位成员都有明确的权限边界",
     "subtitle": "按角色划分系统管理、经理审批、仓库收货和只读审计权限。",
     "tryAccount": "使用演示角色登录",
+    "startWithRole": "开始创建工作区",
     "coverageLabel": "模块覆盖范围",
     "capCreate": "创建单据",
     "capApprove": "审批与对账",
@@ -105,11 +106,13 @@
   "cta": {
     "title": "准备体验仓库工作区了吗？",
     "subtitle": "创建本地演示账户，或选择四种预设测试角色之一登录。",
+    "subtitleProd": "创建企业账户或直接登录，开始管理多仓库库存业务。",
     "button": "创建账户"
   },
   "footer": {
     "tagline": "智能库存管理系统",
     "copyright": "© 2026 Smart Inventory。本地模拟登录的前端原型。",
+    "copyrightProd": "© 2026 Smart Inventory。多仓库库存管理系统。",
     "links": {
       "features": "功能",
       "signIn": "登录",

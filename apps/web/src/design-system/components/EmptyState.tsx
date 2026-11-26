@@ -1,5 +1,7 @@
 import React from 'react';
+import { m, useReducedMotion } from 'motion/react';
 import { useTranslation } from '../../i18n';
+import { MOTION_DURATION, MOTION_EASE } from '../motion/tokens';
 
 export interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -17,11 +19,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   className = '',
 }) => {
   const { t } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div
+    <m.div
       role="region"
       aria-label={t('emptyState.noticeAria')}
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: MOTION_DURATION.normal, ease: MOTION_EASE.out }}
       className={`flex flex-col items-center justify-center text-center p-8 md:p-12 font-sans ${className}`}
     >
       {icon ? (
@@ -57,6 +63,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       </p>
 
       {action && <div className="inline-flex items-center">{action}</div>}
-    </div>
+    </m.div>
   );
 };

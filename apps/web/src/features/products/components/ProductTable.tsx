@@ -14,7 +14,7 @@ import {
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import type { Product } from '../types';
-import { Badge, Button } from '../../../design-system';
+import { Badge, Button, Tooltip } from '../../../design-system';
 
 export interface ProductTableProps {
   products: Product[];
@@ -191,8 +191,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                       >
                         {item.name}
                       </button>
-                      <span className="text-[11px] text-[#64748B] block sm:hidden mt-0.5">
-                        {displayCategory} • {displayUnit}
+                      <span className="text-[11px] text-[#64748B] block md:hidden mt-0.5">
+                        {displayCategory}
+                        <span className="sm:hidden"> • {displayUnit}</span>
                       </span>
                     </td>
 
@@ -230,6 +231,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                           </Badge>
                         ) : null}
                       </div>
+                      <span className="block lg:hidden text-[11px] font-mono text-[#64748B] mt-0.5 whitespace-nowrap">
+                        {t('products.table.colReorder')}: {item.reorderLevel.toLocaleString()}
+                      </span>
                     </td>
 
                     {/* Reorder Level */}
@@ -247,37 +251,40 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                     </td>
 
                     {/* Actions */}
-                    <td className="py-2.5 px-4 text-right">
+                    <td className="py-2.5 px-3 sm:px-4 text-right">
                       <div className="inline-flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => onView(item)}
-                          className="p-1.5 text-[#64748B] hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 outline-none"
-                          title={t('products.table.viewTitle')}
-                          aria-label={t('products.table.viewAria', { sku: item.sku })}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                        <Tooltip content={t('products.table.viewTitle')}>
+                          <button
+                            type="button"
+                            onClick={() => onView(item)}
+                            className="inline-flex items-center justify-center min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 p-2 sm:p-1.5 text-[#64748B] hover:text-blue-600 hover:bg-blue-50 active:scale-95 rounded-md transition-[color,background-color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-blue-600 outline-none cursor-pointer"
+                            aria-label={t('products.table.viewAria', { sku: item.sku })}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </Tooltip>
                         {canMutate && (
                           <>
-                            <button
-                              type="button"
-                              onClick={() => onEdit(item)}
-                              className="p-1.5 text-[#64748B] hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 outline-none"
-                              title={t('products.table.editTitle')}
-                              aria-label={t('products.table.editAria', { sku: item.sku })}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => onDelete(item)}
-                              className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-red-600 outline-none"
-                              title={t('products.table.deleteTitle')}
-                              aria-label={t('products.table.deleteAria', { sku: item.sku })}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <Tooltip content={t('products.table.editTitle')}>
+                              <button
+                                type="button"
+                                onClick={() => onEdit(item)}
+                                className="inline-flex items-center justify-center min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 p-2 sm:p-1.5 text-[#64748B] hover:text-amber-600 hover:bg-amber-50 active:scale-95 rounded-md transition-[color,background-color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-blue-600 outline-none cursor-pointer"
+                                aria-label={t('products.table.editAria', { sku: item.sku })}
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                            </Tooltip>
+                            <Tooltip content={t('products.table.deleteTitle')}>
+                              <button
+                                type="button"
+                                onClick={() => onDelete(item)}
+                                className="inline-flex items-center justify-center min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 p-2 sm:p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 active:scale-95 rounded-md transition-[color,background-color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-red-600 outline-none cursor-pointer"
+                                aria-label={t('products.table.deleteAria', { sku: item.sku })}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </Tooltip>
                           </>
                         )}
                       </div>
@@ -291,8 +298,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B] px-1">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between gap-3 text-xs text-[#64748B] px-1">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
           <span>
             {t('products.table.showingPrefix')} <strong>{startIndex}</strong> {t('products.table.showingTo')}{' '}
             <strong>{endIndex}</strong> {t('products.table.showingOf')}{' '}
@@ -307,7 +314,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
               id="pageSizeSelect"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="h-7 px-1.5 border border-[#CBD5E1] rounded bg-white text-xs text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-blue-600"
+              className="min-h-11 sm:min-h-0 sm:h-7 px-2 sm:px-1.5 border border-[#CBD5E1] rounded bg-white text-base sm:text-xs text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-blue-600"
             >
               <option value={5}>{t('products.table.perPageOption', { size: 5 })}</option>
               <option value={10}>{t('products.table.perPageOption', { size: 10 })}</option>
@@ -317,7 +324,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
         </div>
 
         {/* Page Nav Buttons */}
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center justify-center gap-1">
           <Button
             variant="secondary"
             size="sm"
@@ -335,7 +342,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                 type="button"
                 onClick={() => onPageChange(p)}
                 className={`
-                  w-7 h-7 rounded text-xs font-medium transition-colors
+                  min-w-10 min-h-10 sm:min-w-7 sm:min-h-7 w-10 h-10 sm:w-7 sm:h-7 rounded text-xs font-medium transition-colors cursor-pointer
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600
                   ${
                     currentPage === p

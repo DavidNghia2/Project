@@ -1,10 +1,9 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useSearchParams } from 'react-router-dom';
 import { useAuth } from './useAuth';
-import { Spinner } from '../../design-system';
-import { useTranslation } from '../../i18n';
-import { useSearchParams } from 'react-router-dom';
+import { SessionRecovery } from './SessionRecovery';
 import { invitationDestination } from './invitationRedirect';
+import { hasStoredSessionHint } from './sessionHint';
 
 export interface GuestRouteProps {
   children?: React.ReactNode;
@@ -16,20 +15,13 @@ export const GuestRoute: React.FC<GuestRouteProps> = ({
   redirectTo = '/dashboard',
 }) => {
   const { isLoading, isAuthenticated, user, isMockMode } = useAuth();
-  const { t } = useTranslation();
   const [params] = useSearchParams();
 
   if (isLoading) {
-    return (
-      <div
-        className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F8FAFC] gap-3"
-        data-testid="auth-loading"
-        aria-busy="true"
-      >
-        <Spinner size="lg" className="text-[#2563EB]" />
-        <span className="text-xs font-medium text-[#64748B]">{t('auth.checkingSession')}</span>
-      </div>
-    );
+    if (hasStoredSessionHint(isMockMode)) {
+      return <SessionRecovery variant="dashboard" />;
+    }
+    return <>{children ?? <Outlet />}</>;
   }
 
   if (isAuthenticated) {
