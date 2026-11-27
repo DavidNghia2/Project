@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileEdit, Send } from 'lucide-react';
-import { Button, Input, Modal, Select } from '../../../design-system';
+import { Button, Input, Modal, Select, StaggerGroup, StaggerItem } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_SUPPLIERS, INITIAL_WAREHOUSES } from '../../master-data/mockData';
@@ -164,78 +164,84 @@ const StockInFormContent: React.FC<FormContentProps> = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Select
-          id="stock-in-warehouse"
-          label={t('stockOps.form.in.receivingWarehouse')}
-          required
-          value={formData.warehouseCode}
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, warehouseCode: e.target.value }));
-            if (errors.warehouseCode) setErrors((prev) => ({ ...prev, warehouseCode: undefined }));
-          }}
-          options={warehouseOptions}
-          error={errors.warehouseCode}
-          size="sm"
-        />
+      <StaggerGroup preset="form" isolate className="space-y-5">
+        <StaggerItem index={0} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Select
+            id="stock-in-warehouse"
+            label={t('stockOps.form.in.receivingWarehouse')}
+            required
+            value={formData.warehouseCode}
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, warehouseCode: e.target.value }));
+              if (errors.warehouseCode) setErrors((prev) => ({ ...prev, warehouseCode: undefined }));
+            }}
+            options={warehouseOptions}
+            error={errors.warehouseCode}
+            size="sm"
+          />
 
-        <Select
-          id="stock-in-supplier"
-          label={t('stockOps.form.in.supplier')}
-          required
-          value={formData.supplierCode}
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, supplierCode: e.target.value }));
-            if (errors.supplierCode) setErrors((prev) => ({ ...prev, supplierCode: undefined }));
-          }}
-          options={supplierOptions}
-          error={errors.supplierCode}
-          size="sm"
-        />
-      </div>
+          <Select
+            id="stock-in-supplier"
+            label={t('stockOps.form.in.supplier')}
+            required
+            value={formData.supplierCode}
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, supplierCode: e.target.value }));
+              if (errors.supplierCode) setErrors((prev) => ({ ...prev, supplierCode: undefined }));
+            }}
+            options={supplierOptions}
+            error={errors.supplierCode}
+            size="sm"
+          />
+        </StaggerItem>
 
-      <Input
-        id="stock-in-note"
-        label={t('stockOps.form.in.referenceNote')}
-        placeholder={t('stockOps.form.in.referencePlaceholder')}
-        value={formData.referenceNote}
-        onChange={(e) => setFormData((prev) => ({ ...prev, referenceNote: e.target.value }))}
-        size="sm"
-      />
+        <StaggerItem index={1}>
+          <Input
+            id="stock-in-note"
+            label={t('stockOps.form.in.referenceNote')}
+            placeholder={t('stockOps.form.in.referencePlaceholder')}
+            value={formData.referenceNote}
+            onChange={(e) => setFormData((prev) => ({ ...prev, referenceNote: e.target.value }))}
+            size="sm"
+          />
+        </StaggerItem>
 
-      <StockLineItemsEditor
-        mode="in"
-        warehouseCode={formData.warehouseCode}
-        items={formData.items}
-        lineErrors={errors.lineErrors}
-        itemsGeneralError={errors.itemsGeneral}
-        onChangeLine={handleChangeLine}
-        onAddLine={handleAddLine}
-        onRemoveLine={handleRemoveLine}
-      />
+        <StaggerItem index={2}>
+          <StockLineItemsEditor
+            mode="in"
+            warehouseCode={formData.warehouseCode}
+            items={formData.items}
+            lineErrors={errors.lineErrors}
+            itemsGeneralError={errors.itemsGeneral}
+            onChangeLine={handleChangeLine}
+            onAddLine={handleAddLine}
+            onRemoveLine={handleRemoveLine}
+          />
+        </StaggerItem>
 
-      <div className="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
-        <Button type="button" variant="ghost" onClick={onClose}>
-          {t('stockOps.form.cancel')}
-        </Button>
-        <Button
-          id="btn-save-draft"
-          type="button"
-          variant="secondary"
-          onClick={() => handleAction('DRAFT')}
-          iconLeft={<FileEdit className="w-4 h-4" />}
-        >
-          {t('stockOps.form.saveDraft')}
-        </Button>
-        <Button
-          id="btn-submit-order"
-          type="submit"
-          variant="primary"
-          iconLeft={<Send className="w-4 h-4" />}
-        >
-          {t('stockOps.form.submitForApproval')}
-        </Button>
-      </div>
+        <StaggerItem index={3} className="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0]">
+          <Button type="button" variant="ghost" onClick={onClose}>
+            {t('stockOps.form.cancel')}
+          </Button>
+          <Button
+            id="btn-save-draft"
+            type="button"
+            variant="secondary"
+            onClick={() => handleAction('DRAFT')}
+            iconLeft={<FileEdit className="w-4 h-4" />}
+          >
+            {t('stockOps.form.saveDraft')}
+          </Button>
+          <Button
+            id="btn-submit-order"
+            type="submit"
+            variant="primary"
+            iconLeft={<Send className="w-4 h-4" />}
+          >
+            {t('stockOps.form.submitForApproval')}
+          </Button>
+        </StaggerItem>
+      </StaggerGroup>
     </form>
   );
 };

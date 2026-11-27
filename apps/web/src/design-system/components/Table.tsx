@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { m } from 'motion/react';
 import { Checkbox } from './Checkbox';
 import { Skeleton } from './Loading';
 import { EmptyState } from './EmptyState';
+import {
+  MOTION_STAGGER_PRESETS,
+  createTableRowMotionProps,
+  useSafeReducedMotion,
+} from '../motion';
 import { useTranslation } from '../../i18n';
 
 export interface Column<T = Record<string, unknown>> {
@@ -58,8 +64,17 @@ export function Table<T = Record<string, unknown>>({
   className = '',
 }: TableProps<T>) {
   const { t } = useTranslation();
+  const shouldReduceMotion = useSafeReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollEdges, setScrollEdges] = useState({ left: false, right: false });
+  const [allowInitialRowStagger, setAllowInitialRowStagger] = useState(true);
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      setAllowInitialRowStagger(false);
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -241,11 +256,11 @@ export function Table<T = Record<string, unknown>>({
                 const rowId = getRowId(record, index);
                 const isSelected = selectedRows.includes(rowId);
                 const isEven = index % 2 === 1;
-
-                return (
-                  <tr
-                    key={String(rowId)}
-                    className={`
+                const shouldAnimateRow =
+                  !shouldReduceMotion &&
+                  allowInitialRowStagger &&
+                  index < MOTION_STAGGER_PRESETS.tableRow.maxItems;
+                const rowClassName = `
                       transition-colors duration-150
                       ${highlightRowId !== null && String(highlightRowId) === String(rowId) ? 'row-update-flash' : ''}
                       ${
@@ -256,8 +271,10 @@ export function Table<T = Record<string, unknown>>({
                           : 'bg-white'
                       }
                       hover:bg-[#EFF6FF]/60
-                    `}
-                  >
+                    `;
+
+                const cells = (
+                  <>
                     {selectable && (
                       <td className="w-12 px-4 py-3 text-center align-middle">
                         <div className="flex items-center justify-center">
@@ -290,7 +307,26 @@ export function Table<T = Record<string, unknown>>({
                         </td>
                       );
                     })}
-                  </tr>
+                  </>
+                );
+
+                const rowMotion = createTableRowMotionProps(
+                  index,
+                  shouldAnimateRow,
+                  shouldReduceMotion
+                );
+
+                // Always keep `<m.tr>` across reduced-motion toggles so row focus/selection state is preserved.
+                return (
+                  <m.tr
+                    key={String(rowId)}
+                    initial={rowMotion.initial}
+                    animate={rowMotion.animate}
+                    transition={rowMotion.transition}
+                    className={rowClassName}
+                  >
+                    {cells}
+                  </m.tr>
                 );
               })
             )}

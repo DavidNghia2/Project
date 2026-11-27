@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
@@ -19,7 +19,7 @@ import {
   Users,
   Warehouse,
 } from 'lucide-react';
-import { MOTION_OVERLAY, MOTION_SPRING } from '../design-system';
+import { MOTION_OVERLAY, MOTION_SPRING, useSafeReducedMotion } from '../design-system';
 import { useTranslation } from '../i18n';
 import { canAccessNavKey, useRolePreview, type NavMenuKey } from '../features/users-rbac';
 
@@ -77,7 +77,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const { t } = useTranslation();
   const { activeRole } = useRolePreview();
   const navigate = useNavigate();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);

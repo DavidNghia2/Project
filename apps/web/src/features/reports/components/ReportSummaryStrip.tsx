@@ -7,7 +7,7 @@ import {
   DollarSign,
   Layers,
 } from 'lucide-react';
-import { AnimatedCounter, Card } from '../../../design-system';
+import { AnimatedCounter, Card, StaggerGroup, StaggerItem } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type { ComputedReportResult, CurrentStockRow } from '../types';
@@ -21,12 +21,16 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
   report,
   validDateRange,
 }) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   const qtyNode = (n: number) =>
     validDateRange ? <AnimatedCounter value={n} /> : '—';
   const moneyNode = (n: number) =>
-    validDateRange ? <AnimatedCounter value={n} format={formatCurrencyVND} /> : '—';
+    validDateRange ? (
+      <AnimatedCounter value={n} format={(val) => formatCurrencyVND(val, language)} />
+    ) : (
+      '—'
+    );
 
   const cards = (() => {
     switch (report.reportType) {
@@ -171,28 +175,30 @@ export const ReportSummaryStrip: React.FC<ReportSummaryStripProps> = ({
   })();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map((kpi) => {
+    <StaggerGroup preset="cards" isolate className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {cards.map((kpi, idx) => {
         const Icon = kpi.icon;
         return (
-          <Card key={kpi.id} padding="sm">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-[#64748B] truncate">{kpi.label}</p>
-                <p
-                  data-testid={kpi.id}
-                  className="text-lg sm:text-xl font-bold font-mono tabular-nums text-[#0F172A] mt-1 truncate"
-                >
-                  {kpi.value}
-                </p>
+          <StaggerItem key={kpi.id} index={idx}>
+            <Card padding="sm" className="h-full">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-[#64748B] truncate">{kpi.label}</p>
+                  <p
+                    data-testid={kpi.id}
+                    className="text-lg sm:text-xl font-bold font-mono tabular-nums text-[#0F172A] mt-1 truncate"
+                  >
+                    {kpi.value}
+                  </p>
+                </div>
+                <div className={`p-2.5 rounded-lg shrink-0 ${kpi.tone}`}>
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </div>
               </div>
-              <div className={`p-2.5 rounded-lg shrink-0 ${kpi.tone}`}>
-                <Icon className="w-5 h-5" aria-hidden="true" />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </StaggerItem>
         );
       })}
-    </div>
+    </StaggerGroup>
   );
 };

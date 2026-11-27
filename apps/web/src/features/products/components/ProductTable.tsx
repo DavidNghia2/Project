@@ -11,7 +11,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from 'lucide-react';
-import { useTranslation } from '../../../i18n';
+import { formatNumber, useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import type { Product } from '../types';
 import { Badge, Button, Tooltip } from '../../../design-system';
@@ -219,7 +219,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                               : 'text-emerald-700'
                           }`}
                         >
-                          {item.onHand.toLocaleString()}
+                          {formatNumber(item.onHand, language)}
                         </span>
                         {isOutOfStock ? (
                           <Badge variant="error" size="sm">
@@ -232,13 +232,13 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                         ) : null}
                       </div>
                       <span className="block lg:hidden text-[11px] font-mono text-[#64748B] mt-0.5 whitespace-nowrap">
-                        {t('products.table.colReorder')}: {item.reorderLevel.toLocaleString()}
+                        {t('products.table.colReorder')}: {formatNumber(item.reorderLevel, language)}
                       </span>
                     </td>
 
                     {/* Reorder Level */}
                     <td className="py-2.5 px-4 hidden lg:table-cell text-center font-mono text-xs text-[#64748B]">
-                      {item.reorderLevel.toLocaleString()}
+                      {formatNumber(item.reorderLevel, language)}
                     </td>
 
                     {/* Status */}

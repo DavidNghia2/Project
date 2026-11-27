@@ -7,7 +7,7 @@ import { useTranslation } from '../../../i18n';
 export interface MasterDataDeleteModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (forceConfirm: boolean) => void;
+  onConfirm: (forceConfirm: boolean) => void | Promise<void>;
   entityLabel: string;
   itemCode?: string;
   itemName?: string;
@@ -20,7 +20,7 @@ interface DeleteModalBodyProps {
   itemName: string;
   references: ProductReferenceSummary[];
   onClose: () => void;
-  onConfirm: (forceConfirm: boolean) => void;
+  onConfirm: (forceConfirm: boolean) => void | Promise<void>;
 }
 
 const DeleteModalBody: React.FC<DeleteModalBodyProps> = ({

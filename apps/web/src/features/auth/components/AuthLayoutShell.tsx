@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { m, useReducedMotion } from 'motion/react';
+import { m } from 'motion/react';
 import { ArrowLeft, Boxes, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { LanguageSelect, useTranslation } from '../../../i18n';
-import { Badge, MOTION_SPRING } from '../../../design-system';
+import { Badge, MOTION_SPRING, useSafeReducedMotion } from '../../../design-system';
 import { useAuth } from '../useAuth';
 
 export interface AuthLayoutShellProps {
@@ -14,7 +14,7 @@ export const AuthLayoutShell: React.FC<AuthLayoutShellProps> = ({ children }) =>
   const { t } = useTranslation();
   const { isMockMode } = useAuth();
   const { pathname } = useLocation();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const isRegister = pathname === '/register';
 
   const showcasePoints = [

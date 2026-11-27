@@ -1,8 +1,8 @@
 import React from 'react';
 import { Barcode, Package, Warehouse, Calendar, Pencil } from 'lucide-react';
 import type { Product } from '../types';
-import { Modal, Button, Badge } from '../../../design-system';
-import { getIntlLocale, useTranslation } from '../../../i18n';
+import { Modal, Button, Badge, StaggerGroup, StaggerItem } from '../../../design-system';
+import { formatNumber, getIntlLocale, useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
 export interface ProductDetailModalProps {
@@ -61,9 +61,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         </>
       }
     >
-      <div className="space-y-5 text-xs sm:text-sm">
+      <StaggerGroup preset="modal" isolate className="space-y-5 text-xs sm:text-sm">
         {/* Top Info Card */}
-        <div className="flex flex-col sm:flex-row gap-4 p-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg">
+        <StaggerItem index={0} className="flex flex-col sm:flex-row gap-4 p-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white border border-[#CBD5E1] overflow-hidden flex items-center justify-center shrink-0 shadow-xs">
             {product.imageUrl ? (
               <img
@@ -95,10 +95,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             )}
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Stock Overview Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <StaggerItem index={1} className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg">
             <span className="text-xs text-[#64748B] block">{t('products.detail.totalOnHand')}</span>
             <div className="flex items-center gap-2 mt-1">
@@ -111,7 +111,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     : 'text-emerald-700'
                 }`}
               >
-                {product.onHand.toLocaleString()}
+                {formatNumber(product.onHand, language)}
               </span>
               <span className="text-xs text-[#64748B]">{displayUnit}</span>
             </div>
@@ -121,7 +121,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             <span className="text-xs text-[#64748B] block">{t('products.detail.minThreshold')}</span>
             <div className="flex items-center gap-2 mt-1">
               <span className="font-mono text-xl font-bold text-slate-800">
-                {product.reorderLevel.toLocaleString()}
+                {formatNumber(product.reorderLevel, language)}
               </span>
               <span className="text-xs text-[#64748B]">{displayUnit}</span>
             </div>
@@ -145,10 +145,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               )}
             </div>
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Warehouse Distribution */}
-        <div className="space-y-2">
+        <StaggerItem index={2} className="space-y-2">
           <h5 className="font-semibold text-xs text-[#0F172A] uppercase tracking-wider flex items-center gap-1.5">
             <Warehouse className="w-4 h-4 text-blue-600" />
             <span>{t('products.detail.whBreakdownHeading')}</span>
@@ -173,26 +173,26 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       {translateDomainLabel(language, 'warehouseNames', wh.warehouseCode, wh.warehouseName)}
                     </td>
                     <td className="py-2 px-3 text-right font-mono font-semibold text-[#0F172A]">
-                      {wh.quantity.toLocaleString()} {displayUnit}
+                      {formatNumber(wh.quantity, language)} {displayUnit}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Description & Timestamps */}
         {product.description && (
-          <div className="space-y-1">
+          <StaggerItem index={3} className="space-y-1">
             <span className="font-semibold text-xs text-[#0F172A] block">{t('products.detail.descHeading')}</span>
             <p className="text-xs text-[#475569] leading-relaxed bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0]">
               {product.description}
             </p>
-          </div>
+          </StaggerItem>
         )}
 
-        <div className="flex items-center justify-between text-[11px] text-[#94A3B8] pt-2 border-t border-[#F1F5F9]">
+        <StaggerItem index={4} className="flex items-center justify-between text-[11px] text-[#94A3B8] pt-2 border-t border-[#F1F5F9]">
           <span className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5" />
             {t('products.detail.createdLabel')} {new Date(product.createdAt).toLocaleDateString(getIntlLocale(language))}
@@ -200,8 +200,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           <span>
             {t('products.detail.updatedLabel')} {new Date(product.updatedAt).toLocaleDateString(getIntlLocale(language))}
           </span>
-        </div>
-      </div>
+        </StaggerItem>
+      </StaggerGroup>
     </Modal>
   );
 };

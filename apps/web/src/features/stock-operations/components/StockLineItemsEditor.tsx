@@ -1,7 +1,7 @@
 import React from 'react';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { AlertCircle, Plus, Trash2 } from 'lucide-react';
-import { Button, MOTION_DURATION, MOTION_EASE } from '../../../design-system';
+import { Button, MOTION_DURATION, MOTION_EASE, useSafeReducedMotion } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { INITIAL_PRODUCTS } from '../../products/mockData';
@@ -45,7 +45,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
   onRemoveLine,
 }) => {
   const { t, language } = useTranslation();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
 
   const resolvedLinesForTotal = items.map((line) => {
     const product = products.find((p) => p.id === line.productId);
@@ -280,7 +280,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                         id={`line-cost-${index}`}
                         className="h-9 flex items-center justify-end px-2.5 rounded-md border border-[#E2E8F0] bg-[#F8FAFC] text-xs font-mono tabular-nums text-[#475569]"
                       >
-                        {formatCurrencyVND(effectiveCost)}
+                        {formatCurrencyVND(effectiveCost, language)}
                       </div>
                     )}
                   </div>
@@ -295,7 +295,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                         data-testid={`line-total-${index}`}
                         className="text-xs font-semibold font-mono tabular-nums text-[#0F172A] truncate"
                       >
-                        {formatCurrencyVND(lineTotal)}
+                        {formatCurrencyVND(lineTotal, language)}
                       </span>
                       <button
                         type="button"
@@ -340,7 +340,7 @@ export const StockLineItemsEditor: React.FC<StockLineItemsEditorProps> = ({
                 data-testid="voucher-total-amount"
                 className="font-mono tabular-nums text-sm font-bold text-[#0284C7]"
               >
-                {formatCurrencyVND(totals.totalAmount)}
+                {formatCurrencyVND(totals.totalAmount, language)}
               </strong>
             </div>
           </div>

@@ -8,7 +8,7 @@ import {
   ShieldAlert,
   XCircle,
 } from 'lucide-react';
-import { Alert, Button, Input, Modal, Select } from '../../../design-system';
+import { Alert, Button, Input, Modal, Select, StaggerGroup, StaggerItem } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 import { SIMULATED_ACTORS, STOCK_OUT_REASONS } from '../mockData';
@@ -89,9 +89,9 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
   };
 
   return (
-    <div className="space-y-5 text-xs sm:text-sm">
+    <StaggerGroup preset="modal" isolate className="space-y-5 text-xs sm:text-sm">
       {/* Header Metadata Card */}
-      <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-4 space-y-3">
+      <StaggerItem index={0} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-4 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E2E8F0]">
           <div className="flex items-center gap-2.5">
             <span className="font-mono font-bold text-base text-[#0F172A]">{order.code}</span>
@@ -152,10 +152,10 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </StaggerItem>
 
       {/* Items Table */}
-      <div className="space-y-2">
+      <StaggerItem index={1} className="space-y-2">
         <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
           {t('stockOps.detail.lineItemsTitle')}
         </h4>
@@ -202,10 +202,10 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                     {item.quantity}
                   </td>
                   <td className="py-2.5 px-3 text-right font-mono tabular-nums text-[#475569] whitespace-nowrap">
-                    {formatCurrencyVND(item.unitCost)}
+                    {formatCurrencyVND(item.unitCost, language)}
                   </td>
                   <td className="py-2.5 px-3 text-right font-mono font-semibold tabular-nums text-[#0F172A] whitespace-nowrap">
-                    {formatCurrencyVND(item.lineTotal)}
+                    {formatCurrencyVND(item.lineTotal, language)}
                   </td>
                 </tr>
               ))}
@@ -220,23 +220,25 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
                 </td>
                 <td className="py-2.5 px-3" />
                 <td className="py-2.5 px-3 text-right font-mono tabular-nums text-sm text-[#0284C7] whitespace-nowrap">
-                  {formatCurrencyVND(order.totalAmount)}
+                  {formatCurrencyVND(order.totalAmount, language)}
                 </td>
               </tr>
             </tfoot>
           </table>
         </div>
-      </div>
+      </StaggerItem>
 
       {/* Prototype Warning Note */}
-      <Alert
-        variant="info"
-        message={t('stockOps.detail.prototypeNotice')}
-      />
+      <StaggerItem index={2}>
+        <Alert
+          variant="info"
+          message={t('stockOps.detail.prototypeNotice')}
+        />
+      </StaggerItem>
 
       {/* Workflow Actions & Maker-Checker Controls */}
       {order.status !== 'COMPLETED' && (canCreate || canApprove) && (
-        <div className="border border-[#E2E8F0] rounded-lg p-4 bg-white space-y-3">
+        <StaggerItem index={3} className="border border-[#E2E8F0] rounded-lg p-4 bg-white space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
               {t('stockOps.detail.transitionsTitle')}
@@ -398,17 +400,17 @@ const StockOrderDetailContent: React.FC<DetailContentProps> = ({
               </Button>
             )}
           </div>
-        </div>
+        </StaggerItem>
       )}
 
       {/* Timeline History */}
-      <div className="space-y-2.5">
+      <StaggerItem index={4} className="space-y-2.5">
         <h4 className="text-xs sm:text-sm font-semibold text-[#0F172A]">
           {t('stockOps.detail.statusHistoryTitle')}
         </h4>
         <OrderHistoryTimeline history={order.statusHistory} />
-      </div>
-    </div>
+      </StaggerItem>
+    </StaggerGroup>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { m, useReducedMotion } from 'motion/react';
+import { m } from 'motion/react';
 import {
   LayoutDashboard,
   Package,
@@ -22,7 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { Badge, MOTION_SPRING, Tooltip } from '../design-system';
+import { Badge, MOTION_SPRING, Tooltip, useSafeReducedMotion } from '../design-system';
 import {
   canAccessNavKey,
   useRolePreview,
@@ -72,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { t } = useTranslation();
   const { activeRole } = useRolePreview();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const activeIndicatorId = isMobileDrawer ? 'sidebar-mobile-active' : 'sidebar-desktop-active';
 
   const navSections: NavSection[] = [

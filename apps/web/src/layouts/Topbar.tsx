@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import {
   Menu,
   Bell,
@@ -16,9 +16,10 @@ import {
   PackagePlus,
 } from 'lucide-react';
 import { LanguageSelect, useTranslation } from '../i18n';
-import { Badge, MOTION_OVERLAY, MOTION_SPRING } from '../design-system';
+import { Badge, MOTION_OVERLAY, MOTION_SPRING, useSafeReducedMotion } from '../design-system';
 import { ROLE_META, useRolePreview, type RoleCode } from '../features/users-rbac';
 import { useAuth } from '../features/auth/useAuth';
+import type { Warehouse as WarehouseRecord } from '../features/master-data/types';
 
 const ROLE_AVATAR_META: Record<RoleCode, { initials: string; emailPrefix: string }> = {
   ADMIN: { initials: 'AD', emailPrefix: 'admin' },
@@ -49,12 +50,24 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenCommandPalette,
 }) => {
   const { t } = useTranslation();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const { activeRole, capabilities } = useRolePreview();
-  const { user: authUser, signOut } = useAuth();
+  const { user: authUser, signOut, isMockMode } = useAuth();
+  const location = useLocation();
+  const companyId = authUser?.company?.id;
+  const [remoteWarehouses, setRemoteWarehouses] = useState<{ companyId: string; rows: WarehouseRecord[] }>();
+  useEffect(() => {
+    if (isMockMode || !companyId) return;
+    let active = true;
+    void import('../features/master-data/warehouseRepository')
+      .then(({ fetchCompanyWarehouses }) => fetchCompanyWarehouses())
+      .then(({ warehouses }) => {
+        if (active) setRemoteWarehouses({ companyId, rows: warehouses.filter((warehouse) => warehouse.status === 'active') });
+      }).catch(() => { if (active) setRemoteWarehouses(undefined); });
+    return () => { active = false; };
+  }, [isMockMode, companyId, location.pathname, authUser?.assignedWarehouses]);
   const roleMeta = ROLE_META[activeRole];
   const avatarMeta = ROLE_AVATAR_META[activeRole];
-  const location = useLocation();
   const navigate = useNavigate();
 
   const displayInitials = authUser?.avatarInitials ?? avatarMeta.initials;
@@ -187,10 +200,15 @@ export const Topbar: React.FC<TopbarProps> = ({
   const pageInfo = getPageInfo();
 
   const warehouses = [
-    { code: 'ALL', labelKey: 'topbar.allWarehouses' },
-    { code: 'WH-01', labelKey: 'topbar.warehouseHanoi' },
-    { code: 'WH-02', labelKey: 'topbar.warehouseDanang' },
-    { code: 'WH-03', labelKey: 'topbar.warehouseSaigon' },
+    { code: 'ALL', label: t('topbar.allWarehouses') },
+    ...(isMockMode || !companyId ? [
+      { code: 'WH-01', label: t('topbar.warehouseHanoi') },
+      { code: 'WH-02', label: t('topbar.warehouseDanang') },
+      { code: 'WH-03', label: t('topbar.warehouseSaigon') },
+    ] : (remoteWarehouses?.companyId === companyId ? remoteWarehouses?.rows ?? [] : []).map((warehouse) => ({
+      code: warehouse.id,
+      label: [warehouse.code, warehouse.name, warehouse.country].filter(Boolean).join(' · '),
+    }))),
   ];
 
   const currentWh = warehouses.find((w) => w.code === activeWarehouse) || warehouses[0];
@@ -264,16 +282,16 @@ export const Topbar: React.FC<TopbarProps> = ({
               }}
               className="inline-flex items-center justify-center gap-1.5 sm:gap-2 min-h-11 min-w-11 sm:min-h-9 sm:min-w-0 px-2 sm:px-3 rounded-md border border-[#CBD5E1] bg-white text-xs sm:text-sm text-[#0F172A] hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 transition-colors cursor-pointer"
               title={t('topbar.warehouse')}
-              aria-label={`${t('topbar.warehouse')}: ${t(currentWh.labelKey)}`}
+              aria-label={`${t('topbar.warehouse')}: ${currentWh.label}`}
               aria-haspopup="listbox"
               aria-expanded={isWarehouseOpen}
             >
               <Warehouse className="w-4 h-4 text-blue-600 shrink-0" aria-hidden="true" />
               <span className="hidden min-[400px]:inline sm:hidden font-mono text-xs font-semibold">
-                {currentWh.code}
+                {isMockMode || currentWh.code === 'ALL' ? currentWh.code : currentWh.label.split(' · ')[0]}
               </span>
               <span className="hidden sm:inline font-medium max-w-[140px] lg:max-w-[180px] truncate text-left">
-                {t(currentWh.labelKey)}
+                {currentWh.label}
               </span>
               <ChevronDown
                 className={`hidden sm:block w-3.5 h-3.5 text-[#64748B] shrink-0 transition-transform duration-150 ${
@@ -313,7 +331,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                         ${activeWarehouse === wh.code ? 'font-semibold text-blue-600 bg-blue-50/60' : 'text-[#334155]'}
                       `}
                     >
-                      <span className="truncate">{t(wh.labelKey)}</span>
+                      <span className="truncate">{wh.label}</span>
                       {activeWarehouse === wh.code && <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 ml-2" />}
                     </button>
                   ))}

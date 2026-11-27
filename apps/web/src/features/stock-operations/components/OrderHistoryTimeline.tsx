@@ -1,7 +1,6 @@
 import React from 'react';
-import { m, useReducedMotion } from 'motion/react';
 import { Clock, ArrowRight } from 'lucide-react';
-import { MOTION_DURATION, MOTION_EASE } from '../../../design-system';
+import { StaggerItem, StaggerList } from '../../../design-system';
 import { getIntlLocale, useTranslation, type Language } from '../../../i18n';
 import type { StatusHistoryEntry } from '../types';
 import { OrderStatusBadge } from './OrderStatusBadge';
@@ -24,7 +23,6 @@ function formatTimestamp(iso: string, language: Language): string {
 
 export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ history }) => {
   const { t, language } = useTranslation();
-  const shouldReduceMotion = useReducedMotion();
 
   if (history.length === 0) {
     return (
@@ -35,19 +33,14 @@ export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ hist
   }
 
   return (
-    <ol className="relative space-y-4 border-l border-[#CBD5E1] ml-2.5 pl-5">
+    <StaggerList as="ol" preset="list" isolate className="relative space-y-4 border-l border-[#CBD5E1] ml-2.5 pl-5">
       {history.map((entry, idx) => {
         const isLast = idx === history.length - 1;
         return (
-          <m.li
+          <StaggerItem
+            as="li"
             key={entry.id}
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: MOTION_DURATION.normal,
-              delay: Math.min(idx, 6) * 0.04,
-              ease: MOTION_EASE.out,
-            }}
+            index={idx}
             className="relative"
           >
             <span
@@ -80,9 +73,9 @@ export const OrderHistoryTimeline: React.FC<OrderHistoryTimelineProps> = ({ hist
                 {entry.note && <span className="text-[#475569]"> — {entry.note}</span>}
               </div>
             </div>
-          </m.li>
+          </StaggerItem>
         );
       })}
-    </ol>
+    </StaggerList>
   );
 };

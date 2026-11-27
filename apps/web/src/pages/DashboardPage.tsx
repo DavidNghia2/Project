@@ -13,7 +13,7 @@ import {
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { AnimatedCounter, Card, Button, Badge, StaggerItem, StaggerList, Table, type Column } from '../design-system';
+import { AnimatedCounter, Card, Button, Badge, StaggerGroup, StaggerItem, StaggerList, Table, type Column } from '../design-system';
 import { ROLE_META, useRolePreview } from '../features/users-rbac';
 
 export const DashboardPage: React.FC = () => {
@@ -193,12 +193,12 @@ export const DashboardPage: React.FC = () => {
         }
       />
 
-      {/* KPI Cards Grid with Stagger Entrance & Animated Counter */}
-      <StaggerList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Primary KPI Cards Grid — single choreography layer */}
+      <StaggerList preset="cards" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => {
           const IconComponent = kpi.icon;
           return (
-            <StaggerItem key={idx}>
+            <StaggerItem key={idx} index={idx}>
               <Card padding="md" className="h-full">
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1 min-w-0">
@@ -222,8 +222,8 @@ export const DashboardPage: React.FC = () => {
       </StaggerList>
 
       {/* Quick Flow Guidance & Recent Transactions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
+      <StaggerGroup preset="sections" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <StaggerItem index={0} className="lg:col-span-2 space-y-4">
           <Card
             title={t('dashboard.recentTitle')}
             description={t('dashboard.recentDesc')}
@@ -240,13 +240,13 @@ export const DashboardPage: React.FC = () => {
               className="border-0 shadow-none rounded-t-none"
             />
           </Card>
-        </div>
+        </StaggerItem>
 
-        <div className="space-y-4">
+        <StaggerItem index={1} className="space-y-4">
           <Card title={t('dashboard.flowTitle')} description={t('dashboard.flowDesc')}>
-            <ol className="space-y-3 text-xs text-[#334155]">
-              {flowSteps.map((step) => (
-                <li key={step.num} className="flex gap-2.5 items-start">
+            <StaggerList as="ol" preset="list" isolate className="space-y-3 text-xs text-[#334155]">
+              {flowSteps.map((step, stepIdx) => (
+                <StaggerItem as="li" key={step.num} index={stepIdx} className="flex gap-2.5 items-start">
                   <span className={`w-5 h-5 rounded-full font-bold flex items-center justify-center shrink-0 text-[11px] ${step.bg}`}>
                     {step.num}
                   </span>
@@ -254,9 +254,9 @@ export const DashboardPage: React.FC = () => {
                     <p className="font-semibold text-[#0F172A]">{step.title}</p>
                     <p className="text-[#64748B]">{step.desc}</p>
                   </div>
-                </li>
+                </StaggerItem>
               ))}
-            </ol>
+            </StaggerList>
           </Card>
 
           <Card padding="md" className="bg-blue-50/50 border-blue-200">
@@ -277,8 +277,8 @@ export const DashboardPage: React.FC = () => {
               </div>
             </div>
           </Card>
-        </div>
-      </div>
+        </StaggerItem>
+      </StaggerGroup>
     </div>
   );
 };

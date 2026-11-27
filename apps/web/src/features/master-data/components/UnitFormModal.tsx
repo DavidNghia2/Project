@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input, Select } from '../../../design-system';
+import { Modal, Button, Input, Select, StaggerGroup, StaggerItem } from '../../../design-system';
 import type { UnitOfMeasure, UnitFormData, MeasureType, MasterStatus, ValidationErrors } from '../types';
 import { useTranslation } from '../../../i18n';
 
@@ -70,101 +70,107 @@ const UnitFormContent: React.FC<UnitFormContentProps> = ({
   };
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Input
-          id="uom-input-code"
-          label={t('masterData.units.formCodeLabel')}
-          required
-          placeholder={t('masterData.units.formCodePlaceholder')}
-          value={formData.code}
-          onChange={(e) => handleChange('code', e.target.value.toUpperCase())}
-          error={errors.code}
-          size="sm"
-        />
-        <Input
-          id="uom-input-name"
-          label={t('masterData.units.formNameLabel')}
-          required
-          placeholder={t('masterData.units.formNamePlaceholder')}
-          value={formData.name}
-          onChange={(e) => handleChange('name', e.target.value)}
-          error={errors.name}
-          size="sm"
-        />
-        <Input
-          id="uom-input-symbol"
-          label={t('masterData.units.formSymbolLabel')}
-          required
-          placeholder={t('masterData.units.formSymbolPlaceholder')}
-          value={formData.symbol}
-          onChange={(e) => handleChange('symbol', e.target.value)}
-          error={errors.symbol}
-          size="sm"
-        />
-      </div>
+    <form noValidate onSubmit={handleSubmit} className="text-xs sm:text-sm">
+      <StaggerGroup preset="form" isolate className="space-y-4">
+        <StaggerItem index={0} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Input
+            id="uom-input-code"
+            label={t('masterData.units.formCodeLabel')}
+            required
+            placeholder={t('masterData.units.formCodePlaceholder')}
+            value={formData.code}
+            onChange={(e) => handleChange('code', e.target.value.toUpperCase())}
+            error={errors.code}
+            size="sm"
+          />
+          <Input
+            id="uom-input-name"
+            label={t('masterData.units.formNameLabel')}
+            required
+            placeholder={t('masterData.units.formNamePlaceholder')}
+            value={formData.name}
+            onChange={(e) => handleChange('name', e.target.value)}
+            error={errors.name}
+            size="sm"
+          />
+          <Input
+            id="uom-input-symbol"
+            label={t('masterData.units.formSymbolLabel')}
+            required
+            placeholder={t('masterData.units.formSymbolPlaceholder')}
+            value={formData.symbol}
+            onChange={(e) => handleChange('symbol', e.target.value)}
+            error={errors.symbol}
+            size="sm"
+          />
+        </StaggerItem>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Select
-          id="uom-select-type"
-          label={t('masterData.units.formTypeLabel')}
-          required
-          value={formData.measureType}
-          onChange={(e) => handleChange('measureType', e.target.value as MeasureType)}
-          options={[
-            { value: 'discrete', label: t('masterData.units.measureFormOpts.discrete') },
-            { value: 'packaging', label: t('masterData.units.measureFormOpts.packaging') },
-            { value: 'length', label: t('masterData.units.measureFormOpts.length') },
-            { value: 'weight', label: t('masterData.units.measureFormOpts.weight') },
-          ]}
-          size="sm"
-        />
-        <Select
-          id="uom-select-status"
-          label={t('masterData.units.formStatusLabel')}
-          value={formData.status}
-          onChange={(e) => handleChange('status', e.target.value as MasterStatus)}
-          options={[
-            { value: 'active', label: t('masterData.common.statusActive') },
-            { value: 'inactive', label: t('masterData.common.statusInactive') },
-          ]}
-          size="sm"
-        />
-      </div>
+        <StaggerItem index={1} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Select
+            id="uom-select-type"
+            label={t('masterData.units.formTypeLabel')}
+            required
+            value={formData.measureType}
+            onChange={(e) => handleChange('measureType', e.target.value as MeasureType)}
+            options={[
+              { value: 'discrete', label: t('masterData.units.measureFormOpts.discrete') },
+              { value: 'packaging', label: t('masterData.units.measureFormOpts.packaging') },
+              { value: 'length', label: t('masterData.units.measureFormOpts.length') },
+              { value: 'weight', label: t('masterData.units.measureFormOpts.weight') },
+            ]}
+            size="sm"
+          />
+          <Select
+            id="uom-select-status"
+            label={t('masterData.units.formStatusLabel')}
+            value={formData.status}
+            onChange={(e) => handleChange('status', e.target.value as MasterStatus)}
+            options={[
+              { value: 'active', label: t('masterData.common.statusActive') },
+              { value: 'inactive', label: t('masterData.common.statusInactive') },
+            ]}
+            size="sm"
+          />
+        </StaggerItem>
 
-      <Input
-        id="uom-input-conversion"
-        label={t('masterData.units.formConversionLabel')}
-        placeholder={t('masterData.units.formConversionPlaceholder')}
-        value={formData.conversionNote}
-        onChange={(e) => handleChange('conversionNote', e.target.value)}
-        size="sm"
-      />
+        <StaggerItem index={2}>
+          <Input
+            id="uom-input-conversion"
+            label={t('masterData.units.formConversionLabel')}
+            placeholder={t('masterData.units.formConversionPlaceholder')}
+            value={formData.conversionNote}
+            onChange={(e) => handleChange('conversionNote', e.target.value)}
+            size="sm"
+          />
+        </StaggerItem>
 
-      <div>
-        <label htmlFor="uom-input-desc" className="block text-xs font-medium text-[#0F172A] mb-1">
-          {t('masterData.units.formDescLabel')}
-        </label>
-        <textarea
-          id="uom-input-desc"
-          rows={2}
-          placeholder={t('masterData.units.formDescPlaceholder')}
-          value={formData.description}
-          onChange={(e) => handleChange('description', e.target.value)}
-          className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]"
-        />
-      </div>
+        <StaggerItem index={3} className="space-y-4">
+          <div>
+            <label htmlFor="uom-input-desc" className="block text-xs font-medium text-[#0F172A] mb-1">
+              {t('masterData.units.formDescLabel')}
+            </label>
+            <textarea
+              id="uom-input-desc"
+              rows={2}
+              placeholder={t('masterData.units.formDescPlaceholder')}
+              value={formData.description}
+              onChange={(e) => handleChange('description', e.target.value)}
+              className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB]"
+            />
+          </div>
 
-      <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
-        <Button variant="secondary" size="sm" onClick={onClose} type="button">
-          {t('masterData.common.cancelBtn')}
-        </Button>
-        <Button id="btn-submit-unit" variant="primary" size="sm" type="submit">
-          {mode === 'create'
-            ? t('masterData.units.formCreateSubmit')
-            : t('masterData.common.saveBtn')}
-        </Button>
-      </div>
+          <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
+            <Button variant="secondary" size="sm" onClick={onClose} type="button">
+              {t('masterData.common.cancelBtn')}
+            </Button>
+            <Button id="btn-submit-unit" variant="primary" size="sm" type="submit">
+              {mode === 'create'
+                ? t('masterData.units.formCreateSubmit')
+                : t('masterData.common.saveBtn')}
+            </Button>
+          </div>
+        </StaggerItem>
+      </StaggerGroup>
     </form>
   );
 };

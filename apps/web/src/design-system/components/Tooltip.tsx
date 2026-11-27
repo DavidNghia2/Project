@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
+import { useSafeReducedMotion } from '../motion/hooks';
 import { MOTION_OVERLAY } from '../motion/tokens';
 
 export type TooltipPlacement = 'top' | 'bottom' | 'right' | 'left';
@@ -31,7 +32,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const triggerRef = useRef<HTMLSpanElement>(null);
   const timerRef = useRef<number | null>(null);
   const tooltipId = useId();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
 
   const updateCoords = () => {
     const el = triggerRef.current;

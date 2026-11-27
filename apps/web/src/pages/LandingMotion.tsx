@@ -1,22 +1,34 @@
-import React from 'react';
-import { m, useReducedMotion } from 'motion/react';
-import { AnimatedCounter, MotionRoot } from '../design-system/motion';
+import React, { useSyncExternalStore } from 'react';
+import { m } from 'motion/react';
+import {
+  AnimatedCounter,
+  REDUCED_MOTION_STATIC_ANIMATE,
+  REDUCED_MOTION_TRANSITION,
+  StaggerGroup,
+  StaggerItem as BaseStaggerItem,
+  useSafeReducedMotion,
+} from '../design-system/motion';
 import {
   LANDING_EASE_OUT,
   LANDING_EASE_UI,
   LANDING_VIEWPORT,
   sectionRevealVariants,
-  staggerGridVariants,
-  staggerItemVariants,
 } from './landingMotionPrimitives';
 
-export interface LandingMotionRootProps {
-  children: React.ReactNode;
+function readDocumentHidden(): boolean {
+  if (typeof document === 'undefined') return false;
+  return document.visibilityState === 'hidden';
 }
 
-export const LandingMotionRoot: React.FC<LandingMotionRootProps> = ({ children }) => {
-  return <MotionRoot>{children}</MotionRoot>;
-};
+function subscribeDocumentVisibility(onChange: () => void): () => void {
+  if (typeof document === 'undefined') return () => {};
+  document.addEventListener('visibilitychange', onChange);
+  return () => document.removeEventListener('visibilitychange', onChange);
+}
+
+function useIsDocumentHidden(): boolean {
+  return useSyncExternalStore(subscribeDocumentVisibility, readDocumentHidden, () => false);
+}
 
 export interface AnimatedStatCounterProps {
   target: number;
@@ -30,7 +42,7 @@ export interface AnimatedStatCounterProps {
 export const AnimatedStatCounter: React.FC<AnimatedStatCounterProps> = ({
   target,
   suffix = '',
-  duration = 0.85,
+  duration = 0.65,
   trigger = 'inView',
   useLocaleGrouping = true,
   className = '',
@@ -58,7 +70,7 @@ export const MotionCtaWrapper: React.FC<MotionCtaWrapperProps> = ({
   children,
   className = '',
 }) => {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
 
   return (
     <m.div
@@ -83,14 +95,21 @@ export const ScrollRevealBlock: React.FC<ScrollRevealBlockProps> = ({
   className = '',
   delay = 0,
 }) => {
+  const shouldReduceMotion = useSafeReducedMotion();
+
   return (
     <m.div
       className={className}
-      variants={sectionRevealVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={LANDING_VIEWPORT}
-      transition={{ duration: 0.48, delay, ease: LANDING_EASE_OUT }}
+      variants={shouldReduceMotion ? undefined : sectionRevealVariants}
+      initial={shouldReduceMotion ? false : 'hidden'}
+      animate={shouldReduceMotion ? REDUCED_MOTION_STATIC_ANIMATE : undefined}
+      whileInView={shouldReduceMotion ? undefined : 'visible'}
+      viewport={shouldReduceMotion ? undefined : LANDING_VIEWPORT}
+      transition={
+        shouldReduceMotion
+          ? REDUCED_MOTION_TRANSITION
+          : { duration: 0.48, delay, ease: LANDING_EASE_OUT }
+      }
     >
       {children}
     </m.div>
@@ -102,49 +121,40 @@ export interface StaggerGridProps {
   className?: string;
 }
 
-export const StaggerGrid: React.FC<StaggerGridProps> = ({ children, className = '' }) => {
-  return (
-    <m.div
-      className={className}
-      variants={staggerGridVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={LANDING_VIEWPORT}
-    >
-      {children}
-    </m.div>
-  );
-};
+/** Delegates to global `StaggerGroup` with expressive viewport choreography (no duplicated stagger system). */
+export const StaggerGrid: React.FC<StaggerGridProps> = ({ children, className = '' }) => (
+  <StaggerGroup preset="expressive" trigger="inView" className={className}>
+    {children}
+  </StaggerGroup>
+);
 
 export interface StaggerItemProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export const StaggerItem: React.FC<StaggerItemProps> = ({ children, className = '' }) => {
-  return (
-    <m.div className={className} variants={staggerItemVariants}>
-      {children}
-    </m.div>
-  );
-};
+export const StaggerItem: React.FC<StaggerItemProps> = ({ children, className = '' }) => (
+  <BaseStaggerItem className={className}>{children}</BaseStaggerItem>
+);
 
 /**
  * Subtle architectural depth layers anchored behind the Hero preview frame.
- * Hidden on smaller viewports and frozen cleanly when prefers-reduced-motion is active.
+ * Paused cleanly whenever `prefers-reduced-motion` is enabled OR the browser tab is hidden.
  */
 export const HeroAmbientDepth: React.FC = () => {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
+  const isTabHidden = useIsDocumentHidden();
+  const pauseAmbient = shouldReduceMotion || isTabHidden;
 
   return (
     <div className="pointer-events-none hidden lg:block" aria-hidden="true">
       {/* Subtle architectural warehouse grid plate top-right */}
       <m.div
         className="absolute -top-6 -right-5 w-44 h-36 rounded-xl border border-slate-700/45 bg-slate-900/55 shadow-lg backdrop-blur-xs"
-        animate={shouldReduceMotion ? undefined : { y: [-4, 5, -4] }}
+        animate={pauseAmbient ? { y: 0 } : { y: [-4, 5, -4] }}
         transition={
-          shouldReduceMotion
-            ? undefined
+          pauseAmbient
+            ? REDUCED_MOTION_TRANSITION
             : { duration: 6.8, repeat: Infinity, ease: 'easeInOut' }
         }
       >
@@ -165,10 +175,10 @@ export const HeroAmbientDepth: React.FC = () => {
       {/* Subtle architectural balance card bottom-left */}
       <m.div
         className="absolute -bottom-5 -left-5 w-40 h-24 rounded-xl border border-slate-700/40 bg-slate-900/50 shadow-lg"
-        animate={shouldReduceMotion ? undefined : { y: [5, -5, 5] }}
+        animate={pauseAmbient ? { y: 0 } : { y: [5, -5, 5] }}
         transition={
-          shouldReduceMotion
-            ? undefined
+          pauseAmbient
+            ? REDUCED_MOTION_TRANSITION
             : { duration: 7.6, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }
         }
       >

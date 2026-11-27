@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { AlertCircle, AlertTriangle, CheckCircle2, Info, X } from 'lucide-react';
+import { useSafeReducedMotion } from '../motion/hooks';
 import { MOTION_SPRING } from '../motion/tokens';
 import {
   ToastContext,
@@ -49,7 +50,7 @@ const ToastCard: React.FC<{ item: ToastItem; onDismiss: (id: string) => void }> 
   item,
   onDismiss,
 }) => {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const [paused, setPaused] = useState(false);
   const remainingRef = useRef(item.durationMs);
   const startRef = useRef<number>(0);

@@ -3,7 +3,7 @@ import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, Alert, useToast, type Column } from '../design-system';
+import { Card, Button, Badge, Table, Alert, StaggerGroup, StaggerItem, useToast, type Column } from '../design-system';
 import {
   useCategories,
   CATEGORY_PARENT_GROUPS,
@@ -194,98 +194,104 @@ export const CategoriesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t('pages.categoriesTitle')}
-        description={t('pages.categoriesDesc')}
-        actions={
-          canManageCatalog ? (
-            <Button
-              id="btn-add-category"
-              variant="primary"
-              size="sm"
-              iconLeft={<Plus className="w-4 h-4" />}
-              onClick={handleOpenCreate}
-            >
-              {t('masterData.categories.createBtn')}
-            </Button>
-          ) : undefined
-        }
-      />
+      <StaggerGroup preset="sections" className="space-y-6">
+        <StaggerItem>
+          <PageHeader
+            title={t('pages.categoriesTitle')}
+            description={t('pages.categoriesDesc')}
+            actions={
+              canManageCatalog ? (
+                <Button
+                  id="btn-add-category"
+                  variant="primary"
+                  size="sm"
+                  iconLeft={<Plus className="w-4 h-4" />}
+                  onClick={handleOpenCreate}
+                >
+                  {t('masterData.categories.createBtn')}
+                </Button>
+              ) : undefined
+            }
+          />
+        </StaggerItem>
 
-      {!canManageCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
+        {!canManageCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
 
-      {toastMessage && (
-        <Alert
-          variant="success"
-          title={t('common.operationSuccess')}
-          message={toastMessage}
-          dismissible
-          onDismiss={() => setToastMessage(null)}
-        />
-      )}
+        {toastMessage && (
+          <Alert
+            variant="success"
+            title={t('common.operationSuccess')}
+            message={toastMessage}
+            dismissible
+            onDismiss={() => setToastMessage(null)}
+          />
+        )}
 
-      <Card padding="md" className="space-y-4">
-        <MasterDataToolbar
-          search={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t('masterData.categories.searchPlaceholder')}
-          searchInputId="cat-search-input"
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          secondaryFilter={secondaryFilter}
-          onSecondaryFilterChange={setSecondaryFilter}
-          secondaryLabel={t('masterData.categories.filterGroupLabel')}
-          secondaryOptions={[
-            { value: 'ALL', label: t('masterData.categories.allGroups') },
-            ...CATEGORY_PARENT_GROUPS.map((g) => ({
-              value: g,
-              label: translateDomainLabel(language, 'parentGroups', g),
-            })),
-          ]}
-          isFiltered={isFiltered}
-          onReset={resetFilters}
-          totalFiltered={filteredItems.length}
-          totalItems={items.length}
-          itemUnitLabel={t('masterData.categories.unitLabel')}
-        />
+        <StaggerItem>
+          <Card padding="md" className="space-y-4">
+            <MasterDataToolbar
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder={t('masterData.categories.searchPlaceholder')}
+              searchInputId="cat-search-input"
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              secondaryFilter={secondaryFilter}
+              onSecondaryFilterChange={setSecondaryFilter}
+              secondaryLabel={t('masterData.categories.filterGroupLabel')}
+              secondaryOptions={[
+                { value: 'ALL', label: t('masterData.categories.allGroups') },
+                ...CATEGORY_PARENT_GROUPS.map((g) => ({
+                  value: g,
+                  label: translateDomainLabel(language, 'parentGroups', g),
+                })),
+              ]}
+              isFiltered={isFiltered}
+              onReset={resetFilters}
+              totalFiltered={filteredItems.length}
+              totalItems={items.length}
+              itemUnitLabel={t('masterData.categories.unitLabel')}
+            />
 
-        <Table
-          columns={columns}
-          data={filteredItems}
-          caption={t('masterData.categories.tableCaption')}
-          emptyTitle={
-            isFiltered
-              ? t('masterData.categories.emptyFilteredTitle')
-              : t('masterData.categories.emptyTitle')
-          }
-          emptyDescription={
-            isFiltered
-              ? t('masterData.categories.emptyFilteredDesc')
-              : t('masterData.categories.emptyDesc')
-          }
-          emptyAction={
-            isFiltered ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={resetFilters}
-                iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
-              >
-                {t('masterData.common.clearFilters')}
-              </Button>
-            ) : canManageCatalog ? (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleOpenCreate}
-                iconLeft={<Plus className="w-3.5 h-3.5" />}
-              >
-                {t('masterData.categories.createBtn')}
-              </Button>
-            ) : undefined
-          }
-        />
-      </Card>
+            <Table
+              columns={columns}
+              data={filteredItems}
+              caption={t('masterData.categories.tableCaption')}
+              emptyTitle={
+                isFiltered
+                  ? t('masterData.categories.emptyFilteredTitle')
+                  : t('masterData.categories.emptyTitle')
+              }
+              emptyDescription={
+                isFiltered
+                  ? t('masterData.categories.emptyFilteredDesc')
+                  : t('masterData.categories.emptyDesc')
+              }
+              emptyAction={
+                isFiltered ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={resetFilters}
+                    iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
+                  >
+                    {t('masterData.common.clearFilters')}
+                  </Button>
+                ) : canManageCatalog ? (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleOpenCreate}
+                    iconLeft={<Plus className="w-3.5 h-3.5" />}
+                  >
+                    {t('masterData.categories.createBtn')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </Card>
+        </StaggerItem>
+      </StaggerGroup>
 
       <CategoryFormModal
         open={formOpen}

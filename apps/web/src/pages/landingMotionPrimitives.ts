@@ -1,10 +1,11 @@
 import type { Variants } from 'motion/react';
+import { MOTION_EASE } from '../design-system/motion/tokens';
 
 /** Exponential deceleration curve for confident UI settlement (zero overshoot). */
-export const LANDING_EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
+export const LANDING_EASE_OUT: [number, number, number, number] = MOTION_EASE.out;
 
 /** Responsive interactive curve for hover, tab slides, and micro feedback. */
-export const LANDING_EASE_UI: [number, number, number, number] = [0.2, 0.8, 0.2, 1];
+export const LANDING_EASE_UI: [number, number, number, number] = MOTION_EASE.ui;
 
 export const LANDING_VIEWPORT = {
   once: true,

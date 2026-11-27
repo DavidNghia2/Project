@@ -26,6 +26,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
   onExportCsv,
 }) => {
   const { t, language } = useTranslation();
+  const formatVnd = (amount: number) => formatCurrencyVND(amount, language);
 
   const titleMap = {
     current_stock: t('reports.table.titles.current_stock'),
@@ -91,7 +92,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#475569] whitespace-nowrap">
-                {formatCurrencyVND(r.unitCost)}
+                {formatVnd(r.unitCost)}
               </span>
             ),
           },
@@ -101,7 +102,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0284C7] whitespace-nowrap">
-                {formatCurrencyVND(r.totalValue)}
+                {formatVnd(r.totalValue)}
               </span>
             ),
           },
@@ -215,7 +216,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono tabular-nums text-[#475569] whitespace-nowrap">
-                {formatCurrencyVND(r.unitCost)}
+                {formatVnd(r.unitCost)}
               </span>
             ),
           },
@@ -225,7 +226,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0F172A] whitespace-nowrap">
-                {formatCurrencyVND(r.lineTotal)}
+                {formatVnd(r.lineTotal)}
               </span>
             ),
           },
@@ -316,7 +317,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0284C7] whitespace-nowrap">
-                {formatCurrencyVND(r.closingValue)}
+                {formatVnd(r.closingValue)}
               </span>
             ),
           },
@@ -391,7 +392,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
             align: 'right',
             render: (_, r) => (
               <span className="font-mono font-semibold tabular-nums text-[#0F172A] whitespace-nowrap">
-                {formatCurrencyVND(r.estimatedRestockValue)}
+                {formatVnd(r.estimatedRestockValue)}
               </span>
             ),
           },
@@ -494,7 +495,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                     </span>
                     <span>
                       {t('reports.table.footer.inValue')}{' '}
-                      <strong>{formatCurrencyVND(report.totals.totalPrimaryValue)}</strong>
+                      <strong>{formatVnd(report.totals.totalPrimaryValue)}</strong>
                     </span>
                   </>
                 ) : report.reportType === 'low_stock' ? (
@@ -512,7 +513,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                     <span>
                       {t('reports.table.footer.estRestock')}{' '}
                       <strong className="text-[#0284C7]">
-                        {formatCurrencyVND(report.totals.totalPrimaryValue)}
+                        {formatVnd(report.totals.totalPrimaryValue)}
                       </strong>
                     </span>
                   </>
@@ -525,7 +526,7 @@ export const ReportDataTable: React.FC<ReportDataTableProps> = ({
                     <span>
                       {t('reports.table.footer.totalValue')}{' '}
                       <strong className="text-sm text-[#0284C7]">
-                        {formatCurrencyVND(report.totals.totalPrimaryValue)}
+                        {formatVnd(report.totals.totalPrimaryValue)}
                       </strong>
                     </span>
                   </>

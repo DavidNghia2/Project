@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Package, AlertTriangle, Boxes, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { PageHeader } from '../components/PageHeader';
-import { AnimatedCounter, Card, Button, Alert, useToast } from '../design-system';
+import { AnimatedCounter, Card, Button, Alert, StaggerGroup, StaggerItem, useToast } from '../design-system';
 import {
   useProducts,
   ProductFilters,
@@ -118,128 +118,136 @@ export const ProductsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <PageHeader
-        title={t('pages.productsTitle')}
-        description={t('pages.productsDesc')}
-        actions={
-          canEditCatalog ? (
-            <Button
-              variant="primary"
-              size="sm"
-              iconLeft={<Plus className="w-4 h-4" />}
-              onClick={handleOpenCreate}
-              id="btn-add-product"
-            >
-              {t('products.addBtn')}
-            </Button>
-          ) : undefined
-        }
-      />
+      <StaggerGroup preset="sections" className="space-y-6">
+        {/* Page Header */}
+        <StaggerItem>
+          <PageHeader
+            title={t('pages.productsTitle')}
+            description={t('pages.productsDesc')}
+            actions={
+              canEditCatalog ? (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  iconLeft={<Plus className="w-4 h-4" />}
+                  onClick={handleOpenCreate}
+                  id="btn-add-product"
+                >
+                  {t('products.addBtn')}
+                </Button>
+              ) : undefined
+            }
+          />
+        </StaggerItem>
 
-      {!canEditCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
+        {!canEditCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
 
-      {/* Success Feedback Alert */}
-      {toastMessage && (
-        <Alert
-          variant="success"
-          title={t('common.operationSuccess')}
-          message={toastMessage}
-          dismissible
-          onDismiss={() => setToastMessage(null)}
-        />
-      )}
+        {/* Success Feedback Alert */}
+        {toastMessage && (
+          <Alert
+            variant="success"
+            title={t('common.operationSuccess')}
+            message={toastMessage}
+            dismissible
+            onDismiss={() => setToastMessage(null)}
+          />
+        )}
 
-      {/* Quick KPIs Summary Bar */}
-      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <Package className="w-5 h-5" />
-          </div>
-          <div className="min-w-0">
-            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.totalItems')}</span>
-            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-[#0F172A] block truncate">
-              <AnimatedCounter
-                value={totalCatalogCount}
-                format={(n) => t('products.kpi.totalItemsUnit', { count: n })}
-              />
-            </span>
-          </div>
-        </div>
+        {/* Quick KPIs Summary Bar */}
+        <StaggerItem>
+          <StaggerGroup preset="cards" isolate className="grid grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-4 gap-3">
+            <StaggerItem index={0} className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <Package className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.totalItems')}</span>
+                <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-[#0F172A] block truncate">
+                  <AnimatedCounter
+                    value={totalCatalogCount}
+                    format={(n) => t('products.kpi.totalItemsUnit', { count: n })}
+                  />
+                </span>
+              </div>
+            </StaggerItem>
 
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-          <div className="min-w-0">
-            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.activeItems')}</span>
-            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-emerald-700 block truncate">
-              <AnimatedCounter
-                value={activeCount}
-                format={(n) => t('products.kpi.activeItemsUnit', { count: n })}
-              />
-            </span>
-          </div>
-        </div>
+            <StaggerItem index={1} className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.activeItems')}</span>
+                <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-emerald-700 block truncate">
+                  <AnimatedCounter
+                    value={activeCount}
+                    format={(n) => t('products.kpi.activeItemsUnit', { count: n })}
+                  />
+                </span>
+              </div>
+            </StaggerItem>
 
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-5 h-5" />
-          </div>
-          <div className="min-w-0">
-            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.lowStockItems')}</span>
-            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-amber-600 block truncate">
-              <AnimatedCounter
-                value={lowStockCount}
-                format={(n) => t('products.kpi.lowStockItemsUnit', { count: n })}
-              />
-            </span>
-          </div>
-        </div>
+            <StaggerItem index={2} className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.lowStockItems')}</span>
+                <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-amber-600 block truncate">
+                  <AnimatedCounter
+                    value={lowStockCount}
+                    format={(n) => t('products.kpi.lowStockItemsUnit', { count: n })}
+                  />
+                </span>
+              </div>
+            </StaggerItem>
 
-        <div className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-            <Boxes className="w-5 h-5" />
-          </div>
-          <div className="min-w-0">
-            <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.totalOnHand')}</span>
-            <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-purple-700 block truncate">
-              <AnimatedCounter value={totalStockUnits} />
-            </span>
-          </div>
-        </div>
-      </div>
+            <StaggerItem index={3} className="p-3 bg-white border border-[#E2E8F0] rounded-lg shadow-2xs flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center shrink-0">
+                <Boxes className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[11px] text-[#64748B] block font-medium truncate">{t('products.kpi.totalOnHand')}</span>
+                <span className="font-mono tabular-nums text-base sm:text-lg font-bold text-sky-800 block truncate">
+                  <AnimatedCounter value={totalStockUnits} />
+                </span>
+              </div>
+            </StaggerItem>
+          </StaggerGroup>
+        </StaggerItem>
 
-      {/* Main Table Card with Search & Filters */}
-      <Card padding="md" className="space-y-4">
-        <ProductFilters
-          filters={filters}
-          onSearchChange={setSearch}
-          onCategoryChange={setCategory}
-          onStatusChange={setStatus}
-          onWarehouseChange={setWarehouse}
-          onReset={resetFilters}
-          totalFiltered={totalItems}
-          totalProducts={products.length}
-        />
+        {/* Main Table Card with Search & Filters */}
+        <StaggerItem>
+          <Card padding="md" className="space-y-4">
+            <ProductFilters
+              filters={filters}
+              onSearchChange={setSearch}
+              onCategoryChange={setCategory}
+              onStatusChange={setStatus}
+              onWarehouseChange={setWarehouse}
+              onReset={resetFilters}
+              totalFiltered={totalItems}
+              totalProducts={products.length}
+            />
 
-        <ProductTable
-          products={paginatedProducts}
-          totalItems={totalItems}
-          totalPages={totalPages}
-          currentPage={currentPage}
-          pageSize={filters.pageSize}
-          sortBy={filters.sortBy}
-          sortDir={filters.sortDir}
-          onSort={(key) => setSort(key)}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-          onView={handleOpenDetail}
-          onEdit={handleOpenEdit}
-          onDelete={handleOpenDelete}
-          canMutate={canEditCatalog}
-        />
-      </Card>
+            <ProductTable
+              products={paginatedProducts}
+              totalItems={totalItems}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              pageSize={filters.pageSize}
+              sortBy={filters.sortBy}
+              sortDir={filters.sortDir}
+              onSort={(key) => setSort(key)}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+              onView={handleOpenDetail}
+              onEdit={handleOpenEdit}
+              onDelete={handleOpenDelete}
+              canMutate={canEditCatalog}
+            />
+          </Card>
+        </StaggerItem>
+      </StaggerGroup>
 
       {/* Modals */}
       <ProductFormModal

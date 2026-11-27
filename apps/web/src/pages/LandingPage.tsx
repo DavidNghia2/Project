@@ -26,7 +26,6 @@ import type { RoleCode } from '../features/users-rbac/types';
 import {
   AnimatedStatCounter,
   HeroAmbientDepth,
-  LandingMotionRoot,
   MotionCtaWrapper,
   ScrollRevealBlock,
   StaggerGrid,
@@ -210,7 +209,6 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <LandingMotionRoot>
       <div id="top" className="min-h-screen flex flex-col bg-[#F6F8FB] text-[#0F172A] font-sans antialiased">
         <a
           href="#main-content"
@@ -1234,6 +1232,5 @@ export const LandingPage: React.FC = () => {
           </div>
         </footer>
       </div>
-    </LandingMotionRoot>
   );
 };

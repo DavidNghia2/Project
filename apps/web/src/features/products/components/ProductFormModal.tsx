@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Product, ProductFormData, ValidationErrors } from '../types';
 import { CATEGORIES_LIST, UNITS_LIST, WAREHOUSES_LIST } from '../mockData';
-import { Modal, Button, Input, Select } from '../../../design-system';
+import { Modal, Button, Input, Select, StaggerGroup, StaggerItem } from '../../../design-system';
 import { useTranslation } from '../../../i18n';
 import { translateDomainLabel } from '../../../i18n/domainTranslate';
 
@@ -88,8 +88,9 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
   };
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form noValidate onSubmit={handleSubmit} className="text-xs sm:text-sm">
+      <StaggerGroup preset="form" isolate className="space-y-4">
+        <StaggerItem index={0} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* SKU */}
         <div>
           <Input
@@ -118,10 +119,10 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
             size="sm"
           />
         </div>
-      </div>
+      </StaggerItem>
 
       {/* Name */}
-      <div>
+      <StaggerItem index={1}>
         <Input
           id="product-input-name"
           label={t('products.form.nameLabel')}
@@ -132,9 +133,9 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
           error={errors.name}
           size="sm"
         />
-      </div>
+      </StaggerItem>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <StaggerItem index={2} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Category */}
         <div>
           <Select
@@ -168,9 +169,9 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
             size="sm"
           />
         </div>
-      </div>
+      </StaggerItem>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <StaggerItem index={3} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Reorder Level */}
         <div>
           <Input
@@ -222,9 +223,9 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
             size="sm"
           />
         </div>
-      </div>
+      </StaggerItem>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <StaggerItem index={4} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Image URL */}
         <div>
           <Input
@@ -252,37 +253,39 @@ const ProductFormContent: React.FC<ProductFormContentProps> = ({
             size="sm"
           />
         </div>
-      </div>
+      </StaggerItem>
 
-      {/* Description */}
-      <div>
-        <label htmlFor="productDesc" className="block text-xs font-medium text-[#0F172A] mb-1">
-          {t('products.form.descLabel')}
-        </label>
-        <textarea
-          id="productDesc"
-          rows={3}
-          placeholder={t('products.form.descPlaceholder')}
-          value={formData.description}
-          onChange={(e) => handleChange('description', e.target.value)}
-          className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-        />
-      </div>
+      {/* Description & Actions */}
+      <StaggerItem index={5} className="space-y-4">
+        <div>
+          <label htmlFor="productDesc" className="block text-xs font-medium text-[#0F172A] mb-1">
+            {t('products.form.descLabel')}
+          </label>
+          <textarea
+            id="productDesc"
+            rows={3}
+            placeholder={t('products.form.descPlaceholder')}
+            value={formData.description}
+            onChange={(e) => handleChange('description', e.target.value)}
+            className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md text-xs sm:text-sm bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+          />
+        </div>
 
-      {/* Actions */}
-      <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
-        <Button variant="secondary" onClick={onClose} disabled={isSubmitting} type="button">
-          {t('products.form.cancelBtn')}
-        </Button>
-        <Button
-          variant="primary"
-          loading={isSubmitting}
-          type="submit"
-          id="btn-submit-product"
-        >
-          {mode === 'create' ? t('products.form.createSubmitBtn') : t('products.form.editSubmitBtn')}
-        </Button>
-      </div>
+        <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
+          <Button variant="secondary" onClick={onClose} disabled={isSubmitting} type="button">
+            {t('products.form.cancelBtn')}
+          </Button>
+          <Button
+            variant="primary"
+            loading={isSubmitting}
+            type="submit"
+            id="btn-submit-product"
+          >
+            {mode === 'create' ? t('products.form.createSubmitBtn') : t('products.form.editSubmitBtn')}
+          </Button>
+        </div>
+      </StaggerItem>
+      </StaggerGroup>
     </form>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { animate, useInView, useReducedMotion } from 'motion/react';
+import { animate, useInView } from 'motion/react';
+import { useSafeReducedMotion } from './hooks';
 import { MOTION_DURATION, MOTION_EASE } from './tokens';
 import { getIntlLocale, useTranslation } from '../../i18n';
 
@@ -37,9 +38,9 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   className = '',
 }) => {
   const ref = useRef<HTMLSpanElement>(null);
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const { language } = useTranslation();
-  const isInView = useInView(ref, { once: true, amount: 0.25 });
+  const isInView = useInView(ref, { once: true, amount: 'some' });
   const shouldStart = trigger === 'mount' || isInView;
 
   const initialVal = !animateOnMount || shouldReduceMotion ? value : 0;
@@ -48,8 +49,11 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
 
   useEffect(() => {
     if (!Number.isFinite(value)) return;
-    if (shouldReduceMotion || !shouldStart) {
+    if (shouldReduceMotion) {
       prevValueRef.current = value;
+      return;
+    }
+    if (!shouldStart) {
       return;
     }
 
@@ -79,7 +83,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     return `${prefix}${numStr}${suffix}`;
   };
 
-  const renderedValue = shouldReduceMotion || !shouldStart ? value : displayValue;
+  const renderedValue = shouldReduceMotion ? value : !shouldStart ? initialVal : displayValue;
 
   return (
     <span
@@ -87,7 +91,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
       className={`tabular-nums ${className}`}
       aria-label={formatValue(value)}
     >
-      {formatValue(renderedValue)}
+      <span aria-hidden="true">{formatValue(renderedValue)}</span>
     </span>
   );
 };

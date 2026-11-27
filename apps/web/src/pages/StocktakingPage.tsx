@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, type Column } from '../design-system';
+import { Card, Button, Badge, StaggerGroup, StaggerItem, Table, type Column } from '../design-system';
 import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const StocktakingPage: React.FC = () => {
@@ -106,24 +106,28 @@ export const StocktakingPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={t('pages.stocktakingTitle')}
-        description={t('pages.stocktakingDesc')}
-        actions={
-          canConduct ? (
-            <Button variant="primary" size="sm" iconLeft={<Plus className="w-4 h-4" />}>
-              {t('stocktaking.newSession')}
-            </Button>
-          ) : undefined
-        }
-      />
+    <StaggerGroup preset="sections" className="space-y-6">
+      <StaggerItem>
+        <PageHeader
+          title={t('pages.stocktakingTitle')}
+          description={t('pages.stocktakingDesc')}
+          actions={
+            canConduct ? (
+              <Button variant="primary" size="sm" iconLeft={<Plus className="w-4 h-4" />}>
+                {t('stocktaking.newSession')}
+              </Button>
+            ) : undefined
+          }
+        />
+      </StaggerItem>
 
       {!canConduct && <RoleScopeNotice role={activeRole} context="restricted" />}
 
-      <Card padding="md">
-        <Table columns={columns} data={sessions} />
-      </Card>
-    </div>
+      <StaggerItem>
+        <Card padding="md">
+          <Table columns={columns} data={sessions} />
+        </Card>
+      </StaggerItem>
+    </StaggerGroup>
   );
 };

@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { CommandPalette } from './CommandPalette';
@@ -8,13 +8,13 @@ import { useTranslation } from '../i18n';
 import { DevRolePreviewBar } from '../features/users-rbac/components/DevRolePreviewBar';
 import { useAuth } from '../features/auth/useAuth';
 import { DashboardSkeleton } from '../pages/DashboardSkeleton';
-import { MOTION_EASE, MOTION_OVERLAY, MOTION_SPRING, PageTransition } from '../design-system';
+import { MOTION_EASE, MOTION_OVERLAY, MOTION_SPRING, PageTransition, useSafeReducedMotion } from '../design-system';
 
 export const AppLayout: React.FC = () => {
   const { t } = useTranslation();
   const { isMockMode } = useAuth();
   const { pathname } = useLocation();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const mainRef = useRef<HTMLElement>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);

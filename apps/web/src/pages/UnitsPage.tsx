@@ -3,7 +3,7 @@ import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, Alert, useToast, type Column } from '../design-system';
+import { Card, Button, Badge, Table, Alert, StaggerGroup, StaggerItem, useToast, type Column } from '../design-system';
 import {
   useUnits,
   MasterDataToolbar,
@@ -203,98 +203,104 @@ export const UnitsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t('pages.unitsTitle')}
-        description={t('pages.unitsDesc')}
-        actions={
-          canManageCatalog ? (
-            <Button
-              id="btn-add-unit"
-              variant="primary"
-              size="sm"
-              iconLeft={<Plus className="w-4 h-4" />}
-              onClick={handleOpenCreate}
-            >
-              {t('masterData.units.createBtn')}
-            </Button>
-          ) : undefined
-        }
-      />
+      <StaggerGroup preset="sections" className="space-y-6">
+        <StaggerItem>
+          <PageHeader
+            title={t('pages.unitsTitle')}
+            description={t('pages.unitsDesc')}
+            actions={
+              canManageCatalog ? (
+                <Button
+                  id="btn-add-unit"
+                  variant="primary"
+                  size="sm"
+                  iconLeft={<Plus className="w-4 h-4" />}
+                  onClick={handleOpenCreate}
+                >
+                  {t('masterData.units.createBtn')}
+                </Button>
+              ) : undefined
+            }
+          />
+        </StaggerItem>
 
-      {!canManageCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
+        {!canManageCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
 
-      {toastMessage && (
-        <Alert
-          variant="success"
-          title={t('common.operationSuccess')}
-          message={toastMessage}
-          dismissible
-          onDismiss={() => setToastMessage(null)}
-        />
-      )}
+        {toastMessage && (
+          <Alert
+            variant="success"
+            title={t('common.operationSuccess')}
+            message={toastMessage}
+            dismissible
+            onDismiss={() => setToastMessage(null)}
+          />
+        )}
 
-      <Card padding="md" className="space-y-4">
-        <MasterDataToolbar
-          search={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t('masterData.units.searchPlaceholder')}
-          searchInputId="uom-search-input"
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          secondaryFilter={secondaryFilter}
-          onSecondaryFilterChange={setSecondaryFilter}
-          secondaryLabel={t('masterData.units.filterMeasureLabel')}
-          secondaryOptions={[
-            { value: 'ALL', label: t('masterData.units.allMeasureTypes') },
-            { value: 'discrete', label: t('masterData.units.measureTypes.discrete') },
-            { value: 'packaging', label: t('masterData.units.measureTypes.packaging') },
-            { value: 'length', label: t('masterData.units.measureTypes.length') },
-            { value: 'weight', label: t('masterData.units.measureTypes.weight') },
-          ]}
-          isFiltered={isFiltered}
-          onReset={resetFilters}
-          totalFiltered={filteredItems.length}
-          totalItems={items.length}
-          itemUnitLabel={t('masterData.units.unitLabel')}
-        />
+        <StaggerItem>
+          <Card padding="md" className="space-y-4">
+            <MasterDataToolbar
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder={t('masterData.units.searchPlaceholder')}
+              searchInputId="uom-search-input"
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              secondaryFilter={secondaryFilter}
+              onSecondaryFilterChange={setSecondaryFilter}
+              secondaryLabel={t('masterData.units.filterMeasureLabel')}
+              secondaryOptions={[
+                { value: 'ALL', label: t('masterData.units.allMeasureTypes') },
+                { value: 'discrete', label: t('masterData.units.measureTypes.discrete') },
+                { value: 'packaging', label: t('masterData.units.measureTypes.packaging') },
+                { value: 'length', label: t('masterData.units.measureTypes.length') },
+                { value: 'weight', label: t('masterData.units.measureTypes.weight') },
+              ]}
+              isFiltered={isFiltered}
+              onReset={resetFilters}
+              totalFiltered={filteredItems.length}
+              totalItems={items.length}
+              itemUnitLabel={t('masterData.units.unitLabel')}
+            />
 
-        <Table
-          columns={columns}
-          data={filteredItems}
-          caption={t('masterData.units.tableCaption')}
-          emptyTitle={
-            isFiltered
-              ? t('masterData.units.emptyFilteredTitle')
-              : t('masterData.units.emptyTitle')
-          }
-          emptyDescription={
-            isFiltered
-              ? t('masterData.units.emptyFilteredDesc')
-              : t('masterData.units.emptyDesc')
-          }
-          emptyAction={
-            isFiltered ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={resetFilters}
-                iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
-              >
-                {t('masterData.common.clearFilters')}
-              </Button>
-            ) : canManageCatalog ? (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleOpenCreate}
-                iconLeft={<Plus className="w-3.5 h-3.5" />}
-              >
-                {t('masterData.units.createBtn')}
-              </Button>
-            ) : undefined
-          }
-        />
-      </Card>
+            <Table
+              columns={columns}
+              data={filteredItems}
+              caption={t('masterData.units.tableCaption')}
+              emptyTitle={
+                isFiltered
+                  ? t('masterData.units.emptyFilteredTitle')
+                  : t('masterData.units.emptyTitle')
+              }
+              emptyDescription={
+                isFiltered
+                  ? t('masterData.units.emptyFilteredDesc')
+                  : t('masterData.units.emptyDesc')
+              }
+              emptyAction={
+                isFiltered ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={resetFilters}
+                    iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
+                  >
+                    {t('masterData.common.clearFilters')}
+                  </Button>
+                ) : canManageCatalog ? (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleOpenCreate}
+                    iconLeft={<Plus className="w-3.5 h-3.5" />}
+                  >
+                    {t('masterData.units.createBtn')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </Card>
+        </StaggerItem>
+      </StaggerGroup>
 
       <UnitFormModal
         open={formOpen}

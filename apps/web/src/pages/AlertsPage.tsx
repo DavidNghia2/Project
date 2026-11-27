@@ -3,7 +3,7 @@ import { RefreshCw } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, Alert, type Column } from '../design-system';
+import { Card, Button, Badge, Table, Alert, StaggerGroup, StaggerItem, type Column } from '../design-system';
 import { RoleScopeNotice, useRolePreview } from '../features/users-rbac';
 
 export const AlertsPage: React.FC = () => {
@@ -105,30 +105,36 @@ export const AlertsPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={t('pages.alertsTitle')}
-        description={t('pages.alertsDesc')}
-        actions={
-          canConfigure ? (
-            <Button variant="secondary" size="sm" iconLeft={<RefreshCw className="w-4 h-4" />}>
-              {t('alerts.rescanBtn')}
-            </Button>
-          ) : undefined
-        }
-      />
+    <StaggerGroup preset="sections" className="space-y-6">
+      <StaggerItem>
+        <PageHeader
+          title={t('pages.alertsTitle')}
+          description={t('pages.alertsDesc')}
+          actions={
+            canConfigure ? (
+              <Button variant="secondary" size="sm" iconLeft={<RefreshCw className="w-4 h-4" />}>
+                {t('alerts.rescanBtn')}
+              </Button>
+            ) : undefined
+          }
+        />
+      </StaggerItem>
 
       {!canConfigure && <RoleScopeNotice role={activeRole} context="catalog" />}
 
-      <Alert
-        variant="warning"
-        title={t('alerts.warningTitle', { count: alerts.length })}
-        message={t('alerts.warningMessage')}
-      />
+      <StaggerItem>
+        <Alert
+          variant="warning"
+          title={t('alerts.warningTitle', { count: alerts.length })}
+          message={t('alerts.warningMessage')}
+        />
+      </StaggerItem>
 
-      <Card padding="md">
-        <Table columns={columns} data={alerts} />
-      </Card>
-    </div>
+      <StaggerItem>
+        <Card padding="md">
+          <Table columns={columns} data={alerts} />
+        </Card>
+      </StaggerItem>
+    </StaggerGroup>
   );
 };

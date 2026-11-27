@@ -3,7 +3,7 @@ import { Plus, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { translateDomainLabel } from '../i18n/domainTranslate';
 import { PageHeader } from '../components/PageHeader';
-import { Card, Button, Badge, Table, Alert, useToast, type Column } from '../design-system';
+import { Card, Button, Badge, Table, Alert, StaggerGroup, StaggerItem, useToast, type Column } from '../design-system';
 import {
   useSuppliers,
   SUPPLIER_PAYMENT_TERMS,
@@ -195,98 +195,104 @@ export const SuppliersPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t('pages.suppliersTitle')}
-        description={t('pages.suppliersDesc')}
-        actions={
-          canManageCatalog ? (
-            <Button
-              id="btn-add-supplier"
-              variant="primary"
-              size="sm"
-              iconLeft={<Plus className="w-4 h-4" />}
-              onClick={handleOpenCreate}
-            >
-              {t('masterData.suppliers.createBtn')}
-            </Button>
-          ) : undefined
-        }
-      />
+      <StaggerGroup preset="sections" className="space-y-6">
+        <StaggerItem>
+          <PageHeader
+            title={t('pages.suppliersTitle')}
+            description={t('pages.suppliersDesc')}
+            actions={
+              canManageCatalog ? (
+                <Button
+                  id="btn-add-supplier"
+                  variant="primary"
+                  size="sm"
+                  iconLeft={<Plus className="w-4 h-4" />}
+                  onClick={handleOpenCreate}
+                >
+                  {t('masterData.suppliers.createBtn')}
+                </Button>
+              ) : undefined
+            }
+          />
+        </StaggerItem>
 
-      {!canManageCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
+        {!canManageCatalog && <RoleScopeNotice role={activeRole} context="catalog" />}
 
-      {toastMessage && (
-        <Alert
-          variant="success"
-          title={t('common.operationSuccess')}
-          message={toastMessage}
-          dismissible
-          onDismiss={() => setToastMessage(null)}
-        />
-      )}
+        {toastMessage && (
+          <Alert
+            variant="success"
+            title={t('common.operationSuccess')}
+            message={toastMessage}
+            dismissible
+            onDismiss={() => setToastMessage(null)}
+          />
+        )}
 
-      <Card padding="md" className="space-y-4">
-        <MasterDataToolbar
-          search={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t('masterData.suppliers.searchPlaceholder')}
-          searchInputId="sup-search-input"
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          secondaryFilter={secondaryFilter}
-          onSecondaryFilterChange={setSecondaryFilter}
-          secondaryLabel={t('masterData.suppliers.filterTermsLabel')}
-          secondaryOptions={[
-            { value: 'ALL', label: t('masterData.suppliers.allPaymentTerms') },
-            ...SUPPLIER_PAYMENT_TERMS.map((p) => ({
-              value: p,
-              label: translateDomainLabel(language, 'paymentTerms', p),
-            })),
-          ]}
-          isFiltered={isFiltered}
-          onReset={resetFilters}
-          totalFiltered={filteredItems.length}
-          totalItems={items.length}
-          itemUnitLabel={t('masterData.suppliers.unitLabel')}
-        />
+        <StaggerItem>
+          <Card padding="md" className="space-y-4">
+            <MasterDataToolbar
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder={t('masterData.suppliers.searchPlaceholder')}
+              searchInputId="sup-search-input"
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              secondaryFilter={secondaryFilter}
+              onSecondaryFilterChange={setSecondaryFilter}
+              secondaryLabel={t('masterData.suppliers.filterTermsLabel')}
+              secondaryOptions={[
+                { value: 'ALL', label: t('masterData.suppliers.allPaymentTerms') },
+                ...SUPPLIER_PAYMENT_TERMS.map((p) => ({
+                  value: p,
+                  label: translateDomainLabel(language, 'paymentTerms', p),
+                })),
+              ]}
+              isFiltered={isFiltered}
+              onReset={resetFilters}
+              totalFiltered={filteredItems.length}
+              totalItems={items.length}
+              itemUnitLabel={t('masterData.suppliers.unitLabel')}
+            />
 
-        <Table
-          columns={columns}
-          data={filteredItems}
-          caption={t('masterData.suppliers.tableCaption')}
-          emptyTitle={
-            isFiltered
-              ? t('masterData.suppliers.emptyFilteredTitle')
-              : t('masterData.suppliers.emptyTitle')
-          }
-          emptyDescription={
-            isFiltered
-              ? t('masterData.suppliers.emptyFilteredDesc')
-              : t('masterData.suppliers.emptyDesc')
-          }
-          emptyAction={
-            isFiltered ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={resetFilters}
-                iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
-              >
-                {t('masterData.common.clearFilters')}
-              </Button>
-            ) : canManageCatalog ? (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleOpenCreate}
-                iconLeft={<Plus className="w-3.5 h-3.5" />}
-              >
-                {t('masterData.suppliers.createBtn')}
-              </Button>
-            ) : undefined
-          }
-        />
-      </Card>
+            <Table
+              columns={columns}
+              data={filteredItems}
+              caption={t('masterData.suppliers.tableCaption')}
+              emptyTitle={
+                isFiltered
+                  ? t('masterData.suppliers.emptyFilteredTitle')
+                  : t('masterData.suppliers.emptyTitle')
+              }
+              emptyDescription={
+                isFiltered
+                  ? t('masterData.suppliers.emptyFilteredDesc')
+                  : t('masterData.suppliers.emptyDesc')
+              }
+              emptyAction={
+                isFiltered ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={resetFilters}
+                    iconLeft={<RotateCcw className="w-3.5 h-3.5" />}
+                  >
+                    {t('masterData.common.clearFilters')}
+                  </Button>
+                ) : canManageCatalog ? (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleOpenCreate}
+                    iconLeft={<Plus className="w-3.5 h-3.5" />}
+                  >
+                    {t('masterData.suppliers.createBtn')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </Card>
+        </StaggerItem>
+      </StaggerGroup>
 
       <SupplierFormModal
         open={formOpen}

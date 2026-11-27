@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { m, useReducedMotion } from 'motion/react';
+import { m } from 'motion/react';
 import { BarChart3 } from 'lucide-react';
-import { AnimatedCounter, Card, EmptyState, MOTION_DURATION, MOTION_EASE } from '../../../design-system';
+import {
+  AnimatedCounter,
+  Card,
+  EmptyState,
+  MOTION_EASE,
+  MOTION_STAGGER_PRESETS,
+  getCappedStaggerDelay,
+  useSafeReducedMotion,
+} from '../../../design-system';
 import { getIntlLocale, useTranslation } from '../../../i18n';
 import { formatCurrencyVND } from '../../stock-operations/workflow';
 import type { ComputedReportResult } from '../types';
@@ -21,7 +29,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
   validDateRange,
 }) => {
   const { t, language } = useTranslation();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   const series = validDateRange ? report.chartSeries : [];
@@ -117,7 +125,10 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                 <span>
                   {t('reports.charts.valueLabel')}{' '}
                   <strong className="text-[#0F172A]">
-                    <AnimatedCounter value={activePoint.primaryValue} format={formatCurrencyVND} />
+                    <AnimatedCounter
+                      value={activePoint.primaryValue}
+                      format={(val) => formatCurrencyVND(val, language)}
+                    />
                   </strong>
                 </span>
               </div>
@@ -226,8 +237,8 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                           initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0.08, opacity: 0.7 }}
                           animate={{ scaleY: 1, opacity: 1 }}
                           transition={{
-                            duration: MOTION_DURATION.moderate,
-                            delay: Math.min(idx, 7) * 0.025,
+                            duration: MOTION_STAGGER_PRESETS.chart.duration,
+                            delay: getCappedStaggerDelay(idx, 'chart'),
                             ease: MOTION_EASE.out,
                           }}
                         >
@@ -249,8 +260,8 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                           initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0.08, opacity: 0.7 }}
                           animate={{ scaleY: 1, opacity: 1 }}
                           transition={{
-                            duration: MOTION_DURATION.moderate,
-                            delay: Math.min(idx, 7) * 0.025 + 0.04,
+                            duration: MOTION_STAGGER_PRESETS.chart.duration,
+                            delay: getCappedStaggerDelay(idx, 'chart') + 0.035,
                             ease: MOTION_EASE.out,
                           }}
                         >
@@ -286,13 +297,13 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
                           initial={shouldReduceMotion ? { scaleY: 1 } : { scaleY: 0.08, opacity: 0.7 }}
                           animate={{ scaleY: 1, opacity: 1 }}
                           transition={{
-                            duration: MOTION_DURATION.moderate,
-                            delay: Math.min(idx, 7) * 0.025,
+                            duration: MOTION_STAGGER_PRESETS.chart.duration,
+                            delay: getCappedStaggerDelay(idx, 'chart'),
                             ease: MOTION_EASE.out,
                           }}
                         >
                           <title>
-                            {item.label}: {item.primaryQty} ({formatCurrencyVND(item.primaryValue)})
+                            {item.label}: {item.primaryQty} ({formatCurrencyVND(item.primaryValue, language)})
                           </title>
                         </m.rect>
                         <text
@@ -336,7 +347,7 @@ export const ReportChartsPanel: React.FC<ReportChartsPanelProps> = ({
             </span>
             <span className="font-mono tabular-nums text-[#0F172A]">
               {primaryLegend}: <strong>{chartQtySum.toLocaleString(getIntlLocale(language))}</strong> ·{' '}
-              {formatCurrencyVND(chartValueSum)}
+              {formatCurrencyVND(chartValueSum, language)}
             </span>
           </div>
         </div>

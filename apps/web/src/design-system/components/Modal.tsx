@@ -1,7 +1,8 @@
 import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { m, useReducedMotion } from 'motion/react';
+import { m } from 'motion/react';
 import { useTranslation } from '../../i18n';
+import { useSafeReducedMotion } from '../motion/hooks';
 import { MOTION_OVERLAY } from '../motion/tokens';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -43,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
 
   useEffect(() => {
     const dialog = dialogRef.current;

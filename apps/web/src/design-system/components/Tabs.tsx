@@ -1,5 +1,6 @@
 import React, { createContext, use, useCallback, useId, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
+import { useSafeReducedMotion } from '../motion/hooks';
 import { MOTION_DURATION, MOTION_EASE, MOTION_SPRING } from '../motion/tokens';
 
 export type TabsVariant = 'pill' | 'ink' | 'linked' | 'overshoot';
@@ -135,7 +136,7 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({
   ...rest
 }) => {
   const { value, onValueChange, variant, layoutId, registerOrder } = useTabsContext();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const isActive = value === itemValue;
 
   const springTransition = shouldReduceMotion
@@ -190,7 +191,7 @@ export interface TabsContentProps {
 
 export const TabsContent: React.FC<TabsContentProps> = ({ value: itemValue, className = '', children }) => {
   const { value, direction, variant } = useTabsContext();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const isActive = value === itemValue;
   const slideOffset = variant === 'linked' && !shouldReduceMotion ? direction * 12 : 0;
 
